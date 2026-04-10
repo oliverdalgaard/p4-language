@@ -1,0 +1,88 @@
+COMPILER Matilda
+
+  public CodeGenerator gen;
+
+  Dictionary<string, Var> symbols = new Dictionary<string, Var>();
+
+CHARACTERS
+  letter = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".
+  digit = "0123456789".
+  cr  = '\r'.
+  lf  = '\n'.
+  tab = '\t'.
+
+TOKENS
+  IDENT = ("_" | letter) {letter | digit | "_"}.
+  NUMBER = digit {digit}.
+
+COMMENTS FROM "/*" TO "*/" NESTED
+COMMENTS FROM "//" TO lf
+
+IGNORE cr + lf + tab
+
+PRODUCTIONS
+
+Matilda =
+  {
+    Declaration
+    | Stmt<out int stmt>
+    | Expr<out int result>
+  }
+  EOF
+.
+
+VarType<out Type type> (. type = Type.INT; .) =
+  "int" (. type = Type.INT; .)
+  | "bool" (. type = Type.BOOL; .)
+.
+
+Declaration =
+  VarType<out Type type>
+  IDENT
+  (.
+  string name = t.val;
+
+  if (symbols.ContainsKey(name)) throw new Exception("Variable  "+name+" already declared");
+
+  Var var = new Var(name, type);
+  symbols[name] = var; 
+  .)
+  "="
+  Expr<out int result> (. symbols[name].setValue(result); .)
+.
+
+
+
+Stmt<out int stmt> (. stmt = 0; .) = 
+  (
+    "if"
+  "(" Expr<out int cond> ")"
+  "{"
+    Expr<out int thenBranch> (. if (cond != 0) stmt = thenBranch; .)
+  "}"
+  [ "else" "{" Expr<out int elseBranch> "}" (. if (cond == 0) stmt = elseBranch; .) ]
+  )
+  | ("print" Expr<out int result> (. Console.WriteLine(result); .))
+.
+
+
+Expr<out int result> =
+  Term<out result>
+  {
+    "+"
+    Term<out int t>
+    (. result += t; .)
+  }
+.
+
+Term<out int result> (. result = 0; .) =
+  (NUMBER (. result = int.Parse(t.val); .))
+  | (IDENT (. 
+      string name = t.val;
+      if (!symbols.ContainsKey(name)) throw new Exception("Variable "+name+" is not defined");
+
+      result = symbols[name].getValue();
+            .))
+.
+
+END Matilda.
