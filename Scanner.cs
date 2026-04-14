@@ -203,8 +203,8 @@ public class UTF8Buffer: Buffer {
 public class Scanner {
 	const char EOL = '\n';
 	const int eofSym = 0; /* pdt */
-	const int maxT = 15;
-	const int noSym = 15;
+	const int maxT = 13;
+	const int noSym = 13;
 
 
 	public Buffer buffer; // scanner buffer
@@ -231,12 +231,8 @@ public class Scanner {
 		for (int i = 97; i <= 122; ++i) start[i] = 1;
 		for (int i = 48; i <= 57; ++i) start[i] = 2;
 		start[61] = 3; 
-		start[40] = 4; 
-		start[41] = 5; 
-		start[123] = 6; 
-		start[125] = 7; 
-		start[43] = 8; 
-		start[45] = 9; 
+		start[59] = 4; 
+		start[43] = 5; 
 		start[Buffer.EOF] = -1;
 
 	}
@@ -349,11 +345,13 @@ public class Scanner {
 
 	void CheckLiteral() {
 		switch (t.val) {
-			case "int": t.kind = 3; break;
-			case "bool": t.kind = 4; break;
-			case "if": t.kind = 6; break;
-			case "else": t.kind = 11; break;
-			case "print": t.kind = 12; break;
+			case "print": t.kind = 5; break;
+			case "int": t.kind = 6; break;
+			case "float": t.kind = 7; break;
+			case "bool": t.kind = 8; break;
+			case "string": t.kind = 9; break;
+			case "true": t.kind = 11; break;
+			case "false": t.kind = 12; break;
 			default: break;
 		}
 	}
@@ -390,19 +388,11 @@ public class Scanner {
 				if (ch >= '0' && ch <= '9') {AddCh(); goto case 2;}
 				else {t.kind = 2; break;}
 			case 3:
-				{t.kind = 5; break;}
+				{t.kind = 3; break;}
 			case 4:
-				{t.kind = 7; break;}
+				{t.kind = 4; break;}
 			case 5:
-				{t.kind = 8; break;}
-			case 6:
-				{t.kind = 9; break;}
-			case 7:
 				{t.kind = 10; break;}
-			case 8:
-				{t.kind = 13; break;}
-			case 9:
-				{t.kind = 14; break;}
 
 		}
 		t.val = new String(tval, 0, tlen);

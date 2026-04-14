@@ -1,8 +1,20 @@
 COMPILER Matilda
 
-  public CodeGenerator gen;
+  public Stmt mainNode = null;
 
-  Dictionary<string, Var> symbols = new Dictionary<string, Var>();
+  public bool hasErrors() {
+    return errors.count > 0;
+  }
+
+  private Stmt toComp(List<Stmt> stmts) {
+    if (!stmts.Any()) {
+      return Skip.Instance;
+    }
+
+    Stmt result = stmts.Last();
+
+    return result;
+  }
 
 CHARACTERS
   letter = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".
@@ -22,74 +34,58 @@ IGNORE cr + lf + tab
 
 PRODUCTIONS
 
-Matilda =
+Matilda = Stmts<out mainNode> .
+
+/*-------------------------------------------------------*/
+Stmts<out Stmt stmt> =    (. List<Stmt> list = new List<Stmt>(); .)
   {
-    Declaration
-    | Stmt<out int stmt>
-    | Expr<out int result>
-  }
-  EOF
+    Stmt<out Stmt temp>   (. list.Add(temp); .)
+  }                       (. stmt = toComp(list); .)
 .
 
-VarType<out Type type> (. type = Type.INT; .) =
-  "int" (. type = Type.INT; .)
-  | "bool" (. type = Type.BOOL; .)
-.
-
-Declaration =
-  VarType<out Type type>
-  IDENT
-  (.
-  string name = t.val;
-
-  if (symbols.ContainsKey(name)) throw new Exception("Variable  "+name+" already declared");
-
-  Var var = new Var(name, type);
-  symbols[name] = var; 
-  .)
-  "="
-  Expr<out int result> (. symbols[name].setValue(result); .)
-.
-
-
-
-Stmt<out int stmt> (. stmt = 0; .) = 
+Stmt<out Stmt stmt> =       (. stmt = Skip.Instance; .)
   (
-    "if"
-  "(" Expr<out int cond> ")"
-  "{"
-    Expr<out int thenBranch> (. if (cond != 0) stmt = thenBranch; .)
-  "}"
-  [ "else" "{" Expr<out int elseBranch> "}" (. if (cond == 0) stmt = elseBranch; .) ]
+    Declaration<out stmt>
+    | Print<out stmt>
   )
-  | ("print" Expr<out int result> (. Console.WriteLine(result); .))
 .
 
+Declaration<out Stmt stmt> = 
+  Type<out Type type>
+  IDENT                 (. string var = t.val; stmt = new Declaration(type, var, t.line); .)
+  '='                   (. int lineNumber = t.line; .)
+  Expr<out Expr expr>   (. stmt = new Comp(stmt, new Assign(var, expr, lineNumber)); .)
+  ';'
+.
 
-Expr<out int result> =
-  Term<out result>
+Print<out Stmt stmt> = 
+  "print"             (. int lineNumber = t.line; .)
+  Expr<out Expr expr> (. stmt = new Print(expr, lineNumber); .)
+  ';'
+.
+
+Type<out Type type> (. type = null; .)
+  =
+  "int"             (. type = IntT.Instance; .)
+  | "float"         (. type = FloatT.Instance; .)
+  | "bool"          (. type = BoolT.Instance; .)
+  | "string"        (. type = StringT.Instance; .)
+.
+
+Expr<out Expr expr> = 
+  Term<out expr>
   {
-    (
-      "+"
-      Term<out int t>
-      (. result += t; .)
-    )
-    |(
-      "-"
-      Term<out int t>
-      (. result -= t; .)
-    )
+    '+'                   (. int lineNumber = t.line; .)
+    Term<out Expr expr2>  (. expr = new BinaryOp(BinaryOperators.ADD, expr, expr2, lineNumber); .)
   }
 .
 
-Term<out int result> (. result = 0; .) =
-  (NUMBER (. result = int.Parse(t.val); .))
-  | (IDENT (. 
-      string name = t.val;
-      if (!symbols.ContainsKey(name)) throw new Exception("Variable "+name+" is not defined");
-
-      result = symbols[name].getValue();
-            .))
+Term<out Expr expr>     (. expr = null; .)
+  =
+  IDENT                 (. expr = new Ref(t.val, t.line); .)
+  | NUMBER              (. expr = new IntV(Int32.Parse(t.val), t.line); .)
+  | "true"              (. expr = new BoolV(true, t.line); .)
+  | "false"             (. expr = new BoolV(false, t.line); .)
 .
 
 END Matilda.
