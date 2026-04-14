@@ -80,13 +80,13 @@ namespace Matilda
 
     public class Print : Stmt
     {
-        private Expr? value;
+        public Expr Value { get; }
 
         public override int LineNumber { get; }
 
         public Print(Expr value, int lineNumber)
         {
-            this.value = value;
+            this.Value = value;
 
             LineNumber = lineNumber;
         }

@@ -22,7 +22,7 @@ namespace Matilda
 				{
 					Stmt program = parser.mainNode;
 
-					Console.WriteLine(program);
+					Interpreter.evalStmt(program);
 				}
 
 
