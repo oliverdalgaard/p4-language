@@ -1,1 +1,1 @@
-.\bin\Release\net10.0\matilda.exe code.matilda
+./bin/Release/net10.0/matilda.exe code.matilda
