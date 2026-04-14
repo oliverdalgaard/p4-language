@@ -1,2 +1,4 @@
 bin/*
 obj/*
+Parser.cs.old
+Scanner.cs.old

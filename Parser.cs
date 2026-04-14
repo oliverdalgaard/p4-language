@@ -9,7 +9,7 @@ public class Parser {
 	public const int _EOF = 0;
 	public const int _IDENT = 1;
 	public const int _NUMBER = 2;
-	public const int maxT = 14;
+	public const int maxT = 15;
 
 	const bool _T = true;
 	const bool _x = false;
@@ -135,15 +135,21 @@ public CodeGenerator gen;
 			Get();
 			Expr(out int result);
 			Console.WriteLine(result); 
-		} else SynErr(15);
+		} else SynErr(16);
 	}
 
 	void Expr(out int result) {
 		Term(out result);
-		while (la.kind == 13) {
-			Get();
-			Term(out int t);
-			result += t; 
+		while (la.kind == 13 || la.kind == 14) {
+			if (la.kind == 13) {
+				Get();
+				Term(out int t);
+				result += t; 
+			} else {
+				Get();
+				Term(out int t);
+				result -= t; 
+			}
 		}
 	}
 
@@ -155,7 +161,7 @@ public CodeGenerator gen;
 		} else if (la.kind == 4) {
 			Get();
 			type = Type.BOOL; 
-		} else SynErr(16);
+		} else SynErr(17);
 	}
 
 	void Term(out int result) {
@@ -170,7 +176,7 @@ public CodeGenerator gen;
 			
 			result = symbols[name].getValue();
 			     
-		} else SynErr(17);
+		} else SynErr(18);
 	}
 
 
@@ -185,8 +191,8 @@ public CodeGenerator gen;
 	}
 	
 	static readonly bool[,] set = {
-		{_T,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x},
-		{_x,_T,_T,_T, _T,_x,_T,_x, _x,_x,_x,_x, _T,_x,_x,_x}
+		{_T,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x},
+		{_x,_T,_T,_T, _T,_x,_T,_x, _x,_x,_x,_x, _T,_x,_x,_x, _x}
 
 	};
 } // end Parser
@@ -214,10 +220,11 @@ public class Errors {
 			case 11: s = "\"else\" expected"; break;
 			case 12: s = "\"print\" expected"; break;
 			case 13: s = "\"+\" expected"; break;
-			case 14: s = "??? expected"; break;
-			case 15: s = "invalid Stmt"; break;
-			case 16: s = "invalid VarType"; break;
-			case 17: s = "invalid Term"; break;
+			case 14: s = "\"-\" expected"; break;
+			case 15: s = "??? expected"; break;
+			case 16: s = "invalid Stmt"; break;
+			case 17: s = "invalid VarType"; break;
+			case 18: s = "invalid Term"; break;
 
 			default: s = "error " + n; break;
 		}

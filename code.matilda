@@ -6,8 +6,13 @@ int x = 125
 
 int y = 50
 
-print x+y
+int z = x+y
 
+int o = z-y
+
+print o
+
+/*
 2+5+20
 
 if (0) {
@@ -27,3 +32,5 @@ if (1) {
 } else {
     1+2
 }
+
+*/
