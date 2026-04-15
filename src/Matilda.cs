@@ -22,7 +22,20 @@ namespace Matilda
 				{
 					Stmt program = parser.mainNode;
 
-					Interpreter.evalStmt(program);
+					/* TypeChecker typeChecker = new TypeChecker(program);
+
+					if (typeChecker.HasErrors())
+					{
+						typeChecker.errors.ForEach(Console.WriteLine);
+
+						Console.WriteLine("Errors during static analysis!");
+					}
+					else
+					{ */
+					Console.WriteLine("Program starting!");
+					Interpreter.EvalStmt(program, new EnvV());
+					Console.WriteLine("Program stopped!");
+					/* } */
 				}
 
 

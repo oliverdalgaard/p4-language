@@ -1,4 +1,8 @@
+using System;
+using System.Globalization;
+
 COMPILER Matilda
+
 
   public Stmt mainNode = null;
 
@@ -6,19 +10,49 @@ COMPILER Matilda
     return errors.count > 0;
   }
 
-  private Stmt toComp(List<Stmt> stmts) {
+  private Stmt ToComp(List<Stmt> stmts) {
     if (!stmts.Any()) {
       return Skip.Instance;
     }
 
     Stmt result = stmts.Last();
+    int index = stmts.Count - 2;
 
+    while (index >= 0) {
+      Stmt current = stmts[index];
+
+      if (current is Comp comp) {
+        result = new Comp(comp.Stmt1, new Comp(comp.Stmt2, result));
+      } else {
+        result = new Comp(current, result);
+      }
+      index--;
+    }
+
+    return result;
+  }
+
+  private Expr applyUnaries(List<char> unariesReversed, Expr baseExpr, int lineNumber) {
+    Expr result = baseExpr;
+    int index = 0;
+    while (index < unariesReversed.Count) {
+      char ch = unariesReversed[index];
+      switch (ch) {
+        case '!':
+          result = new UnaryOp(UnaryOperators.NOT, result, lineNumber);
+          break;
+        default:
+          throw new Exception("Unknown unary operator: " + ch);
+      }
+      index += 1;
+    }
     return result;
   }
 
 CHARACTERS
   letter = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".
   digit = "0123456789".
+  string = ANY - '\"'.
   cr  = '\r'.
   lf  = '\n'.
   tab = '\t'.
@@ -26,6 +60,8 @@ CHARACTERS
 TOKENS
   IDENT = ("_" | letter) {letter | digit | "_"}.
   NUMBER = digit {digit}.
+  FLOAT = digit {digit} "." digit {digit}.
+  STRING =  '\"' {string} '\"'.
 
 COMMENTS FROM "/*" TO "*/" NESTED
 COMMENTS FROM "//" TO lf
@@ -40,14 +76,21 @@ Matilda = Stmts<out mainNode> .
 Stmts<out Stmt stmt> =    (. List<Stmt> list = new List<Stmt>(); .)
   {
     Stmt<out Stmt temp>   (. list.Add(temp); .)
-  }                       (. stmt = toComp(list); .)
+  }                       (. stmt = ToComp(list); .)
 .
 
 Stmt<out Stmt stmt> =       (. stmt = Skip.Instance; .)
   (
     Declaration<out stmt>
     | Print<out stmt>
+    | If<out stmt>
   )
+.
+
+Print<out Stmt stmt> = 
+  "print"             (. int lineNumber = t.line; .)
+  Expr<out Expr expr> (. stmt = new Print(expr, lineNumber); .)
+  ';'
 .
 
 Declaration<out Stmt stmt> = 
@@ -58,10 +101,18 @@ Declaration<out Stmt stmt> =
   ';'
 .
 
-Print<out Stmt stmt> = 
-  "print"             (. int lineNumber = t.line; .)
-  Expr<out Expr expr> (. stmt = new Print(expr, lineNumber); .)
-  ';'
+If<out Stmt stmt>                                     (. Stmt elseStmt = Skip.Instance; List<If> elseIfStmts = new List<If>(); int lineNumber = -1; .) =
+  "if"                                                (. lineNumber = t.line; .)
+  '(' Expr<out Expr condition> ')'
+  '{' Stmt<out Stmt thenStmt> '}'
+  {
+  "elseif" '(' Expr<out Expr elseIfCondition> ')'
+  '{' Stmt<out Stmt elseIfStmt> '}'                   (. elseIfStmts.Add(new If(elseIfCondition, elseIfStmt, null, Skip.Instance, lineNumber)); .)
+  }
+  [
+    "else"
+    '{' Stmt<out elseStmt> '}'
+  ]                                                   (. stmt = new If(condition, thenStmt, elseIfStmts, elseStmt, lineNumber); .)
 .
 
 Type<out Type type> (. type = null; .)
@@ -72,20 +123,77 @@ Type<out Type type> (. type = null; .)
   | "string"        (. type = StringT.Instance; .)
 .
 
-Expr<out Expr expr> = 
-  Term<out expr>
+Expr<out Expr expr>         (. BinaryOperators op = BinaryOperators.OR; int lineNumber = -1; .) =
+  EqExpr<out expr>
   {
-    '+'                   (. int lineNumber = t.line; .)
-    Term<out Expr expr2>  (. expr = new BinaryOp(BinaryOperators.ADD, expr, expr2, lineNumber); .)
+    (
+      "||"                  (. op = BinaryOperators.OR; lineNumber = t.line; .)
+      | "&&"                (. op = BinaryOperators.AND; lineNumber = t.line; .)
+    )
+    EqExpr<out Expr expr2>  (. expr = new BinaryOp(op, expr, expr2, lineNumber); .)
   }
 .
+
+EqExpr<out Expr expr>           (. BinaryOperators op = BinaryOperators.EQ; int lineNumber = -1; .) =
+  RelExpr<out expr>
+  {
+    (
+      "=="                      (. op = BinaryOperators.EQ; lineNumber = t.line; .)
+      | "!="                    (. op = BinaryOperators.NEQ; lineNumber = t.line; .)
+    )
+    RelExpr<out Expr expr2>     (. expr = new BinaryOp(op, expr, expr2, lineNumber); .)
+  }
+.
+
+RelExpr<out Expr expr>          (. BinaryOperators op = BinaryOperators.LT; int lineNumber = -1; .) =
+  PlusExpr<out expr>
+  {
+    '<'                         (. lineNumber = t.line; .)
+    PlusExpr<out Expr expr2>    (. expr = new BinaryOp(op, expr, expr2, lineNumber); .)
+  }
+.
+
+PlusExpr<out Expr expr>         (. BinaryOperators op = BinaryOperators.ADD; int lineNumber = -1; .) = 
+  MulExpr<out expr>
+  {
+    (
+      '+'                       (. op = BinaryOperators.ADD; lineNumber = t.line; .)
+      | '-'                     (. op = BinaryOperators.SUB; lineNumber = t.line; .)
+    )
+    MulExpr<out Expr expr2>     (. expr = new BinaryOp(op, expr, expr2, lineNumber); .)
+  }
+.
+
+MulExpr<out Expr expr>          (. BinaryOperators op = BinaryOperators.MUL; int lineNumber = -1; .) =
+  UnaryExpr<out expr>
+  {
+    (
+      '*'                       (. op = BinaryOperators.MUL; lineNumber = t.line; .)
+      | '/'                     (. op = BinaryOperators.DIV; lineNumber = t.line; .)
+    )
+    UnaryExpr<out Expr expr2>   (. expr = new BinaryOp(op, expr, expr2, lineNumber); .)
+  }
+.
+
+UnaryExpr<out Expr expr>  (. List<char> unaries = new List<char>(); int lineNumber = -1; .) =
+  {
+    (
+      '!'                 (. unaries.Add('!'); lineNumber = t.line; .)
+    )                  
+  }
+  Term<out Expr expr2>    (. unaries.Reverse(); expr = applyUnaries(unaries, expr2, lineNumber); .)
+.
+
 
 Term<out Expr expr>     (. expr = null; .)
   =
   IDENT                 (. expr = new Ref(t.val, t.line); .)
   | NUMBER              (. expr = new IntV(Int32.Parse(t.val), t.line); .)
+  | FLOAT               (. expr = new FloatV(float.Parse(t.val, new CultureInfo("en", false)), t.line); .)
   | "true"              (. expr = new BoolV(true, t.line); .)
   | "false"             (. expr = new BoolV(false, t.line); .)
+  | STRING              (. expr = new StringV(t.val, t.line); .)
+  | '(' Expr<out expr> ')'
 .
 
 END Matilda.

@@ -22,22 +22,22 @@ namespace Matilda
 
     public class Comp : Stmt
     {
-        private Stmt? stmt1;
-        private Stmt? stmt2;
+        public Stmt? Stmt1 { get; }
+        public Stmt? Stmt2 { get; }
 
         public Comp(Stmt? stmt1, Stmt? stmt2)
         {
-            this.stmt1 = stmt1;
-            this.stmt2 = stmt2;
+            Stmt1 = stmt1;
+            Stmt2 = stmt2;
         }
 
         public override int LineNumber
         {
             get
             {
-                if (stmt1 != null)
+                if (Stmt1 != null)
                 {
-                    return stmt1.LineNumber;
+                    return Stmt1.LineNumber;
                 }
 
                 throw new Exception("Left statement of ';' is 'null'. Cannot get line number");
@@ -48,15 +48,15 @@ namespace Matilda
 
     public class Declaration : Stmt
     {
-        private Type? type;
-        private string? identifier;
+        public Type? Type { get; }
+        public string? Identifier { get; }
 
         public override int LineNumber { get; }
 
         public Declaration(Type? type, string? identifier, int lineNumber)
         {
-            this.type = type;
-            this.identifier = identifier;
+            Type = type;
+            Identifier = identifier;
 
             LineNumber = lineNumber;
         }
@@ -64,15 +64,15 @@ namespace Matilda
 
     public class Assign : Stmt
     {
-        private string? identifier;
-        private Expr? value;
+        public string? Identifier { get; }
+        public Expr? Value { get; }
 
         public override int LineNumber { get; }
 
         public Assign(string? identifier, Expr? value, int lineNumber)
         {
-            this.identifier = identifier;
-            this.value = value;
+            Identifier = identifier;
+            Value = value;
 
             LineNumber = lineNumber;
         }
@@ -94,17 +94,19 @@ namespace Matilda
 
     public class If : Stmt
     {
-        private Expr? condition;
-        private Stmt? thenBody;
-        private Stmt? elseBody;
+        public Expr? Condition { get; }
+        public Stmt? ThenBody { get; }
+        public List<If>? ElseIfStmts { get; }
+        public Stmt? ElseBody { get; }
 
         public override int LineNumber { get; }
 
-        public If(Expr condition, Stmt thenBody, Stmt elseBody, int lineNumber)
+        public If(Expr condition, Stmt thenBody, List<If> elseIfStmts, Stmt elseBody, int lineNumber)
         {
-            this.condition = condition;
-            this.thenBody = thenBody;
-            this.elseBody = elseBody;
+            Condition = condition;
+            ThenBody = thenBody;
+            ElseIfStmts = elseIfStmts;
+            ElseBody = elseBody;
 
             LineNumber = lineNumber;
         }

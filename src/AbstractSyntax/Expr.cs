@@ -8,15 +8,15 @@ namespace Matilda
 
     public class UnaryOp : Expr
     {
-        private UnaryOperators op;
-        private Expr expr;
+        public UnaryOperators Op { get; }
+        public Expr Expr { get; }
 
         public override int LineNumber { get; }
 
         public UnaryOp(UnaryOperators op, Expr expr, int lineNumber)
         {
-            this.op = op;
-            this.expr = expr;
+            Op = op;
+            Expr = expr;
 
             LineNumber = lineNumber;
         }
@@ -24,17 +24,17 @@ namespace Matilda
 
     public class BinaryOp : Expr
     {
-        private BinaryOperators op;
-        private Expr exprLeft;
-        private Expr exprRight;
+        public BinaryOperators Op { get; }
+        public Expr ExprLeft { get; }
+        public Expr ExprRight { get; }
 
         public override int LineNumber { get; }
 
         public BinaryOp(BinaryOperators op, Expr exprLeft, Expr exprRight, int lineNumber)
         {
-            this.op = op;
-            this.exprLeft = exprLeft;
-            this.exprRight = exprRight;
+            Op = op;
+            ExprLeft = exprLeft;
+            ExprRight = exprRight;
 
             LineNumber = lineNumber;
         }
@@ -42,13 +42,13 @@ namespace Matilda
 
     public class Ref : Expr
     {
-        private string name;
+        public string Name { get; }
 
         public override int LineNumber { get; }
 
         public Ref(string name, int lineNumber)
         {
-            this.name = name;
+            Name = name;
 
             LineNumber = lineNumber;
         }
@@ -56,13 +56,13 @@ namespace Matilda
 
     public class IntV : Expr
     {
-        private int value;
+        public int Value { get; }
 
         public override int LineNumber { get; }
 
         public IntV(int value, int lineNumber)
         {
-            this.value = value;
+            Value = value;
 
             LineNumber = lineNumber;
         }
@@ -70,13 +70,13 @@ namespace Matilda
 
     public class FloatV : Expr
     {
-        private float value;
+        public float Value { get; }
 
         public override int LineNumber { get; }
 
         public FloatV(float value, int lineNumber)
         {
-            this.value = value;
+            Value = value;
 
             LineNumber = lineNumber;
         }
@@ -84,13 +84,13 @@ namespace Matilda
 
     public class BoolV : Expr
     {
-        private bool value;
+        public bool Value { get; }
 
         public override int LineNumber { get; }
 
         public BoolV(bool value, int lineNumber)
         {
-            this.value = value;
+            Value = value;
 
             LineNumber = lineNumber;
         }
@@ -98,13 +98,13 @@ namespace Matilda
 
     public class StringV : Expr
     {
-        private string value;
+        public string Value { get; }
 
         public override int LineNumber { get; }
 
         public StringV(string value, int lineNumber)
         {
-            this.value = value;
+            Value = value;
 
             LineNumber = lineNumber;
         }
@@ -117,6 +117,6 @@ namespace Matilda
 
     public enum BinaryOperators
     {
-        ADD, SUB
+        ADD, SUB, MUL, DIV, LT, EQ, NEQ, AND, OR
     }
 }

@@ -7,6 +7,11 @@ namespace Matilda
             throw new Exception("Value is not an int");
         }
 
+        public virtual float AsFloat()
+        {
+            throw new Exception("Value is not a float");
+        }
+
         public virtual bool AsBool()
         {
             throw new Exception("Value is not a bool");
@@ -31,6 +36,26 @@ namespace Matilda
         {
             return N.ToString();
         }
+
+    }
+    public class FloatVal : Val
+    {
+        public float F { get; }
+
+        public FloatVal(float f)
+        {
+            F = f;
+        }
+
+        public override float AsFloat()
+        {
+            return F;
+        }
+
+        public override string ToString()
+        {
+            return F.ToString();
+        }
     }
 
     public class BoolVal : Val
@@ -50,6 +75,21 @@ namespace Matilda
         public override string ToString()
         {
             return B.ToString();
+        }
+    }
+
+    public class StringVal : Val
+    {
+        public string S { get; }
+
+        public StringVal(string s)
+        {
+            S = s;
+        }
+
+        public override string ToString()
+        {
+            return S;
         }
     }
 }
