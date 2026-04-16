@@ -33,7 +33,7 @@ namespace Matilda
 					else
 					{ */
 					Console.WriteLine("Program starting!");
-					Interpreter.EvalStmt(program, new EnvV());
+					Interpreter.EvalStmt(program, new EnvV(), new EnvP());
 					Console.WriteLine("Program stopped!");
 					/* } */
 				}

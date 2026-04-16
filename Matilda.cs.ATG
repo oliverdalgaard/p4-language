@@ -83,29 +83,62 @@ Stmt<out Stmt stmt> =       (. stmt = Skip.Instance; .)
   (
     Declaration<out stmt>
     | Assignment<out stmt>
+    | FunctionDeclaration<out stmt>
     | Print<out stmt>
     | If<out stmt>
+    | Return<out stmt>
   )
 .
 
 Print<out Stmt stmt> = 
-  "print"             (. int lineNumber = t.line; .)
-  Expr<out Expr expr> (. stmt = new Print(expr, lineNumber); .)
+  "print"               (. int lineNumber = t.line; .)
+  Expr<out Expr expr>   (. stmt = new Print(expr, lineNumber); .)
   ';'
 .
 
 Declaration<out Stmt stmt> = 
   Type<out Type type>
-  IDENT                 (. string var = t.val; stmt = new Declaration(type, var, t.line); .)
-  '='                   (. int lineNumber = t.line; .)
-  Expr<out Expr expr>   (. stmt = new Comp(stmt, new Assign(var, expr, lineNumber)); .)
+  IDENT                       (. string var = t.val; stmt = new Declaration(type, var, t.line); .)
+  '='                         (. int lineNumber = t.line; .)
+  Expr<out Expr expr>         (. stmt = new Comp(stmt, new Assign(var, expr, lineNumber)); .)
   ';'
 .
 
 Assignment<out Stmt stmt> =
-  IDENT                 (. string var = t.val;.)
-  '='                   (. int lineNumber = t.line; .)
-  Expr<out Expr expr>   (. stmt = new Assign(var, expr, lineNumber); .)
+  IDENT                       (. string var = t.val;.)
+  '='                         (. int lineNumber = t.line; .)
+  Expr<out Expr expr>         (. stmt = new Assign(var, expr, lineNumber); .)
+  ';'
+.
+
+Parameter<out Declaration param> =
+  Type<out Type type>
+  IDENT                             (. param = new Declaration(type, t.val, t.line); .)
+.
+
+FunctionDeclaration<out Stmt stmt> =
+  "function"
+  Type<out Type type>
+  IDENT                                       (. string var = t.val; int lineNumber = t.line; List<Declaration> parameters = new List<Declaration>(); List<Stmt> bodyStmts = new List<Stmt>(); Stmt funcBody = Skip.Instance; .)
+  '('
+  [
+    Parameter<out Declaration param>          (. parameters.Add(param); .)
+    {
+      ',' Parameter<out param>                (. parameters.Add(param); .)
+    }
+  ]
+  ')' '{'
+  Stmt<out funcBody>                          (. bodyStmts.Add(funcBody); .)
+  {
+    Stmt<out funcBody>                        (. bodyStmts.Add(funcBody); .)
+  }
+
+  '}'                                         (. stmt = new FunctionDeclaration(type, var, parameters, bodyStmts, lineNumber); .)                  
+.
+
+Return<out Stmt stmt> =
+  "return"
+  Expr<out Expr expr>     (. stmt = new Return(expr, t.line); .)
   ';'
 .
 
@@ -193,14 +226,24 @@ UnaryExpr<out Expr expr>  (. List<char> unaries = new List<char>(); int lineNumb
 .
 
 
-Term<out Expr expr>     (. expr = null; .)
-  =
-  IDENT                 (. expr = new Ref(t.val, t.line); .)
-  | NUMBER              (. expr = new IntV(Int32.Parse(t.val), t.line); .)
-  | FLOAT               (. expr = new FloatV(float.Parse(t.val, new CultureInfo("en", false)), t.line); .)
-  | "true"              (. expr = new BoolV(true, t.line); .)
-  | "false"             (. expr = new BoolV(false, t.line); .)
-  | STRING              (. expr = new StringV(t.val, t.line); .)
+Term<out Expr expr>               (. expr = null; .) =
+  IDENT                           (. string name = t.val; int lineNumber = t.line; .)     // Either IDENT is a function reference or a variable reference
+  (
+    '('                           (. List<Expr> arguments = new List<Expr>(); .)
+    [
+      Expr<out Expr argument>     (. arguments.Add(argument); .)
+      {
+        ',' Expr<out argument>    (. arguments.Add(argument); .)
+      }
+    ]
+    ')'                           (. expr = new FunctionRef(name, arguments, lineNumber); .)
+    |                             (. expr = new Ref(name, lineNumber); .)
+  )
+  | NUMBER                        (. expr = new IntV(Int32.Parse(t.val), t.line); .)
+  | FLOAT                         (. expr = new FloatV(float.Parse(t.val, new CultureInfo("en", false)), t.line); .)
+  | "true"                        (. expr = new BoolV(true, t.line); .)
+  | "false"                       (. expr = new BoolV(false, t.line); .)
+  | STRING                        (. expr = new StringV(t.val, t.line); .)
   | '(' Expr<out expr> ')'
 .
 
