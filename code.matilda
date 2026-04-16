@@ -1,0 +1,33 @@
+print "Test 1:";
+
+if (5 < 0) {
+    print "hej med dig";
+} elseif (10 < 11) {
+    print "Ha en god dag";
+} else {
+    print "Ya fat bitch";
+}
+
+print "Test 2:";
+
+if (5 < 0) {
+    print "hej med dig";
+} elseif (10 < 5) {
+    print "Ha en god dag";
+} elseif (50 < 100) {
+    print "Andet elseif stmt";
+} else {
+    print "Ya fat bitch";
+}
+
+print "Test 3:";
+
+if (5 < 0) {
+    print "hej med dig";
+} elseif (5 < 10) {
+    print "Ha en god dag";
+} elseif (50 < 100) {
+    print "Andet elseif stmt";
+} else {
+    print "Ya fat bitch";
+}
