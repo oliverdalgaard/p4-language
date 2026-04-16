@@ -94,10 +94,10 @@ namespace Matilda
 
     public class If : Stmt
     {
-        public Expr? Condition { get; }
-        public Stmt? ThenBody { get; }
+        public Expr Condition { get; }
+        public Stmt ThenBody { get; }
         public List<If>? ElseIfStmts { get; }
-        public Stmt? ElseBody { get; }
+        public Stmt ElseBody { get; }
 
         public override int LineNumber { get; }
 
