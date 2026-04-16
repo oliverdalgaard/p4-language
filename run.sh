@@ -1,1 +1,1 @@
-./bin/Release/net10.0/matilda.exe code.matilda
+dotnet ./bin/Release/net10.0/matilda.dll code.matilda
