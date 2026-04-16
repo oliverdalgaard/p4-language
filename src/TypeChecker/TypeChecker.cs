@@ -72,6 +72,64 @@ namespace Matilda
 
                             break;
 
+                        case BinaryOperators.SUB:
+                            if (typeLeft != IntT.Instance && typeLeft != FloatT.Instance)
+                            {
+                                errors.Add($"Line {binaryOp.ExprLeft.LineNumber}: Operator '-' expected a left operand of type 'int' or 'float', but got '{typeLeft}'.");
+                            }
+
+                            if (typeRight != IntT.Instance && typeRight != FloatT.Instance)
+                            {
+                                errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Operator '-' expected a right operand of type 'int' or 'float', but got '{typeRight}'.");
+                            }
+
+                            if (typeLeft != typeRight)
+                            {
+                                errors.Add($"Line {binaryOp.LineNumber}: Type mismatch.");
+                            }
+
+                            break;
+
+                        case BinaryOperators.MUL:
+                            if (typeLeft != IntT.Instance && typeLeft != FloatT.Instance)
+                            {
+                                errors.Add($"Line {binaryOp.ExprLeft.LineNumber}: Operator '*' expected a left operand of type 'int' or 'float', but got '{typeLeft}'.");
+                            }
+
+                            if (typeRight != IntT.Instance && typeRight != FloatT.Instance)
+                            {
+                                errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Operator '*' expected a right operand of type 'int' or 'float', but got '{typeRight}'.");
+                            }
+
+                            if (typeLeft != typeRight)
+                            {
+                                errors.Add($"Line {binaryOp.LineNumber}: Type mismatch.");
+                            }
+
+                            break;
+
+                        case BinaryOperators.DIV:
+                            if (typeLeft != IntT.Instance && typeLeft != FloatT.Instance)
+                            {
+                                errors.Add($"Line {binaryOp.ExprLeft.LineNumber}: Operator '*' expected a left operand of type 'int' or 'float', but got '{typeLeft}'.");
+                            }
+
+                            if (typeRight != IntT.Instance && typeRight != FloatT.Instance)
+                            {
+                                errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Operator '*' expected a right operand of type 'int' or 'float', but got '{typeRight}'.");
+                            }
+
+                            if (typeLeft != typeRight)
+                            {
+                                errors.Add($"Line {binaryOp.LineNumber}: Type mismatch.");
+                            }
+
+                            break;
+
+                        case BinaryOperators.LT:
+
+
+
                         default: throw new Exception("Invalid binary operation");
                     }
 
@@ -86,6 +144,37 @@ namespace Matilda
                             {
                                 return FloatT.Instance;
                             }
+
+                        case BinaryOperators.SUB:
+                            if (typeLeft == IntT.Instance)
+                            {
+                                return IntT.Instance;
+                            }
+                            else
+                            {
+                                return FloatT.Instance;
+                            }
+
+                        case BinaryOperators.MUL:
+                            if (typeLeft == IntT.Instance)
+                            {
+                                return IntT.Instance;
+                            }
+                            else
+                            {
+                                return FloatT.Instance;
+                            }
+
+                        case BinaryOperators.DIV:
+                            if (typeLeft == IntT.Instance)
+                            {
+                                return IntT.Instance;
+                            }
+                            else
+                            {
+                                return FloatT.Instance;
+                            }
+
 
                         default: throw new Exception("Invalid binary operation");
                     }
