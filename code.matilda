@@ -1,33 +1,15 @@
-print "Test 1:";
+int x = 5;
 
-if (5 < 0) {
-    print "hej med dig";
-} elseif (10 < 11) {
-    print "Ha en god dag";
+if (false) {
+    print 10;
+    print x;
+    print 500;
+} elseif (false) {
+    print 123;
+} elseif (false) {
+    print 321;
 } else {
-    print "Ya fat bitch";
+    print 543;
 }
 
-print "Test 2:";
-
-if (5 < 0) {
-    print "hej med dig";
-} elseif (10 < 5) {
-    print "Ha en god dag";
-} elseif (50 < 100) {
-    print "Andet elseif stmt";
-} else {
-    print "Ya fat bitch";
-}
-
-print "Test 3:";
-
-if (5 < 0) {
-    print "hej med dig";
-} elseif (5 < 10) {
-    print "Ha en god dag";
-} elseif (50 < 100) {
-    print "Andet elseif stmt";
-} else {
-    print "Ya fat bitch";
-}
+print x;

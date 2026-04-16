@@ -149,6 +149,8 @@ public Stmt mainNode = null;
 		stmt = Skip.Instance; 
 		if (StartOf(2)) {
 			Declaration(out stmt);
+		} else if (la.kind == 1) {
+			Assignment(out stmt);
 		} else if (la.kind == 5) {
 			Print(out stmt);
 		} else if (la.kind == 8) {
@@ -164,6 +166,16 @@ public Stmt mainNode = null;
 		int lineNumber = t.line; 
 		Expr(out Expr expr);
 		stmt = new Comp(stmt, new Assign(var, expr, lineNumber)); 
+		Expect(6);
+	}
+
+	void Assignment(out Stmt stmt) {
+		Expect(1);
+		string var = t.val;
+		Expect(7);
+		int lineNumber = t.line; 
+		Expr(out Expr expr);
+		stmt = new Assign(var, expr, lineNumber); 
 		Expect(6);
 	}
 
@@ -183,7 +195,7 @@ public Stmt mainNode = null;
 		Expr(out Expr condition);
 		Expect(10);
 		Expect(11);
-		Stmt(out Stmt thenStmt);
+		Stmts(out Stmt thenStmt);
 		Expect(12);
 		while (la.kind == 13) {
 			Get();
@@ -191,14 +203,14 @@ public Stmt mainNode = null;
 			Expr(out Expr elseIfCondition);
 			Expect(10);
 			Expect(11);
-			Stmt(out Stmt elseIfStmt);
+			Stmts(out Stmt elseIfStmt);
 			Expect(12);
 			elseIfStmts.Add(new If(elseIfCondition, elseIfStmt, null, Skip.Instance, lineNumber)); 
 		}
 		if (la.kind == 14) {
 			Get();
 			Expect(11);
-			Stmt(out elseStmt);
+			Stmts(out elseStmt);
 			Expect(12);
 		}
 		stmt = new If(condition, thenStmt, elseIfStmts, elseStmt, lineNumber); 
@@ -362,7 +374,7 @@ public Stmt mainNode = null;
 	
 	static readonly bool[,] set = {
 		{_T,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x},
-		{_x,_x,_x,_x, _x,_T,_x,_x, _T,_x,_x,_x, _x,_x,_x,_T, _T,_T,_T,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x},
+		{_x,_T,_x,_x, _x,_T,_x,_x, _T,_x,_x,_x, _x,_x,_x,_T, _T,_T,_T,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x},
 		{_x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_T, _T,_T,_T,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x}
 
 	};

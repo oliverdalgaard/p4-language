@@ -82,6 +82,7 @@ Stmts<out Stmt stmt> =    (. List<Stmt> list = new List<Stmt>(); .)
 Stmt<out Stmt stmt> =       (. stmt = Skip.Instance; .)
   (
     Declaration<out stmt>
+    | Assignment<out stmt>
     | Print<out stmt>
     | If<out stmt>
   )
@@ -101,17 +102,24 @@ Declaration<out Stmt stmt> =
   ';'
 .
 
+Assignment<out Stmt stmt> =
+  IDENT                 (. string var = t.val;.)
+  '='                   (. int lineNumber = t.line; .)
+  Expr<out Expr expr>   (. stmt = new Assign(var, expr, lineNumber); .)
+  ';'
+.
+
 If<out Stmt stmt>                                     (. Stmt elseStmt = Skip.Instance; List<If> elseIfStmts = new List<If>(); int lineNumber = -1; .) =
   "if"                                                (. lineNumber = t.line; .)
   '(' Expr<out Expr condition> ')'
-  '{' Stmt<out Stmt thenStmt> '}'
+  '{' Stmts<out Stmt thenStmt> '}'
   {
   "elseif" '(' Expr<out Expr elseIfCondition> ')'
-  '{' Stmt<out Stmt elseIfStmt> '}'                   (. elseIfStmts.Add(new If(elseIfCondition, elseIfStmt, null, Skip.Instance, lineNumber)); .)
+  '{' Stmts<out Stmt elseIfStmt> '}'                   (. elseIfStmts.Add(new If(elseIfCondition, elseIfStmt, null, Skip.Instance, lineNumber)); .)
   }
   [
     "else"
-    '{' Stmt<out elseStmt> '}'
+    '{' Stmts<out elseStmt> '}'
   ]                                                   (. stmt = new If(condition, thenStmt, elseIfStmts, elseStmt, lineNumber); .)
 .
 

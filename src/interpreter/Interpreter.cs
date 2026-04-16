@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace Matilda
 {
 
@@ -31,9 +33,12 @@ namespace Matilda
                     break;
 
                 case If ifStmt:
+                    bool runElse = true;
+
                     Val condition = EvalExpr(ifStmt.Condition, envV);
                     if (condition.AsBool())
                     {
+                        runElse = false;
                         EvalStmt(ifStmt.ThenBody, envV);
                     }
                     else if (ifStmt.ElseIfStmts.Any())
@@ -44,11 +49,13 @@ namespace Matilda
                             if (elseIfStmtCondition.AsBool())
                             {
                                 EvalStmt(elseIfStmt.ThenBody, envV);
+                                runElse = false;
                                 break;
                             }
                         }
                     }
-                    else
+
+                    if (runElse)
                     {
                         EvalStmt(ifStmt.ElseBody, envV);
                     }
