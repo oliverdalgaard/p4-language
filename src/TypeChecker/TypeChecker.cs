@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace Matilda
@@ -31,6 +32,39 @@ namespace Matilda
                     StmtT(comp.Stmt1);
                     StmtT(comp.Stmt2);
                     break;
+
+                case If ifStmt:
+                    if (ifStmt.Condition != null)
+                    {
+                        Type condT = ExprT(ifStmt.Condition);
+
+                        if (condT != BoolT.Instance)
+                        {
+                            errors.Add($"Line {ifStmt.LineNumber} If statement requires a condition with type 'bool', but got '{condT}'.");
+                        }
+                    }
+                    //then, elseif, else branch
+
+                    if (ifStmt.ThenBody != null)
+                    {
+                        StmtT(ifStmt.ThenBody);
+                    }
+
+                    if (ifStmt.ElseIfStmts != null)
+                    {
+                        foreach (var elseif in ifStmt.ElseIfStmts)
+                        {
+                            StmtT(elseif);
+                        }
+                    }
+
+                    if (ifStmt.ElseBody != null)
+                    {
+                        StmtT(ifStmt.ElseBody);
+                    }
+
+                    break;
+
 
                 default: throw new Exception("Invalid statement");
             }
@@ -145,7 +179,7 @@ namespace Matilda
                                 errors.Add($"Line {binaryOp.ExprLeft.LineNumber}: Operator '==' expected a left operand of type 'boolean','int' or 'float', but got '{typeLeft}'.");
                             }
 
-                            if (typeRight != BoolT.Instance && typeLeft != IntT.Instance && typeLeft != FloatT.Instance)
+                            if (typeRight != BoolT.Instance && typeRight != IntT.Instance && typeRight != FloatT.Instance)
                             {
                                 errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Operator '==' expected a right operand of type 'Boolean','int' or 'float', but got '{typeRight}'.");
                             }
@@ -247,14 +281,7 @@ namespace Matilda
                             }
 
                         case BinaryOperators.LT:
-                            if (typeLeft == IntT.Instance)
-                            {
-                                return IntT.Instance;
-                            }
-                            else
-                            {
-                                return FloatT.Instance;
-                            }
+                            return BoolT.Instance;
 
                         case BinaryOperators.EQ:
                             return BoolT.Instance;
