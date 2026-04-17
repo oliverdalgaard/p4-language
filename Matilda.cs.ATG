@@ -1,0 +1,250 @@
+using System;
+using System.Globalization;
+
+COMPILER Matilda
+
+
+  public Stmt mainNode = null;
+
+  public bool hasErrors() {
+    return errors.count > 0;
+  }
+
+  private Stmt ToComp(List<Stmt> stmts) {
+    if (!stmts.Any()) {
+      return Skip.Instance;
+    }
+
+    Stmt result = stmts.Last();
+    int index = stmts.Count - 2;
+
+    while (index >= 0) {
+      Stmt current = stmts[index];
+
+      if (current is Comp comp) {
+        result = new Comp(comp.Stmt1, new Comp(comp.Stmt2, result));
+      } else {
+        result = new Comp(current, result);
+      }
+      index--;
+    }
+
+    return result;
+  }
+
+  private Expr applyUnaries(List<char> unariesReversed, Expr baseExpr, int lineNumber) {
+    Expr result = baseExpr;
+    int index = 0;
+    while (index < unariesReversed.Count) {
+      char ch = unariesReversed[index];
+      switch (ch) {
+        case '!':
+          result = new UnaryOp(UnaryOperators.NOT, result, lineNumber);
+          break;
+        default:
+          throw new Exception("Unknown unary operator: " + ch);
+      }
+      index += 1;
+    }
+    return result;
+  }
+
+CHARACTERS
+  letter = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".
+  digit = "0123456789".
+  string = ANY - '\"'.
+  cr  = '\r'.
+  lf  = '\n'.
+  tab = '\t'.
+
+TOKENS
+  IDENT = ("_" | letter) {letter | digit | "_"}.
+  NUMBER = digit {digit}.
+  FLOAT = digit {digit} "." digit {digit}.
+  STRING =  '\"' {string} '\"'.
+
+COMMENTS FROM "/*" TO "*/" NESTED
+COMMENTS FROM "//" TO lf
+
+IGNORE cr + lf + tab
+
+PRODUCTIONS
+
+Matilda = Stmts<out mainNode> .
+
+/*-------------------------------------------------------*/
+Stmts<out Stmt stmt> =    (. List<Stmt> list = new List<Stmt>(); .)
+  {
+    Stmt<out Stmt temp>   (. list.Add(temp); .)
+  }                       (. stmt = ToComp(list); .)
+.
+
+Stmt<out Stmt stmt> =       (. stmt = Skip.Instance; .)
+  (
+    Declaration<out stmt>
+    | Assignment<out stmt>
+    | FunctionDeclaration<out stmt>
+    | Print<out stmt>
+    | If<out stmt>
+    | Return<out stmt>
+  )
+.
+
+Print<out Stmt stmt> = 
+  "print"               (. int lineNumber = t.line; .)
+  Expr<out Expr expr>   (. stmt = new Print(expr, lineNumber); .)
+  ';'
+.
+
+Declaration<out Stmt stmt> = 
+  Type<out Type type>
+  IDENT                       (. string var = t.val; stmt = new Declaration(type, var, t.line); .)
+  '='                         (. int lineNumber = t.line; .)
+  Expr<out Expr expr>         (. stmt = new Comp(stmt, new Assign(var, expr, lineNumber)); .)
+  ';'
+.
+
+Assignment<out Stmt stmt> =
+  IDENT                       (. string var = t.val;.)
+  '='                         (. int lineNumber = t.line; .)
+  Expr<out Expr expr>         (. stmt = new Assign(var, expr, lineNumber); .)
+  ';'
+.
+
+Parameter<out Declaration param> =
+  Type<out Type type>
+  IDENT                             (. param = new Declaration(type, t.val, t.line); .)
+.
+
+FunctionDeclaration<out Stmt stmt> =
+  "function"
+  Type<out Type type>
+  IDENT                                       (. string var = t.val; int lineNumber = t.line; List<Declaration> parameters = new List<Declaration>(); List<Stmt> bodyStmts = new List<Stmt>(); Stmt funcBody = Skip.Instance; .)
+  '('
+  [
+    Parameter<out Declaration param>          (. parameters.Add(param); .)
+    {
+      ',' Parameter<out param>                (. parameters.Add(param); .)
+    }
+  ]
+  ')' '{'
+  Stmt<out funcBody>                          (. bodyStmts.Add(funcBody); .)
+  {
+    Stmt<out funcBody>                        (. bodyStmts.Add(funcBody); .)
+  }
+
+  '}'                                         (. stmt = new FunctionDeclaration(type, var, parameters, bodyStmts, lineNumber); .)                  
+.
+
+Return<out Stmt stmt> =
+  "return"
+  Expr<out Expr expr>     (. stmt = new Return(expr, t.line); .)
+  ';'
+.
+
+If<out Stmt stmt>                                     (. Stmt elseStmt = Skip.Instance; List<If> elseIfStmts = new List<If>(); int lineNumber = -1; .) =
+  "if"                                                (. lineNumber = t.line; .)
+  '(' Expr<out Expr condition> ')'
+  '{' Stmts<out Stmt thenStmt> '}'
+  {
+  "elseif" '(' Expr<out Expr elseIfCondition> ')'
+  '{' Stmts<out Stmt elseIfStmt> '}'                   (. elseIfStmts.Add(new If(elseIfCondition, elseIfStmt, null, Skip.Instance, lineNumber)); .)
+  }
+  [
+    "else"
+    '{' Stmts<out elseStmt> '}'
+  ]                                                   (. stmt = new If(condition, thenStmt, elseIfStmts, elseStmt, lineNumber); .)
+.
+
+Type<out Type type> (. type = null; .)
+  =
+  "int"             (. type = IntT.Instance; .)
+  | "float"         (. type = FloatT.Instance; .)
+  | "bool"          (. type = BoolT.Instance; .)
+  | "string"        (. type = StringT.Instance; .)
+.
+
+Expr<out Expr expr>         (. BinaryOperators op = BinaryOperators.OR; int lineNumber = -1; .) =
+  EqExpr<out expr>
+  {
+    (
+      "||"                  (. op = BinaryOperators.OR; lineNumber = t.line; .)
+      | "&&"                (. op = BinaryOperators.AND; lineNumber = t.line; .)
+    )
+    EqExpr<out Expr expr2>  (. expr = new BinaryOp(op, expr, expr2, lineNumber); .)
+  }
+.
+
+EqExpr<out Expr expr>           (. BinaryOperators op = BinaryOperators.EQ; int lineNumber = -1; .) =
+  RelExpr<out expr>
+  {
+    (
+      "=="                      (. op = BinaryOperators.EQ; lineNumber = t.line; .)
+      | "!="                    (. op = BinaryOperators.NEQ; lineNumber = t.line; .)
+    )
+    RelExpr<out Expr expr2>     (. expr = new BinaryOp(op, expr, expr2, lineNumber); .)
+  }
+.
+
+RelExpr<out Expr expr>          (. BinaryOperators op = BinaryOperators.LT; int lineNumber = -1; .) =
+  PlusExpr<out expr>
+  {
+    '<'                         (. lineNumber = t.line; .)
+    PlusExpr<out Expr expr2>    (. expr = new BinaryOp(op, expr, expr2, lineNumber); .)
+  }
+.
+
+PlusExpr<out Expr expr>         (. BinaryOperators op = BinaryOperators.ADD; int lineNumber = -1; .) = 
+  MulExpr<out expr>
+  {
+    (
+      '+'                       (. op = BinaryOperators.ADD; lineNumber = t.line; .)
+      | '-'                     (. op = BinaryOperators.SUB; lineNumber = t.line; .)
+    )
+    MulExpr<out Expr expr2>     (. expr = new BinaryOp(op, expr, expr2, lineNumber); .)
+  }
+.
+
+MulExpr<out Expr expr>          (. BinaryOperators op = BinaryOperators.MUL; int lineNumber = -1; .) =
+  UnaryExpr<out expr>
+  {
+    (
+      '*'                       (. op = BinaryOperators.MUL; lineNumber = t.line; .)
+      | '/'                     (. op = BinaryOperators.DIV; lineNumber = t.line; .)
+    )
+    UnaryExpr<out Expr expr2>   (. expr = new BinaryOp(op, expr, expr2, lineNumber); .)
+  }
+.
+
+UnaryExpr<out Expr expr>  (. List<char> unaries = new List<char>(); int lineNumber = -1; .) =
+  {
+    (
+      '!'                 (. unaries.Add('!'); lineNumber = t.line; .)
+    )                  
+  }
+  Term<out Expr expr2>    (. unaries.Reverse(); expr = applyUnaries(unaries, expr2, lineNumber); .)
+.
+
+
+Term<out Expr expr>               (. expr = null; .) =
+  IDENT                           (. string name = t.val; int lineNumber = t.line; .)     // Either IDENT is a function reference or a variable reference
+  (
+    '('                           (. List<Expr> arguments = new List<Expr>(); .)
+    [
+      Expr<out Expr argument>     (. arguments.Add(argument); .)
+      {
+        ',' Expr<out argument>    (. arguments.Add(argument); .)
+      }
+    ]
+    ')'                           (. expr = new FunctionRef(name, arguments, lineNumber); .)
+    |                             (. expr = new Ref(name, lineNumber); .)
+  )
+  | NUMBER                        (. expr = new IntV(Int32.Parse(t.val), t.line); .)
+  | FLOAT                         (. expr = new FloatV(float.Parse(t.val, new CultureInfo("en", false)), t.line); .)
+  | "true"                        (. expr = new BoolV(true, t.line); .)
+  | "false"                       (. expr = new BoolV(false, t.line); .)
+  | STRING                        (. expr = new StringV(t.val, t.line); .)
+  | '(' Expr<out expr> ')'
+.
+
+END Matilda.

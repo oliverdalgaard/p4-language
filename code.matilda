@@ -1,0 +1,26 @@
+function bool yaMama(int yes, bool man) {
+    int number = yes + 10;
+
+    if (man) {
+        return 20;
+    }
+    return 0;
+}
+
+print yaMama(5, true);
+
+print yaMama(5, false);
+
+print "Hej";
+
+
+
+int x = 5;
+
+if (true) {
+    function int yaMama(int hej) {
+        
+    }
+}
+
+print x;
