@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace Matilda
@@ -6,6 +7,7 @@ namespace Matilda
     class TypeChecker
     {
         public List<string> errors = new List<string>();
+        private Dictionary<string, Type> env = new Dictionary<string, Type>();
 
         public bool HasErrors()
         {
@@ -65,6 +67,48 @@ namespace Matilda
 
                     break;
 
+                case Assign assign:
+
+                    // check for null 
+                    if (assign.Identifier == null || assign.Value == null)
+                    {
+                        errors.Add($"Line {assign.LineNumber} invalid assignment");
+                        break;
+                    }
+                    // check delclaration 
+                    if (!env.ContainsKey(assign.Identifier))
+                    {
+                        errors.Add($"Line {assign.LineNumber} varibale {assign.Identifier} is not declared.");
+                    }
+                    else
+                    {
+                        // check type match 
+                        Type expectedType = env[assign.Identifier];
+                        Type actualType = ExprT(assign.Value);
+
+                        if (expectedType != actualType)
+                        {
+                            errors.Add($"Line {assign.LineNumber}: Cannot assign '{actualType}' to variable '{assign.Identifier}' of type '{expectedType}'.");
+                        }
+                    }
+
+                    break;
+
+                case Declaration declaration:
+                    if (declaration.Identifier == null || declaration.Type == null)
+                    {
+                        errors.Add($"Line {declaration.LineNumber} invalid declaration.");
+                        break;
+                    }
+
+                    if (env.ContainsKey(declaration.Identifier))
+                    {
+                        errors.Add($"Line {declaration.LineNumber} varibale '{declaration.Identifier}' is already declared.");
+                        break;
+                    }
+
+                    env[declaration.Identifier] = declaration.Type;
+                    break;
 
                 default: throw new Exception("Invalid statement");
             }
