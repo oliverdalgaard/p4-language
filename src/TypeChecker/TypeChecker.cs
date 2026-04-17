@@ -145,12 +145,22 @@ namespace Matilda
                         case BinaryOperators.DIV:
                             if (typeLeft != IntT.Instance && typeLeft != FloatT.Instance)
                             {
-                                errors.Add($"Line {binaryOp.ExprLeft.LineNumber}: Operator '*' expected a left operand of type 'int' or 'float', but got '{typeLeft}'.");
+                                errors.Add($"Line {binaryOp.ExprLeft.LineNumber}: Operator '/' expected a left operand of type 'int' or 'float', but got '{typeLeft}'.");
                             }
 
                             if (typeRight != IntT.Instance && typeRight != FloatT.Instance)
                             {
-                                errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Operator '*' expected a right operand of type 'int' or 'float', but got '{typeRight}'.");
+                                errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Operator '/' expected a right operand of type 'int' or 'float', but got '{typeRight}'.");
+                            }
+
+                            if (binaryOp.ExprRight is IntV intVal && intVal.Value == 0)
+                            {
+                                errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Division by zero.");
+                            }
+
+                            if (binaryOp.ExprRight is FloatV floatVal && floatVal.Value == 0.0)
+                            {
+                                errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Division by zero.");
                             }
 
                             if (typeLeft != typeRight)
@@ -271,14 +281,7 @@ namespace Matilda
                             }
 
                         case BinaryOperators.DIV:
-                            if (typeLeft == IntT.Instance)
-                            {
-                                return IntT.Instance;
-                            }
-                            else
-                            {
-                                return FloatT.Instance;
-                            }
+                            return FloatT.Instance;
 
                         case BinaryOperators.LT:
                             return BoolT.Instance;
