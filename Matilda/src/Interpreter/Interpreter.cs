@@ -167,7 +167,25 @@ public static class Interpreter
                         return new BoolVal(!IsEqual(v1, v2));
 
                     case BinaryOperators.LT:
-                        return new BoolVal(v1.AsInt() < v2.AsInt());
+                        {
+                            if (v1 is IntVal ai && v2 is IntVal bi)
+                            {
+                                return new BoolVal(v1.AsInt() < v2.AsInt());
+                            }
+                            else if (v1 is FloatVal af && v2 is FloatVal bf)
+                            {
+                                return new BoolVal(v1.AsFloat() < v2.AsFloat());
+                            }
+                            else if (v1 is FloatVal af2 && v2 is IntVal bi2)
+                            {
+                                return new BoolVal(v1.AsFloat() < v2.AsInt());
+                            }
+                            else if (v1 is IntVal ai2 && v2 is FloatVal bf2)
+                            {
+                                return new BoolVal(v1.AsInt() < v2.AsFloat());
+                            }
+                            throw new Exception("Type error: '<' supports only numeric types (int/float)");
+                        }
 
                     case BinaryOperators.ADD:
                         return new IntVal(v1.AsInt() + v2.AsInt());
