@@ -15,7 +15,10 @@ namespace Matilda
 
                 case Comp comp:
                     EvalStmt(comp.Stmt1, envV, envP);
-                    EvalStmt(comp.Stmt2, envV, envP);
+                    if (envV.TryGet("return") == null)
+                    {
+                        EvalStmt(comp.Stmt2, envV, envP);
+                    }
                     break;
 
                 case Print print:
@@ -30,11 +33,11 @@ namespace Matilda
                 case Assign assign:
                     envV.Set(assign.Identifier, EvalExpr(assign.Value, envV, envP));
                     break;
-                
+
                 case FunctionDeclaration functionDeclaration:
                     envP.Bind(functionDeclaration);
                     break;
-                
+
                 case Return returnVal:
                     envV.Bind("return", EvalExpr(returnVal.Value, envV, envP));
                     break;
@@ -68,6 +71,12 @@ namespace Matilda
                     {
                         EvalStmt(ifStmt.ElseBody, localScope, envP);
                     }
+
+                    if (localScope.TryGet("return") != null)
+                    {
+                        envV.Bind("return", localScope.TryGet("return"));
+                    }
+
                     break;
 
                 default:
@@ -94,7 +103,7 @@ namespace Matilda
 
                 case Ref reference:
                     return envV.TryGet(reference.Name);
-                
+
                 case FunctionRef functionRef:
                     FunctionDeclaration function = envP.TryGet(functionRef.Name);
 
@@ -109,7 +118,7 @@ namespace Matilda
                     {
                         string parameterName = function.Parameters[i].Identifier;
                         Val value = EvalExpr(functionRef.Arguments[i], envV, envP);
-                        
+
                         localScope.Bind(parameterName, value);
                     }
 
@@ -121,6 +130,7 @@ namespace Matilda
                             break;
                         }
                     }
+
 
                     return localScope.TryGet("return");
 
