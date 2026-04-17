@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace Matilda
 {
     public abstract class Stmt
@@ -76,6 +74,41 @@ namespace Matilda
 
             LineNumber = lineNumber;
         }
+    }
+
+    public class FunctionDeclaration : Stmt
+    {
+        public Type Type { get; }
+        public string Identifier { get; }
+        public List<Declaration> Parameters { get; }
+        public List<Stmt> Body { get; }
+        
+        public override int LineNumber { get; }
+
+        public FunctionDeclaration(Type type, string identifier, List<Declaration> parameters, List<Stmt> body, int lineNumber)
+        {
+            Type = type;
+            Identifier = identifier;
+            Parameters = parameters;
+            Body = body;
+
+            LineNumber = lineNumber;
+        }
+    }
+
+    public class Return : Stmt
+    {
+        public Expr Value { get; }
+
+        public override int LineNumber { get; }
+
+        public Return(Expr value, int lineNumber)
+        {
+            Value = value;
+            
+            LineNumber = lineNumber;
+        }
+
     }
 
     public class Print : Stmt

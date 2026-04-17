@@ -1,33 +1,26 @@
-print "Test 1:";
+function bool yaMama(int yes, bool man) {
+    int number = yes + 10;
 
-if (5 < 0) {
-    print "hej med dig";
-} elseif (10 < 11) {
-    print "Ha en god dag";
-} else {
-    print "Ya fat bitch";
+    if (man) {
+        return 20;
+    }
+    return 0;
 }
 
-print "Test 2:";
+print yaMama(5, true);
 
-if (5 < 0) {
-    print "hej med dig";
-} elseif (10 < 5) {
-    print "Ha en god dag";
-} elseif (50 < 100) {
-    print "Andet elseif stmt";
-} else {
-    print "Ya fat bitch";
+print yaMama(5, false);
+
+print "Hej";
+
+
+
+int x = 5;
+
+if (true) {
+    function int yaMama(int hej) {
+        
+    }
 }
 
-print "Test 3:";
-
-if (5 < 0) {
-    print "hej med dig";
-} elseif (5 < 10) {
-    print "Ha en god dag";
-} elseif (50 < 100) {
-    print "Andet elseif stmt";
-} else {
-    print "Ya fat bitch";
-}
+print x;

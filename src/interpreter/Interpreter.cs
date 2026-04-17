@@ -1,11 +1,12 @@
+using System.Text;
+
 namespace Matilda
 {
 
     public static class Interpreter
     {
-        public static void EvalStmt(Stmt stmt, EnvV envV)
+        public static void EvalStmt(Stmt stmt, EnvV envV, EnvP envP)
         {
-
             switch (stmt)
             {
                 case Skip:
@@ -13,12 +14,15 @@ namespace Matilda
                     break;
 
                 case Comp comp:
-                    EvalStmt(comp.Stmt1, envV);
-                    EvalStmt(comp.Stmt2, envV);
+                    EvalStmt(comp.Stmt1, envV, envP);
+                    if (envV.TryGet("return") == null)
+                    {
+                        EvalStmt(comp.Stmt2, envV, envP);
+                    }
                     break;
 
                 case Print print:
-                    Val value = EvalExpr(print.Value, envV);
+                    Val value = EvalExpr(print.Value, envV, envP);
                     Console.WriteLine(value.ToString());
                     break;
 
@@ -27,34 +31,53 @@ namespace Matilda
                     break;
 
                 case Assign assign:
-                    envV.Set(assign.Identifier, EvalExpr(assign.Value, envV));
+                    envV.Set(assign.Identifier, EvalExpr(assign.Value, envV, envP));
+                    break;
+
+                case FunctionDeclaration functionDeclaration:
+                    envP.Bind(functionDeclaration);
+                    break;
+
+                case Return returnVal:
+                    envV.Bind("return", EvalExpr(returnVal.Value, envV, envP));
                     break;
 
                 case If ifStmt:
-                    Val condition = EvalExpr(ifStmt.Condition, envV);
+                    EnvV localScope = envV.NewScope();
+
+                    bool runElse = true;
+
+                    Val condition = EvalExpr(ifStmt.Condition, localScope, envP);
                     if (condition.AsBool())
                     {
-                        EvalStmt(ifStmt.ThenBody, envV);
+                        runElse = false;
+                        EvalStmt(ifStmt.ThenBody, localScope, envP);
                     }
                     else if (ifStmt.ElseIfStmts.Any())
                     {
                         foreach (If elseIfStmt in ifStmt.ElseIfStmts)
                         {
-                            Val elseIfStmtCondition = EvalExpr(elseIfStmt.Condition, envV);
+                            Val elseIfStmtCondition = EvalExpr(elseIfStmt.Condition, localScope, envP);
                             if (elseIfStmtCondition.AsBool())
                             {
-                                EvalStmt(elseIfStmt.ThenBody, envV);
+                                EvalStmt(elseIfStmt.ThenBody, localScope, envP);
+                                runElse = false;
                                 break;
                             }
                         }
                     }
-                    else
+
+                    if (runElse)
                     {
-                        EvalStmt(ifStmt.ElseBody, envV);
+                        EvalStmt(ifStmt.ElseBody, localScope, envP);
                     }
+
+                    if (localScope.TryGet("return") != null)
+                    {
+                        envV.Bind("return", localScope.TryGet("return"));
+                    }
+
                     break;
-
-
 
                 default:
                     throw new Exception("Not valid statement");
@@ -62,7 +85,7 @@ namespace Matilda
             }
         }
 
-        public static Val EvalExpr(Expr expr, EnvV envV)
+        public static Val EvalExpr(Expr expr, EnvV envV, EnvP envP)
         {
             switch (expr)
             {
@@ -81,9 +104,39 @@ namespace Matilda
                 case Ref reference:
                     return envV.TryGet(reference.Name);
 
+                case FunctionRef functionRef:
+                    FunctionDeclaration function = envP.TryGet(functionRef.Name);
+
+                    if (functionRef.Arguments.Count != function.Parameters.Count)
+                    {
+                        throw new Exception("Number of arguments do not match the amount of parameters.");
+                    }
+
+                    EnvV localScope = envV.NewScope();
+
+                    for (int i = 0; i < functionRef.Arguments.Count; i++)
+                    {
+                        string parameterName = function.Parameters[i].Identifier;
+                        Val value = EvalExpr(functionRef.Arguments[i], envV, envP);
+
+                        localScope.Bind(parameterName, value);
+                    }
+
+                    foreach (Stmt stmt in function.Body)
+                    {
+                        EvalStmt(stmt, localScope, envP);
+                        if (localScope.TryGet("return") != null)
+                        {
+                            break;
+                        }
+                    }
+
+
+                    return localScope.TryGet("return");
+
                 case BinaryOp binaryOp:
-                    Val v1 = EvalExpr(binaryOp.ExprLeft, envV);
-                    Val v2 = EvalExpr(binaryOp.ExprRight, envV);
+                    Val v1 = EvalExpr(binaryOp.ExprLeft, envV, envP);
+                    Val v2 = EvalExpr(binaryOp.ExprRight, envV, envP);
 
                     switch (binaryOp.Op)
                     {
@@ -118,7 +171,7 @@ namespace Matilda
                     }
 
                 case UnaryOp unaryOp:
-                    Val val = EvalExpr(unaryOp.Expr, envV);
+                    Val val = EvalExpr(unaryOp.Expr, envV, envP);
 
                     switch (unaryOp.Op)
                     {

@@ -54,6 +54,23 @@ namespace Matilda
         }
     }
 
+    public class FunctionRef : Expr
+    {
+        public string Name { get; }
+
+        public List<Expr> Arguments { get; }
+
+        public override int LineNumber { get; }
+
+        public FunctionRef(string name, List<Expr> arguments, int lineNumber)
+        {
+            Name = name;
+            Arguments = arguments;
+
+            LineNumber = lineNumber;
+        }
+    }
+
     public class IntV : Expr
     {
         public int Value { get; }
