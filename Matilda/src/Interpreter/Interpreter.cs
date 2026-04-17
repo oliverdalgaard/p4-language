@@ -82,6 +82,23 @@ public static class Interpreter
         }
     }
 
+    private static bool IsEqual(Val a, Val b)
+    {
+        if (a is IntVal ai && b is IntVal bi)
+        {
+            return ai.AsInt() == bi.AsInt();
+        }
+        else if (a is FloatVal af && b is FloatVal bf)
+        {
+            return af.AsFloat() == bf.AsFloat();
+        }
+        else if (a is BoolVal ab && b is BoolVal bb)
+        {
+            return ab.AsBool() == bb.AsBool();
+        }
+        return false;
+    }
+
     public static Val EvalExpr(Expr expr, EnvV envV, EnvP envP)
     {
         switch (expr)
@@ -144,10 +161,10 @@ public static class Interpreter
                         return new BoolVal(v1.AsBool() && v2.AsBool());
 
                     case BinaryOperators.EQ:
-                        return new BoolVal(v1.AsBool() == v2.AsBool());
+                        return new BoolVal(IsEqual(v1, v2));
 
                     case BinaryOperators.NEQ:
-                        return new BoolVal(v1.AsBool() != v2.AsBool());
+                        return new BoolVal(!IsEqual(v1, v2));
 
                     case BinaryOperators.LT:
                         return new BoolVal(v1.AsInt() < v2.AsInt());
