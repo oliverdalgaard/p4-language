@@ -170,28 +170,64 @@ public static class Interpreter
                         {
                             if (v1 is IntVal ai && v2 is IntVal bi)
                             {
-                                return new BoolVal(v1.AsInt() < v2.AsInt());
+                                return new BoolVal(ai.AsInt() < bi.AsInt());
                             }
                             else if (v1 is FloatVal af && v2 is FloatVal bf)
                             {
-                                return new BoolVal(v1.AsFloat() < v2.AsFloat());
+                                return new BoolVal(af.AsFloat() < bf.AsFloat());
                             }
                             else if (v1 is FloatVal af2 && v2 is IntVal bi2)
                             {
-                                return new BoolVal(v1.AsFloat() < v2.AsInt());
+                                return new BoolVal(af2.AsFloat() < bi2.AsInt());
                             }
                             else if (v1 is IntVal ai2 && v2 is FloatVal bf2)
                             {
-                                return new BoolVal(v1.AsInt() < v2.AsFloat());
+                                return new BoolVal(ai2.AsInt() < bf2.AsFloat());
                             }
                             throw new Exception("Type error: '<' supports only numeric types (int/float)");
                         }
 
                     case BinaryOperators.ADD:
-                        return new IntVal(v1.AsInt() + v2.AsInt());
+                        {
+                            if (v1 is IntVal ai && v2 is IntVal bi)
+                            {
+                                return new FloatVal(ai.AsInt() + bi.AsInt());
+                            }
+                            else if (v1 is FloatVal af && v2 is FloatVal bf)
+                            {
+                                return new FloatVal(af.AsFloat() + bf.AsFloat());
+                            }
+                            else if (v1 is FloatVal af2 && v2 is IntVal bi2)
+                            {
+                                return new FloatVal(af2.AsFloat() + bi2.AsInt());
+                            }
+                            else if (v1 is IntVal ai2 && v2 is FloatVal bf2)
+                            {
+                                return new FloatVal(ai2.AsInt() + bf2.AsFloat());
+                            }
+                            throw new Exception("Type error: '+' supports only numeric types (int/float)");
+                        }
 
                     case BinaryOperators.SUB:
-                        return new IntVal(v1.AsInt() - v2.AsInt());
+                        {
+                            if (v1 is IntVal ai && v2 is IntVal bi)
+                            {
+                                return new FloatVal(ai.AsInt() - bi.AsInt());
+                            }
+                            else if (v1 is FloatVal af && v2 is FloatVal bf)
+                            {
+                                return new FloatVal(af.AsFloat() - bf.AsFloat());
+                            }
+                            else if (v1 is FloatVal af2 && v2 is IntVal bi2)
+                            {
+                                return new FloatVal(af2.AsFloat() - bi2.AsInt());
+                            }
+                            else if (v1 is IntVal ai2 && v2 is FloatVal bf2)
+                            {
+                                return new FloatVal(ai2.AsInt() - bf2.AsFloat());
+                            }
+                            throw new Exception("Type error: '-' supports only numeric types (int/float)");
+                        }
 
                     case BinaryOperators.MUL:
                         return new IntVal(v1.AsInt() * v2.AsInt());
