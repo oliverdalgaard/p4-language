@@ -17,10 +17,5 @@ print "Hej";
 
 int x = 5;
 
-if (true) {
-    function int yaMama(int hej) {
-        
-    }
-}
 
 print x;
