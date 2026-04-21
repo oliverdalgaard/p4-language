@@ -1,3 +1,5 @@
+using System.Numerics;
+
 namespace Matilda
 {
     class TypeChecker
@@ -124,6 +126,42 @@ namespace Matilda
                     if (whileStmt.Body != null)
                     {
                         StmtT(whileStmt.Body);
+                    }
+                    break;
+
+                case FunctionDeclaration f:
+                    if (f.Identifier == null || f.Type == null)
+                    {
+                        errors.Add($"Line {f.LineNumber} invalid declaration.");
+                        break;
+                    }
+
+                    if (env.ContainsKey(f.Identifier))
+                    {
+                        errors.Add($"Line {f.LineNumber}: Function '{f.Identifier}' already declared.");
+                        break;
+                    }
+
+                    //param 
+                    List<Type> paramTypes = new List<Type>();
+                    foreach (var param in f.Parameters)
+                    {
+                        paramTypes.Add(param.Type);
+
+                        if (env.ContainsKey(param.Identifier))
+                        {
+                            errors.Add($"Line {param.LineNumber}: Duplicate parameter '{param.Identifier}'.");
+                        }
+                        else
+                        {
+                            env[param.Identifier] = param.Type;
+                        }
+                    }
+
+                    //body
+                    foreach (var stmtInBody in f.Body)
+                    {
+                        StmtT(stmtInBody);
                     }
                     break;
 
