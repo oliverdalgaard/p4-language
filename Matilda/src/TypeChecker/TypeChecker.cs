@@ -106,6 +106,27 @@ namespace Matilda
                     env[declaration.Identifier] = declaration.Type;
                     break;
 
+                case While whileStmt:
+                    if (whileStmt.Condition == null)
+                    {
+                        errors.Add($"Line {whileStmt.LineNumber} while statement need a valid condition.");
+                    }
+                    else
+                    {
+                        Type condT = ExprT(whileStmt.Condition);
+
+                        if (condT != BoolT.Instance)
+                        {
+                            errors.Add($"Line {whileStmt.LineNumber} while statement requires a condition with type 'bool', but got '{condT}'.");
+                        }
+                    }
+
+                    if (whileStmt.Body != null)
+                    {
+                        StmtT(whileStmt.Body);
+                    }
+                    break;
+
                 default: throw new Exception("Invalid statement");
             }
         }
