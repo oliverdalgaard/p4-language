@@ -1,3 +1,10 @@
 cd ./Matilda
-mono ./Coco.exe Matilda.cs.ATG -namespace Matilda
+
+if [ "$1" -eq "linux" ]
+then
+    wine ./Coco.exe Matilda.cs.ATG -namespace Matilda
+else
+    mono ./Coco.exe Matilda.cs.ATG -namespace Matilda
+fi
+
 dotnet build matilda.csproj -c Release
