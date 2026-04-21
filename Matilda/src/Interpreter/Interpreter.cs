@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace Matilda;
 
 public static class Interpreter
@@ -40,24 +42,24 @@ public static class Interpreter
                 break;
 
             case If ifStmt:
-                EnvV localScope = envV.NewScope();
+                EnvV ifLocalScope = envV.NewScope();
 
                 bool runElse = true;
 
-                Val condition = EvalExpr(ifStmt.Condition, localScope, envP);
+                Val condition = EvalExpr(ifStmt.Condition, ifLocalScope, envP);
                 if (condition.AsBool())
                 {
                     runElse = false;
-                    EvalStmt(ifStmt.ThenBody, localScope, envP);
+                    EvalStmt(ifStmt.ThenBody, ifLocalScope, envP);
                 }
                 else if (ifStmt.ElseIfStmts.Any())
                 {
                     foreach (If elseIfStmt in ifStmt.ElseIfStmts)
                     {
-                        Val elseIfStmtCondition = EvalExpr(elseIfStmt.Condition, localScope, envP);
+                        Val elseIfStmtCondition = EvalExpr(elseIfStmt.Condition, ifLocalScope, envP);
                         if (elseIfStmtCondition.AsBool())
                         {
-                            EvalStmt(elseIfStmt.ThenBody, localScope, envP);
+                            EvalStmt(elseIfStmt.ThenBody, ifLocalScope, envP);
                             runElse = false;
                             break;
                         }
@@ -66,15 +68,31 @@ public static class Interpreter
 
                 if (runElse)
                 {
-                    EvalStmt(ifStmt.ElseBody, localScope, envP);
+                    EvalStmt(ifStmt.ElseBody, ifLocalScope, envP);
                 }
 
-                if (localScope.TryGet("return") != null)
+                if (ifLocalScope.TryGet("return") != null)
                 {
-                    envV.Bind("return", localScope.TryGet("return"));
+                    envV.Bind("return", ifLocalScope.TryGet("return"));
                 }
 
                 break;
+
+            case While whileStmt:
+                {
+                    EnvV whileLocalScope = envV.NewScope();
+
+                    while (EvalExpr(whileStmt.Condition, whileLocalScope, envP).AsBool())
+                    {
+                        EvalStmt(whileStmt.Body, whileLocalScope, envP);
+                        if (whileLocalScope.TryGet("return") != null)
+                        {
+                            envV.Bind("return", whileLocalScope.TryGet("return"));
+                            break;
+                        }
+                    }
+                    break;
+                }
 
             default:
                 throw new Exception("Not valid statement");
@@ -144,25 +162,25 @@ public static class Interpreter
                         return new BoolVal(v1.AsBool() && v2.AsBool());
 
                     case BinaryOperators.EQ:
-                        return new BoolVal(v1.AsBool() == v2.AsBool());
+                        return new BoolVal(InterpreterHelperFunction.IsEqual(v1, v2));
 
                     case BinaryOperators.NEQ:
-                        return new BoolVal(v1.AsBool() != v2.AsBool());
+                        return new BoolVal(!InterpreterHelperFunction.IsEqual(v1, v2));
 
                     case BinaryOperators.LT:
-                        return new BoolVal(v1.AsInt() < v2.AsInt());
+                        return new BoolVal(InterpreterHelperFunction.HelperFunctionLT(v1, v2));
 
                     case BinaryOperators.ADD:
-                        return new IntVal(v1.AsInt() + v2.AsInt());
+                        return new FloatVal(InterpreterHelperFunction.HelperFunctionADD(v1, v2));
 
                     case BinaryOperators.SUB:
-                        return new IntVal(v1.AsInt() - v2.AsInt());
+                        return new FloatVal(InterpreterHelperFunction.HelperFunctionSUB(v1, v2));
 
                     case BinaryOperators.MUL:
-                        return new IntVal(v1.AsInt() * v2.AsInt());
+                        return new FloatVal(InterpreterHelperFunction.HelperFunctionMUL(v1, v2));
 
                     case BinaryOperators.DIV:
-                        return new IntVal(v1.AsInt() / v2.AsInt());
+                        return new FloatVal(InterpreterHelperFunction.HelperFunctionDIV(v1, v2));
 
                     default: throw new Exception("Not a valid binaryOp expression");
                 }
