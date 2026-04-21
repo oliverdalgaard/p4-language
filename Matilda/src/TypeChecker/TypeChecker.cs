@@ -363,6 +363,13 @@ namespace Matilda
                         default: throw new Exception("Invalid binary operation");
                     }
 
+                case Ref r:
+                    if (!env.ContainsKey(r.Name))
+                    {
+                        errors.Add($"Line {r.LineNumber}: variable {r.Name} is not declared.");
+                        return IntT.Instance;
+                    }
+                    return env[r.Name];
 
                 default: throw new Exception("Invalid expression");
             }
