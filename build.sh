@@ -1,6 +1,6 @@
 cd ./Matilda
 
-if [ "$1" -eq "linux" ]
+if [ "$1" = "linux" ]
 then
     wine ./Coco.exe Matilda.cs.ATG -namespace Matilda
 else
