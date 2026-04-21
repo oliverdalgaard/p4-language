@@ -5,7 +5,7 @@ using System;
 namespace MatildaTests;
 
 [TestClass]
-public class EvalExprTests
+public class InterpreterEvalExprTests
 {
     [TestMethod]
     public void EvalExprPrecedenceCheck()
