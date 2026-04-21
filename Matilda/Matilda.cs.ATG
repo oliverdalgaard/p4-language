@@ -86,6 +86,7 @@ Stmt<out Stmt stmt> =       (. stmt = Skip.Instance; .)
     | FunctionDeclaration<out stmt>
     | Print<out stmt>
     | If<out stmt>
+    | While <out stmt>
     | Return<out stmt>
   )
 .
@@ -98,9 +99,9 @@ Print<out Stmt stmt> =
 
 Declaration<out Stmt stmt> = 
   Type<out Type type>
-  IDENT                       (. string var = t.val; stmt = new Declaration(type, var, t.line); .)
+  IDENT                       (. string var = t.val; .)
   '='                         (. int lineNumber = t.line; .)
-  Expr<out Expr expr>         (. stmt = new Comp(stmt, new Assign(var, expr, lineNumber)); .)
+  Expr<out Expr expr>         (. stmt = new Declaration(type, var, t.line, expr); .)
   ';'
 .
 
@@ -156,6 +157,12 @@ If<out Stmt stmt>                                     (. Stmt elseStmt = Skip.In
   ]                                                   (. stmt = new If(condition, thenStmt, elseIfStmts, elseStmt, lineNumber); .)
 .
 
+While <out Stmt stmt> =
+"while"                             (. int lineNumber = t.line; .)
+  '(' Expr<out Expr condition> ')'
+  '{' Stmts<out Stmt body> '}'
+                                    (. stmt = new While(condition, body, lineNumber); .)
+.
 Type<out Type type> (. type = null; .)
   =
   "int"             (. type = IntT.Instance; .)
