@@ -11,7 +11,7 @@ public class InterpreterEvalExprTests
     public void EvalExprPrecedenceCheck()
   {
       // Arange
-      Expr expr = new BinaryOp(BinaryOperators.ADD, new IntV(1,1),new BinaryOp(BinaryOperators.MUL, new IntV(2,1), new IntV(3,1),2),1);
+      Expr expr = new BinaryOp(BinaryOperators.ADD, new IntV(1,-1),new BinaryOp(BinaryOperators.MUL, new IntV(2,-1), new IntV(3,-1),2),-1);
 
       var envV = new EnvV();
       var envP = new EnvP();
@@ -22,5 +22,10 @@ public class InterpreterEvalExprTests
       // Assert
       Assert.IsInstanceOfType(reuslt, typeof(IntVal));
       Assert.AreEqual(7, reuslt.AsInt());
+      Assert.AreNotEqual(9, reuslt.AsInt());
   }
+}
+public class InterpreterCheckTypes()
+{
+  
 }

@@ -12,15 +12,15 @@ public class UnaryOpTests
     public void SetUnaryOpProperties()
     {
         // Arrange
-        var expr = new Ref("x", 1);
+        var expr = new BoolV(true, -1);
 
         // Act
-        var unaryOp = new UnaryOp(UnaryOperators.NOT, expr, 2);
+        var unaryOp = new UnaryOp(UnaryOperators.NOT, expr, -1);
 
         // Assert
         Assert.AreEqual(UnaryOperators.NOT, unaryOp.Op);
         Assert.AreSame(expr, unaryOp.Expr);
-        Assert.AreEqual(2, unaryOp.LineNumber);
+        Assert.AreEqual(-1, unaryOp.LineNumber);
     }
 }
 
@@ -31,16 +31,16 @@ public class BinaryOpTests
     public void SetBinaryOpProperties()
     {
         // Arrange
-        var exprLeft = new IntV(5,7);
-        var exprRight = new IntV(10,5);
+        var exprLeft = new IntV(5,-1);
+        var exprRight = new IntV(10,-1);
 
         // Act
-        var binaryOp = new BinaryOp(BinaryOperators.ADD, exprLeft, exprRight, 2);
+        var binaryOp = new BinaryOp(BinaryOperators.ADD, exprLeft, exprRight, -1);
 
         // Assert
         Assert.AreEqual(BinaryOperators.ADD, binaryOp.Op);
         Assert.AreSame(exprLeft, binaryOp.ExprLeft);
         Assert.AreSame(exprRight, binaryOp.ExprRight);
-        Assert.AreEqual(2, binaryOp.LineNumber);
+        Assert.AreEqual(-1, binaryOp.LineNumber);
     }
 }
