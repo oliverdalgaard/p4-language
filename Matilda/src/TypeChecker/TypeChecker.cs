@@ -265,12 +265,12 @@ namespace Matilda
                         case BinaryOperators.NEQ:
                             if (typeLeft != BoolT.Instance && typeLeft != IntT.Instance && typeLeft != FloatT.Instance)
                             {
-                                errors.Add($"Line {binaryOp.ExprLeft.LineNumber}: Operator '==' expected a left operand of type 'boolean','int' or 'float', but got '{typeLeft}'.");
+                                errors.Add($"Line {binaryOp.ExprLeft.LineNumber}: Operator '!=' expected a left operand of type 'boolean','int' or 'float', but got '{typeLeft}'.");
                             }
 
-                            if (typeRight != BoolT.Instance && typeLeft != IntT.Instance && typeLeft != FloatT.Instance)
+                            if (typeRight != BoolT.Instance && typeRight != IntT.Instance && typeRight != FloatT.Instance)
                             {
-                                errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Operator '==' expected a right operand of type 'Boolean','int' or 'float', but got '{typeRight}'.");
+                                errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Operator '!=' expected a right operand of type 'Boolean','int' or 'float', but got '{typeRight}'.");
                             }
 
                             if (typeLeft != typeRight)
@@ -359,10 +359,27 @@ namespace Matilda
                         case BinaryOperators.OR:
                             return BoolT.Instance;
 
-
                         default: throw new Exception("Invalid binary operation");
                     }
 
+                case UnaryOp unaryOp:
+                    {
+                        Type innertype = ExprT(unaryOp.Expr);
+
+                        switch (unaryOp.Op)
+                        {
+                            case UnaryOperators.NOT:
+                                if (innertype != BoolT.Instance)
+                                {
+                                    errors.Add($"Line {unaryOp.LineNumber} Operator '!' expected a operand of type 'Boolean', but got '{innertype}'.");
+                                }
+                                return BoolT.Instance;
+
+                            default:
+                                throw new Exception("Unknown unary operator");
+                        }
+
+                    }
                 case Ref r:
                     if (!env.ContainsKey(r.Name))
                     {
