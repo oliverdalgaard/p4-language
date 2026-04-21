@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace Matilda;
 
 public static class Interpreter
@@ -98,23 +100,6 @@ public static class Interpreter
         }
     }
 
-    private static bool IsEqual(Val a, Val b)
-    {
-        if (a is IntVal ai && b is IntVal bi)
-        {
-            return ai.AsInt() == bi.AsInt();
-        }
-        else if (a is FloatVal af && b is FloatVal bf)
-        {
-            return af.AsFloat() == bf.AsFloat();
-        }
-        else if (a is BoolVal ab && b is BoolVal bb)
-        {
-            return ab.AsBool() == bb.AsBool();
-        }
-        return false;
-    }
-
     public static Val EvalExpr(Expr expr, EnvV envV, EnvP envP)
     {
         switch (expr)
@@ -177,115 +162,25 @@ public static class Interpreter
                         return new BoolVal(v1.AsBool() && v2.AsBool());
 
                     case BinaryOperators.EQ:
-                        return new BoolVal(IsEqual(v1, v2));
+                        return new BoolVal(InterpreterHelperFunction.IsEqual(v1, v2));
 
                     case BinaryOperators.NEQ:
-                        return new BoolVal(!IsEqual(v1, v2));
+                        return new BoolVal(!InterpreterHelperFunction.IsEqual(v1, v2));
 
                     case BinaryOperators.LT:
-                        {
-                            if (v1 is IntVal ai && v2 is IntVal bi)
-                            {
-                                return new BoolVal(ai.AsInt() < bi.AsInt());
-                            }
-                            else if (v1 is FloatVal af && v2 is FloatVal bf)
-                            {
-                                return new BoolVal(af.AsFloat() < bf.AsFloat());
-                            }
-                            else if (v1 is FloatVal af2 && v2 is IntVal bi2)
-                            {
-                                return new BoolVal(af2.AsFloat() < bi2.AsInt());
-                            }
-                            else if (v1 is IntVal ai2 && v2 is FloatVal bf2)
-                            {
-                                return new BoolVal(ai2.AsInt() < bf2.AsFloat());
-                            }
-                            throw new Exception("Type error: '<' supports only numeric types (int/float)");
-                        }
+                        return new BoolVal(InterpreterHelperFunction.HelperFunctionLT(v1, v2));
 
                     case BinaryOperators.ADD:
-                        {
-                            if (v1 is IntVal ai && v2 is IntVal bi)
-                            {
-                                return new FloatVal(ai.AsInt() + bi.AsInt());
-                            }
-                            else if (v1 is FloatVal af && v2 is FloatVal bf)
-                            {
-                                return new FloatVal(af.AsFloat() + bf.AsFloat());
-                            }
-                            else if (v1 is FloatVal af2 && v2 is IntVal bi2)
-                            {
-                                return new FloatVal(af2.AsFloat() + bi2.AsInt());
-                            }
-                            else if (v1 is IntVal ai2 && v2 is FloatVal bf2)
-                            {
-                                return new FloatVal(ai2.AsInt() + bf2.AsFloat());
-                            }
-                            throw new Exception("Type error: '+' supports only numeric types (int/float)");
-                        }
+                        return new FloatVal(InterpreterHelperFunction.HelperFunctionADD(v1, v2));
 
                     case BinaryOperators.SUB:
-                        {
-                            if (v1 is IntVal ai && v2 is IntVal bi)
-                            {
-                                return new FloatVal(ai.AsInt() - bi.AsInt());
-                            }
-                            else if (v1 is FloatVal af && v2 is FloatVal bf)
-                            {
-                                return new FloatVal(af.AsFloat() - bf.AsFloat());
-                            }
-                            else if (v1 is FloatVal af2 && v2 is IntVal bi2)
-                            {
-                                return new FloatVal(af2.AsFloat() - bi2.AsInt());
-                            }
-                            else if (v1 is IntVal ai2 && v2 is FloatVal bf2)
-                            {
-                                return new FloatVal(ai2.AsInt() - bf2.AsFloat());
-                            }
-                            throw new Exception("Type error: '-' supports only numeric types (int/float)");
-                        }
+                        return new FloatVal(InterpreterHelperFunction.HelperFunctionSUB(v1, v2));
 
                     case BinaryOperators.MUL:
-                        {
-                            if (v1 is IntVal ai && v2 is IntVal bi)
-                            {
-                                return new FloatVal(ai.AsInt() * bi.AsInt());
-                            }
-                            else if (v1 is FloatVal af && v2 is FloatVal bf)
-                            {
-                                return new FloatVal(af.AsFloat() * bf.AsFloat());
-                            }
-                            else if (v1 is FloatVal af2 && v2 is IntVal bi2)
-                            {
-                                return new FloatVal(af2.AsFloat() * bi2.AsInt());
-                            }
-                            else if (v1 is IntVal ai2 && v2 is FloatVal bf2)
-                            {
-                                return new FloatVal(ai2.AsInt() * bf2.AsFloat());
-                            }
-                            throw new Exception("Type error: '*' supports only numeric types (int/float)");
-                        }
+                        return new FloatVal(InterpreterHelperFunction.HelperFunctionMUL(v1, v2));
 
                     case BinaryOperators.DIV:
-                        {
-                            if (v1 is IntVal ai && v2 is IntVal bi)
-                            {
-                                return new FloatVal(ai.AsInt() / bi.AsInt());
-                            }
-                            else if (v1 is FloatVal af && v2 is FloatVal bf)
-                            {
-                                return new FloatVal(af.AsFloat() / bf.AsFloat());
-                            }
-                            else if (v1 is FloatVal af2 && v2 is IntVal bi2)
-                            {
-                                return new FloatVal(af2.AsFloat() / bi2.AsInt());
-                            }
-                            else if (v1 is IntVal ai2 && v2 is FloatVal bf2)
-                            {
-                                return new FloatVal(ai2.AsInt() / bf2.AsFloat());
-                            }
-                            throw new Exception("Type error: '/' supports only numeric types (int/float)");
-                        }
+                        return new FloatVal(InterpreterHelperFunction.HelperFunctionDIV(v1, v2));
 
                     default: throw new Exception("Not a valid binaryOp expression");
                 }
