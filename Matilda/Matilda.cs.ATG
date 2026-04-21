@@ -98,9 +98,9 @@ Print<out Stmt stmt> =
 
 Declaration<out Stmt stmt> = 
   Type<out Type type>
-  IDENT                       (. string var = t.val; stmt = new Declaration(type, var, t.line); .)
+  IDENT                       (. string var = t.val; .)
   '='                         (. int lineNumber = t.line; .)
-  Expr<out Expr expr>         (. stmt = new Comp(stmt, new Assign(var, expr, lineNumber)); .)
+  Expr<out Expr expr>         (. stmt = new Declaration(type, var, t.line, expr); .)
   ';'
 .
 

@@ -46,15 +46,18 @@ public class Comp : Stmt
 
 public class Declaration : Stmt
 {
-    public Type? Type { get; }
-    public string? Identifier { get; }
+    public Type Type { get; }
+    public string Identifier { get; }
+
+    public Expr? Expression { get; }
 
     public override int LineNumber { get; }
 
-    public Declaration(Type? type, string? identifier, int lineNumber)
+    public Declaration(Type? type, string? identifier, int lineNumber, Expr? expression = null)
     {
         Type = type;
         Identifier = identifier;
+        Expression = expression;
 
         LineNumber = lineNumber;
     }
