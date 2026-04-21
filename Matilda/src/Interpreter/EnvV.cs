@@ -16,7 +16,7 @@ public class EnvV
         return new EnvV(this);
     }
 
-    public void Bind(string variable, Val value)
+    public void Bind(string variable, Val? value)
     {
         if (IsLocal(variable))
         {

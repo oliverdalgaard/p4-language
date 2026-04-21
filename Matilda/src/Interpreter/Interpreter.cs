@@ -26,7 +26,14 @@ public static class Interpreter
                 break;
 
             case Declaration declaration:
-                envV.Bind(declaration.Identifier, null);
+                if (declaration.Expression == null)
+                {
+                    envV.Bind(declaration.Identifier, null);
+                }
+                else
+                {
+                    envV.Bind(declaration.Identifier, EvalExpr(declaration.Expression, envV, envP));
+                }
                 break;
 
             case Assign assign:

@@ -183,11 +183,11 @@ public Stmt mainNode = null;
 	void Declaration(out Stmt stmt) {
 		Type(out Type type);
 		Expect(1);
-		string var = t.val; stmt = new Declaration(type, var, t.line); 
+		string var = t.val; 
 		Expect(7);
 		int lineNumber = t.line; 
 		Expr(out Expr expr);
-		stmt = new Comp(stmt, new Assign(var, expr, lineNumber)); 
+		stmt = new Declaration(type, var, t.line, expr); 
 		Expect(6);
 	}
 
