@@ -147,15 +147,15 @@ public class If : Stmt
 
 public class While : Stmt
 {
-    private Expr? condition;
-    private Stmt? body;
+    public Expr? Condition { get; }
+    public Stmt? Body { get; }
 
     public override int LineNumber { get; }
 
     public While(Expr? condition, Stmt? body, int lineNumber)
     {
-        this.condition = condition;
-        this.body = body;
+        Condition = condition;
+        Body = body;
 
         LineNumber = lineNumber;
     }

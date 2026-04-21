@@ -76,6 +76,22 @@ public static class Interpreter
 
                 break;
 
+            case While whileStmt:
+                {
+                    EnvV localScope2 = envV.NewScope();
+
+                    while (EvalExpr(whileStmt.Condition, localScope2, envP).AsBool())
+                    {
+                        EvalStmt(whileStmt.Body, localScope2, envP);
+                        if (localScope2.TryGet("return") != null)
+                        {
+                            envV.Bind("return", localScope2.TryGet("return"));
+                            break;
+                        }
+                    }
+                    break;
+                }
+
             default:
                 throw new Exception("Not valid statement");
 
