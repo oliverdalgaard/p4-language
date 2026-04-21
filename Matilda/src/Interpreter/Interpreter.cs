@@ -42,24 +42,24 @@ public static class Interpreter
                 break;
 
             case If ifStmt:
-                EnvV localScope = envV.NewScope();
+                EnvV ifLocalScope = envV.NewScope();
 
                 bool runElse = true;
 
-                Val condition = EvalExpr(ifStmt.Condition, localScope, envP);
+                Val condition = EvalExpr(ifStmt.Condition, ifLocalScope, envP);
                 if (condition.AsBool())
                 {
                     runElse = false;
-                    EvalStmt(ifStmt.ThenBody, localScope, envP);
+                    EvalStmt(ifStmt.ThenBody, ifLocalScope, envP);
                 }
                 else if (ifStmt.ElseIfStmts.Any())
                 {
                     foreach (If elseIfStmt in ifStmt.ElseIfStmts)
                     {
-                        Val elseIfStmtCondition = EvalExpr(elseIfStmt.Condition, localScope, envP);
+                        Val elseIfStmtCondition = EvalExpr(elseIfStmt.Condition, ifLocalScope, envP);
                         if (elseIfStmtCondition.AsBool())
                         {
-                            EvalStmt(elseIfStmt.ThenBody, localScope, envP);
+                            EvalStmt(elseIfStmt.ThenBody, ifLocalScope, envP);
                             runElse = false;
                             break;
                         }
@@ -68,26 +68,26 @@ public static class Interpreter
 
                 if (runElse)
                 {
-                    EvalStmt(ifStmt.ElseBody, localScope, envP);
+                    EvalStmt(ifStmt.ElseBody, ifLocalScope, envP);
                 }
 
-                if (localScope.TryGet("return") != null)
+                if (ifLocalScope.TryGet("return") != null)
                 {
-                    envV.Bind("return", localScope.TryGet("return"));
+                    envV.Bind("return", ifLocalScope.TryGet("return"));
                 }
 
                 break;
 
             case While whileStmt:
                 {
-                    EnvV localScope2 = envV.NewScope();
+                    EnvV whileLocalScope = envV.NewScope();
 
-                    while (EvalExpr(whileStmt.Condition, localScope2, envP).AsBool())
+                    while (EvalExpr(whileStmt.Condition, whileLocalScope, envP).AsBool())
                     {
-                        EvalStmt(whileStmt.Body, localScope2, envP);
-                        if (localScope2.TryGet("return") != null)
+                        EvalStmt(whileStmt.Body, whileLocalScope, envP);
+                        if (whileLocalScope.TryGet("return") != null)
                         {
-                            envV.Bind("return", localScope2.TryGet("return"));
+                            envV.Bind("return", whileLocalScope.TryGet("return"));
                             break;
                         }
                     }

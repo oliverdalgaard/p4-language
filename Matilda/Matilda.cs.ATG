@@ -158,10 +158,10 @@ If<out Stmt stmt>                                     (. Stmt elseStmt = Skip.In
 .
 
 While <out Stmt stmt> =
-"while"                        (. int lineNumber = t.line; .)
+"while"                             (. int lineNumber = t.line; .)
   '(' Expr<out Expr condition> ')'
   '{' Stmts<out Stmt body> '}'
-                                (. stmt = new While(condition, body, lineNumber); .)
+                                    (. stmt = new While(condition, body, lineNumber); .)
 .
 Type<out Type type> (. type = null; .)
   =
