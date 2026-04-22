@@ -44,3 +44,38 @@ public class BinaryOpTests
         Assert.AreEqual(-1, binaryOp.LineNumber);
     }
 }
+
+// [TestClass]
+// public class RefTests
+// {
+//     [TestMethod]
+//     public void SetRefProperties()
+//     {
+//         // Arrange
+//         string expectedName = "x";
+//         int expectedLineNumber = -1;
+
+//         // Act
+//         var result = new Ref(expectedName, expectedLineNumber);
+
+//         // Assert
+//         Assert.AreEqual(expectedName, result.Name);
+//         Assert.AreEqual(expectedLineNumber, result.LineNumber);
+//     }
+// }
+
+// [TestClass]
+// public class FunctionTests
+// {
+//     [TestMethod]
+//     public void SetFunctionRefProperties()
+//     {
+//         // Arrange
+
+
+//         // Act
+
+//         // Assert
+//     }
+
+// }
