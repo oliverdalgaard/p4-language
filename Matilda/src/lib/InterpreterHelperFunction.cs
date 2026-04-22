@@ -40,86 +40,86 @@ public class InterpreterHelperFunction
         throw new Exception("Type error: '<' supports only numeric types (int/float)");
     }
 
-    public static float HelperFunctionADD(Val v1, Val v2)
+    public static Val HelperFunctionADD(Val v1, Val v2)
     {
         if (v1 is IntVal ai && v2 is IntVal bi)
         {
-            return ai.AsInt() + bi.AsInt();
+            return new IntVal(ai.AsInt() + bi.AsInt());
         }
         else if (v1 is FloatVal af && v2 is FloatVal bf)
         {
-            return af.AsFloat() + bf.AsFloat();
+            return new FloatVal(af.AsFloat() + bf.AsFloat());
         }
         else if (v1 is FloatVal af2 && v2 is IntVal bi2)
         {
-            return af2.AsFloat() + bi2.AsInt();
+            return new FloatVal(af2.AsFloat() + bi2.AsInt());
         }
         else if (v1 is IntVal ai2 && v2 is FloatVal bf2)
         {
-            return ai2.AsInt() + bf2.AsFloat();
+            return new FloatVal(ai2.AsInt() + bf2.AsFloat());
         }
         throw new Exception("Type error: '+' supports only numeric types (int/float)");
     }
 
-    public static float HelperFunctionSUB(Val v1, Val v2)
+    public static Val HelperFunctionSUB(Val v1, Val v2)
     {
         if (v1 is IntVal ai && v2 is IntVal bi)
         {
-            return ai.AsInt() - bi.AsInt();
+            return new IntVal(ai.AsInt() - bi.AsInt());
         }
         else if (v1 is FloatVal af && v2 is FloatVal bf)
         {
-            return af.AsFloat() - bf.AsFloat();
+            return new FloatVal(af.AsFloat() - bf.AsFloat());
         }
         else if (v1 is FloatVal af2 && v2 is IntVal bi2)
         {
-            return af2.AsFloat() - bi2.AsInt();
+            return new FloatVal(af2.AsFloat() - bi2.AsInt());
         }
         else if (v1 is IntVal ai2 && v2 is FloatVal bf2)
         {
-            return ai2.AsInt() - bf2.AsFloat();
+            return new FloatVal(ai2.AsInt() - bf2.AsFloat());
         }
         throw new Exception("Type error: '-' supports only numeric types (int/float)");
     }
 
-    public static float HelperFunctionMUL(Val v1, Val v2)
+    public static Val HelperFunctionMUL(Val v1, Val v2)
     {
         if (v1 is IntVal ai && v2 is IntVal bi)
         {
-            return ai.AsInt() * bi.AsInt();
+            return new IntVal(ai.AsInt() * bi.AsInt());
         }
         else if (v1 is FloatVal af && v2 is FloatVal bf)
         {
-            return af.AsFloat() * bf.AsFloat();
+            return new FloatVal(af.AsFloat() * bf.AsFloat());
         }
         else if (v1 is FloatVal af2 && v2 is IntVal bi2)
         {
-            return af2.AsFloat() * bi2.AsInt();
+            return new FloatVal(af2.AsFloat() * bi2.AsInt());
         }
         else if (v1 is IntVal ai2 && v2 is FloatVal bf2)
         {
-            return ai2.AsInt() * bf2.AsFloat();
+            return new FloatVal(ai2.AsInt() * bf2.AsFloat());
         }
         throw new Exception("Type error: '*' supports only numeric types (int/float)");
     }
 
-    public static float HelperFunctionDIV(Val v1, Val v2)
+    public static Val HelperFunctionDIV(Val v1, Val v2)
     {
         if (v1 is IntVal ai && v2 is IntVal bi)
         {
-            return ai.AsInt() / bi.AsInt();
+            return new FloatVal(ai.AsInt() / bi.AsInt());
         }
         else if (v1 is FloatVal af && v2 is FloatVal bf)
         {
-            return af.AsFloat() / bf.AsFloat();
+            return new FloatVal(af.AsFloat() / bf.AsFloat());
         }
         else if (v1 is FloatVal af2 && v2 is IntVal bi2)
         {
-            return af2.AsFloat() / bi2.AsInt();
+            return new FloatVal(af2.AsFloat() / bi2.AsInt());
         }
         else if (v1 is IntVal ai2 && v2 is FloatVal bf2)
         {
-            return ai2.AsInt() / bf2.AsFloat();
+            return new FloatVal(ai2.AsInt() / bf2.AsFloat());
         }
         throw new Exception("Type error: '/' supports only numeric types (int/float)");
     }

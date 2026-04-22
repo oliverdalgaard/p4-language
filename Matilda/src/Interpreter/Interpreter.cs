@@ -178,16 +178,16 @@ public static class Interpreter
                         return new BoolVal(InterpreterHelperFunction.HelperFunctionLT(v1, v2));
 
                     case BinaryOperators.ADD:
-                        return new FloatVal(InterpreterHelperFunction.HelperFunctionADD(v1, v2));
+                        return InterpreterHelperFunction.HelperFunctionADD(v1, v2);
 
                     case BinaryOperators.SUB:
-                        return new FloatVal(InterpreterHelperFunction.HelperFunctionSUB(v1, v2));
+                        return InterpreterHelperFunction.HelperFunctionSUB(v1, v2);
 
                     case BinaryOperators.MUL:
-                        return new FloatVal(InterpreterHelperFunction.HelperFunctionMUL(v1, v2));
+                        return InterpreterHelperFunction.HelperFunctionMUL(v1, v2);
 
                     case BinaryOperators.DIV:
-                        return new FloatVal(InterpreterHelperFunction.HelperFunctionDIV(v1, v2));
+                        return InterpreterHelperFunction.HelperFunctionDIV(v1, v2);
 
                     default: throw new Exception("Not a valid binaryOp expression");
                 }
