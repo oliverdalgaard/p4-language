@@ -31,8 +31,8 @@ public class BinaryOpTests
     public void SetBinaryOpProperties()
     {
         // Arrange
-        var exprLeft = new IntV(5,-1);
-        var exprRight = new IntV(10,-1);
+        var exprLeft = new IntV(5, -1);
+        var exprRight = new IntV(10, -1);
 
         // Act
         var binaryOp = new BinaryOp(BinaryOperators.ADD, exprLeft, exprRight, -1);
@@ -45,37 +45,44 @@ public class BinaryOpTests
     }
 }
 
-// [TestClass]
-// public class RefTests
-// {
-//     [TestMethod]
-//     public void SetRefProperties()
-//     {
-//         // Arrange
-//         string expectedName = "x";
-//         int expectedLineNumber = -1;
+[TestClass]
+public class RefTests
+{
+    [TestMethod]
+    public void SetRefProperties()
+    {
+        // Arrange
+        string expectedName = "x";
+        int expectedLineNumber = -1;
 
-//         // Act
-//         var result = new Ref(expectedName, expectedLineNumber);
+        // Act
+        var result = new Ref(expectedName, expectedLineNumber);
 
-//         // Assert
-//         Assert.AreEqual(expectedName, result.Name);
-//         Assert.AreEqual(expectedLineNumber, result.LineNumber);
-//     }
-// }
+        // Assert
+        Assert.AreEqual(expectedName, result.Name);
+        Assert.AreEqual(expectedLineNumber, result.LineNumber);
+    }
+}
 
-// [TestClass]
-// public class FunctionTests
-// {
-//     [TestMethod]
-//     public void SetFunctionRefProperties()
-//     {
-//         // Arrange
+[TestClass]
+public class FunctionTests
+{
+    [TestMethod]
+    public void SetFunctionRefProperties()
+    {
+        // Arrange
+        var arguments = new List<Expr>
+        {
+            new Ref("x",-1),
+            new Ref("y",-1)
+        };
 
+        // Act
+        var result = new FunctionRef("dummyFunction", arguments, -1);
 
-//         // Act
-
-//         // Assert
-//     }
-
-// }
+        // Assert
+        Assert.HasCount(2, result.Arguments);
+        Assert.AreEqual("x", ((Ref)result.Arguments[0]).Name);
+        Assert.AreEqual("y", ((Ref)result.Arguments[1]).Name);
+    }
+}

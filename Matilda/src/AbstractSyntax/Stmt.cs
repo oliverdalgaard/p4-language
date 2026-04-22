@@ -14,7 +14,7 @@ public class Skip : Stmt
 
     public static readonly Skip Instance = new Skip();
 
-    private Skip() { }
+    public Skip() { }
 
 }
 
@@ -53,7 +53,7 @@ public class Declaration : Stmt
 
     public override int LineNumber { get; }
 
-    public Declaration(Type? type, string? identifier, int lineNumber, Expr? expression = null)
+    public Declaration(Type type, string identifier, int lineNumber, Expr? expression = null)
     {
         Type = type;
         Identifier = identifier;
