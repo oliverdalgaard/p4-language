@@ -1,3 +1,4 @@
 schema Hej = {
-    Test : int    
+    Test : int,
+    hej : float
 }

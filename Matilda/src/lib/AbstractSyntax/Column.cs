@@ -1,11 +1,13 @@
-public class ColumnV : Expr
+namespace Matilda;
+
+public class Column
 {
-    public string Id {get;}
+    public string Id { get; }
     public Type Type { get; }
 
-    public override int LineNumber { get; }
+    public int LineNumber { get; }
 
-    public ColumnV(string id, Type type)
+    public Column(string id, Type type)
     {
         Id = id;
         Type = type;
