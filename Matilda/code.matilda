@@ -1,21 +1,10 @@
-function bool yaMama(int yes, bool man) {
-    int number = yes + 10;
+function bool Hej(int i, int a) {
+    print i;
 
-    if (man) {
-        return 20;
-    }
-    return 0;
+    print a;
+
+    return true;
 }
 
-print yaMama(5, true);
 
-print yaMama(5, false);
-
-print "Hej";
-
-
-
-int x = 5;
-
-
-print x;
+print Hej(1, 5);

@@ -112,18 +112,18 @@ Assignment<out Stmt stmt> =
   ';'
 .
 
-Parameter<out Declaration param> =
+Parameter<out Parameter param> =
   Type<out Type type>
-  IDENT                             (. param = new Declaration(type, t.val, t.line); .)
+  IDENT                             (. param = new Parameter(type, t.val, t.line); .)
 .
 
 FunctionDeclaration<out Stmt stmt> =
   "function"
   Type<out Type type>
-  IDENT                                       (. string var = t.val; int lineNumber = t.line; List<Declaration> parameters = new List<Declaration>(); List<Stmt> bodyStmts = new List<Stmt>(); Stmt funcBody = Skip.Instance; .)
+  IDENT                                       (. string var = t.val; int lineNumber = t.line; List<Parameter> parameters = new List<Parameter>(); List<Stmt> bodyStmts = new List<Stmt>(); Stmt funcBody = Skip.Instance; .)
   '('
   [
-    Parameter<out Declaration param>          (. parameters.Add(param); .)
+    Parameter<out Parameter param>          (. parameters.Add(param); .)
     {
       ',' Parameter<out param>                (. parameters.Add(param); .)
     }

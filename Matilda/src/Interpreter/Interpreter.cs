@@ -25,15 +25,12 @@ public static class Interpreter
                 Console.WriteLine(value.ToString());
                 break;
 
+            case Parameter parameter:
+                envV.Bind(parameter.Identifier, null);
+                break;
+
             case Declaration declaration:
-                if (declaration.Expression == null)
-                {
-                    envV.Bind(declaration.Identifier, null);
-                }
-                else
-                {
-                    envV.Bind(declaration.Identifier, EvalExpr(declaration.Expression, envV, envP));
-                }
+                envV.Bind(declaration.Identifier, EvalExpr(declaration.Expression, envV, envP));
                 break;
 
             case Assign assign:
