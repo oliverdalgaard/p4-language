@@ -1,5 +1,4 @@
 using Matilda;
-
 namespace MatildaTests;
 
 [TestClass]
@@ -64,7 +63,7 @@ public class InterpreterEvalExprTests
     var result = Interpreter.EvalExpr(expr, new EnvV(), new EnvP());
 
     // Assert
-    Assert.IsInstanceOfType(result, typeof(IntVal));
+    Assert.IsInstanceOfType<IntVal>(result);
     Assert.AreEqual(11, result.AsInt());
   }
 
@@ -96,7 +95,7 @@ public class InterpreterEvalExprTests
 
     var result = Interpreter.EvalExpr(expr, new EnvV(), new EnvP());
 
-    Assert.IsInstanceOfType(result, typeof(IntVal));
+    Assert.IsInstanceOfType<IntVal>(result);
     Assert.AreEqual(26, result.AsInt());
   }
 
@@ -121,7 +120,7 @@ public class InterpreterEvalExprTests
 
     var result = Interpreter.EvalExpr(expr, new EnvV(), new EnvP());
 
-    Assert.IsInstanceOfType(result, typeof(FloatVal));
+    Assert.IsInstanceOfType<FloatVal>(result);
     Assert.AreEqual(11, result.AsFloat());
   }
 
@@ -146,7 +145,7 @@ public class InterpreterEvalExprTests
 
     var result = Interpreter.EvalExpr(expr, new EnvV(), new EnvP());
 
-    Assert.IsInstanceOfType(result, typeof(IntVal));
+    Assert.IsInstanceOfType<IntVal>(result);
     Assert.AreEqual(5, result.AsInt());
   }
 }
