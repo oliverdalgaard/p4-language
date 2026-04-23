@@ -88,6 +88,7 @@ Stmt<out Stmt stmt> =       (. stmt = Skip.Instance; .)
     | If<out stmt>
     | While <out stmt>
     | Return<out stmt>
+    | SchemaDeclaration<out stmt>
   )
 .
 
@@ -110,6 +111,25 @@ Assignment<out Stmt stmt> =
   '='                         (. int lineNumber = t.line; .)
   Expr<out Expr expr>         (. stmt = new Assign(var, expr, lineNumber); .)
   ';'
+.
+
+Column<out Column column> =
+  IDENT                       (. string id = t.val; .)
+  ':'
+  Type<out Type type>         (. column = new Column(id, type); .)
+.
+
+SchemaDeclaration<out Stmt stmt> =    (. List<Column> cols = new List<Column>(); int lineNumber = t.line; .)
+  "schema"
+  IDENT                               (. string ident = t.val; .)
+  '='
+  '{'
+  Column<out Column col>              (. cols.Add(col); .)
+  {
+    ','
+    Column<out col>                   (. cols.Add(col); .)
+  }
+  '}'                                 (. stmt = new SchemaDeclaration(ident, cols, lineNumber); .)
 .
 
 Parameter<out Parameter param> =
@@ -163,6 +183,7 @@ While <out Stmt stmt> =
   '{' Stmts<out Stmt body> '}'
                                     (. stmt = new While(condition, body, lineNumber); .)
 .
+
 Type<out Type type> (. type = null; .)
   =
   "int"             (. type = IntT.Instance; .)

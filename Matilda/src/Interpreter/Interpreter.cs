@@ -99,6 +99,7 @@ public static class Interpreter
                 }
 
             default:
+                Console.WriteLine(stmt);
                 throw new Exception("Not valid statement");
 
         }

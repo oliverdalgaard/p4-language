@@ -95,6 +95,23 @@ public class Assign : Stmt
     }
 }
 
+public class SchemaDeclaration : Stmt
+{
+    public string Identifier { get; }
+    public List<Column> Columns { get; }
+    
+    public override int LineNumber { get; }
+
+
+    public SchemaDeclaration(String identifier, List<Column> columns, int lineNumber)
+    {
+        Identifier = identifier;
+        Columns = columns;
+
+        LineNumber = lineNumber;
+    }
+}
+
 public class FunctionDeclaration : Stmt
 {
     public Type Type { get; }
