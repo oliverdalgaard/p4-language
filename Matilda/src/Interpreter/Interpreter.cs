@@ -9,7 +9,6 @@ public static class Interpreter
         switch (stmt)
         {
             case Skip:
-                Console.WriteLine("Skipped");
                 break;
 
             case Comp comp:
@@ -46,24 +45,24 @@ public static class Interpreter
                 break;
 
             case If ifStmt:
-                EnvV ifLocalScope = envV.NewScope();
+                /* EnvV ifLocalScope = envV.NewScope(); */
 
                 bool runElse = true;
 
-                Val condition = EvalExpr(ifStmt.Condition, ifLocalScope, envP);
+                Val condition = EvalExpr(ifStmt.Condition, envV, envP);
                 if (condition.AsBool())
                 {
                     runElse = false;
-                    EvalStmt(ifStmt.ThenBody, ifLocalScope, envP);
+                    EvalStmt(ifStmt.ThenBody, envV, envP);
                 }
                 else if (ifStmt.ElseIfStmts.Any())
                 {
                     foreach (If elseIfStmt in ifStmt.ElseIfStmts)
                     {
-                        Val elseIfStmtCondition = EvalExpr(elseIfStmt.Condition, ifLocalScope, envP);
+                        Val elseIfStmtCondition = EvalExpr(elseIfStmt.Condition, envV, envP);
                         if (elseIfStmtCondition.AsBool())
                         {
-                            EvalStmt(elseIfStmt.ThenBody, ifLocalScope, envP);
+                            EvalStmt(elseIfStmt.ThenBody, envV, envP);
                             runElse = false;
                             break;
                         }
@@ -72,13 +71,13 @@ public static class Interpreter
 
                 if (runElse)
                 {
-                    EvalStmt(ifStmt.ElseBody, ifLocalScope, envP);
+                    EvalStmt(ifStmt.ElseBody, envV, envP);
                 }
 
-                if (ifLocalScope.TryGet("return") != null)
+                /* if (ifLocalScope.TryGet("return") != null)
                 {
-                    envV.Bind("return", ifLocalScope.TryGet("return"));
-                }
+                    envV.Bind("return", envV.TryGet("return"));
+                } */
 
                 break;
 
