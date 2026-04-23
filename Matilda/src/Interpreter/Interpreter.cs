@@ -37,6 +37,10 @@ public static class Interpreter
                 envV.Set(assign.Identifier, EvalExpr(assign.Value, envV, envP));
                 break;
 
+            case SchemaDeclaration schemaDeclaration:
+                Console.WriteLine(schemaDeclaration);
+                break;
+
             case FunctionDeclaration functionDeclaration:
                 envP.Bind(functionDeclaration);
                 break;
