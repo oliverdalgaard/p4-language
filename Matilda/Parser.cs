@@ -187,7 +187,7 @@ public Stmt mainNode = null;
 		Expect(7);
 		int lineNumber = t.line; 
 		Expr(out Expr expr);
-		stmt = new Declaration(type, var, t.line, expr); 
+		stmt = new Declaration(type, var, expr, t.line); 
 		Expect(6);
 	}
 

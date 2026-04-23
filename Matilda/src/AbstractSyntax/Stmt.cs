@@ -69,7 +69,7 @@ public class Declaration : Stmt
 
     public override int LineNumber { get; }
 
-    public Declaration(Type type, string identifier, int lineNumber, Expr expression = null)
+    public Declaration(Type type, string identifier, Expr expression, int lineNumber)
     {
         Type = type;
         Identifier = identifier;

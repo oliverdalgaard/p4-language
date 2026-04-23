@@ -101,7 +101,7 @@ Declaration<out Stmt stmt> =
   Type<out Type type>
   IDENT                       (. string var = t.val; .)
   '='                         (. int lineNumber = t.line; .)
-  Expr<out Expr expr>         (. stmt = new Declaration(type, var, t.line, expr); .)
+  Expr<out Expr expr>         (. stmt = new Declaration(type, var, expr, t.line); .)
   ';'
 .
 
