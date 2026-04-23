@@ -6,6 +6,8 @@ namespace Matilda
     {
         public List<string> errors = new List<string>();
         private Dictionary<string, Type> env = new Dictionary<string, Type>();
+        private Type currentFunctionReturnType = null;
+        private Dictionary<string, FunctionDeclaration> functions = new Dictionary<string, FunctionDeclaration>();
 
         public bool HasErrors()
         {
@@ -101,10 +103,15 @@ namespace Matilda
 
                     if (env.ContainsKey(declaration.Identifier))
                     {
-                        errors.Add($"Line {declaration.LineNumber} varibale '{declaration.Identifier}' is already declared.");
+                        errors.Add($"Line {declaration.LineNumber} :varibale '{declaration.Identifier}' is already declared.");
                         break;
                     }
 
+                    if (declaration.Type != ExprT(declaration.Expression))
+                    {
+                        errors.Add($"Line {declaration.LineNumber} :declaration type does not match the type of the expression.");
+                        break;
+                    }
                     env[declaration.Identifier] = declaration.Type;
                     break;
 
@@ -130,24 +137,32 @@ namespace Matilda
                     break;
 
                 case FunctionDeclaration f:
+
                     if (f.Identifier == null || f.Type == null)
                     {
                         errors.Add($"Line {f.LineNumber} invalid declaration.");
                         break;
                     }
 
-                    if (env.ContainsKey(f.Identifier))
+                    if (functions.ContainsKey(f.Identifier))
                     {
                         errors.Add($"Line {f.LineNumber}: Function '{f.Identifier}' already declared.");
                         break;
                     }
 
+                    // register function
+                    functions[f.Identifier] = f;
+
+                    // save env 
+                    var oldEnv = new Dictionary<string, Type>(env);
+
+                    // track return type
+                    Type prevReturn = currentFunctionReturnType;
+                    currentFunctionReturnType = f.Type;
+
                     //param 
-                    List<Type> paramTypes = new List<Type>();
                     foreach (var param in f.Parameters)
                     {
-                        paramTypes.Add(param.Type);
-
                         if (env.ContainsKey(param.Identifier))
                         {
                             errors.Add($"Line {param.LineNumber}: Duplicate parameter '{param.Identifier}'.");
@@ -158,10 +173,44 @@ namespace Matilda
                         }
                     }
 
+                    bool haveReturn = false;
                     //body
                     foreach (var stmtInBody in f.Body)
                     {
+                        if (stmtInBody is Return)
+                        {
+                            haveReturn = true;
+                        }
                         StmtT(stmtInBody);
+                    }
+                    if (!haveReturn)
+                    {
+                        errors.Add($"Line {f.LineNumber}: missing return in function{f.Identifier}.");
+                    }
+                    // restore
+                    env = oldEnv;
+                    currentFunctionReturnType = prevReturn;
+                    break;
+
+                case Return r:
+                    if (r.Value == null)
+                    {
+                        errors.Add($"Line {r.LineNumber}: 'return' needs a value.");
+                        break;
+                    }
+                    Type currentType = ExprT(r.Value);
+
+                    if (currentFunctionReturnType != null)
+                    {
+                        // inside function
+                        if (currentType != currentFunctionReturnType)
+                        {
+                            errors.Add($"Line {r.LineNumber}: Return type '{currentType}' does not match function return type '{currentFunctionReturnType}'.");
+                        }
+                    }
+                    else
+                    {
+                        errors.Add($"Line {r.LineNumber} : Return outside of a function is not allowed.");
                     }
                     break;
 
@@ -422,7 +471,7 @@ namespace Matilda
                     if (!env.ContainsKey(r.Name))
                     {
                         errors.Add($"Line {r.LineNumber}: variable {r.Name} is not declared.");
-                        return IntT.Instance;
+                        return null;
                     }
                     return env[r.Name];
 
