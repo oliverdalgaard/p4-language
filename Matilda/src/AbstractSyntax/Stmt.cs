@@ -44,16 +44,32 @@ public class Comp : Stmt
     }
 }
 
+public class Parameter : Stmt
+{
+    public Type Type { get; }
+    public string Identifier { get; }
+
+    public override int LineNumber { get; }
+
+    public Parameter(Type type, string identifier, int lineNumber)
+    {
+        Type = type;
+        Identifier = identifier;
+
+        LineNumber = lineNumber;
+    }
+}
+
 public class Declaration : Stmt
 {
     public Type Type { get; }
     public string Identifier { get; }
 
-    public Expr? Expression { get; }
+    public Expr Expression { get; }
 
     public override int LineNumber { get; }
 
-    public Declaration(Type type, string identifier, int lineNumber, Expr? expression = null)
+    public Declaration(Type type, string identifier, Expr expression, int lineNumber)
     {
         Type = type;
         Identifier = identifier;
@@ -83,12 +99,12 @@ public class FunctionDeclaration : Stmt
 {
     public Type Type { get; }
     public string Identifier { get; }
-    public List<Declaration> Parameters { get; }
+    public List<Parameter> Parameters { get; }
     public List<Stmt> Body { get; }
 
     public override int LineNumber { get; }
 
-    public FunctionDeclaration(Type type, string identifier, List<Declaration> parameters, List<Stmt> body, int lineNumber)
+    public FunctionDeclaration(Type type, string identifier, List<Parameter> parameters, List<Stmt> body, int lineNumber)
     {
         Type = type;
         Identifier = identifier;

@@ -187,7 +187,7 @@ public Stmt mainNode = null;
 		Expect(7);
 		int lineNumber = t.line; 
 		Expr(out Expr expr);
-		stmt = new Declaration(type, var, t.line, expr); 
+		stmt = new Declaration(type, var, expr, t.line); 
 		Expect(6);
 	}
 
@@ -205,10 +205,10 @@ public Stmt mainNode = null;
 		Expect(8);
 		Type(out Type type);
 		Expect(1);
-		string var = t.val; int lineNumber = t.line; List<Declaration> parameters = new List<Declaration>(); List<Stmt> bodyStmts = new List<Stmt>(); Stmt funcBody = Skip.Instance; 
+		string var = t.val; int lineNumber = t.line; List<Parameter> parameters = new List<Parameter>(); List<Stmt> bodyStmts = new List<Stmt>(); Stmt funcBody = Skip.Instance; 
 		Expect(9);
 		if (StartOf(2)) {
-			Parameter(out Declaration param);
+			Parameter(out Parameter param);
 			parameters.Add(param); 
 			while (la.kind == 10) {
 				Get();
@@ -317,10 +317,10 @@ public Stmt mainNode = null;
 		} else SynErr(37);
 	}
 
-	void Parameter(out Declaration param) {
+	void Parameter(out Parameter param) {
 		Type(out Type type);
 		Expect(1);
-		param = new Declaration(type, t.val, t.line); 
+		param = new Parameter(type, t.val, t.line); 
 	}
 
 	void EqExpr(out Expr expr) {
