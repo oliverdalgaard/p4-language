@@ -21,11 +21,10 @@ public class ParserTests
     [TestMethod]
     public void ParsePrintLiteralReturnsPrintNode()
     {
-        Stmt ast = Parse("print 5;");
+        Stmt ast = Parse("../../../Parser/ast1Test.matilda");
 
         Assert.IsInstanceOfType<Print>(ast);
         
-        // Safe cast of ast to Print stmt
         var print = (Print)ast;
         Assert.IsInstanceOfType<IntV>(print.Value);
 
