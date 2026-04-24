@@ -501,7 +501,7 @@ public Stmt mainNode = null;
 			lineNumber = t.line; 
 			Expect(17);
 			Expect(4);
-			expr = new Read(t.val, lineNumber); 
+			expr = new Read(t.val.Substring(1, t.val.Length - 2), lineNumber); 
 			Expect(18);
 			break;
 		}
