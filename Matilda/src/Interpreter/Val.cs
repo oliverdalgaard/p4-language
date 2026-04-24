@@ -17,6 +17,11 @@ public abstract class Val
         throw new Exception("Value is not a bool");
     }
 
+    public virtual List<string[]> AsRow()
+    {
+        throw new Exception("Value is not a row");
+    }
+
     public virtual Table AsTable()
     {
         throw new Exception("Value is not a table");
@@ -95,6 +100,21 @@ public class StringVal : Val
     public override string ToString()
     {
         return S;
+    }
+}
+
+public class RowVal : Val
+{
+    public List<string[]> R { get; }
+
+    public RowVal(List<string[]> r)
+    {
+        R = r;
+    }
+
+    public override List<string[]> AsRow()
+    {
+        return R;
     }
 }
 
