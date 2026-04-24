@@ -17,6 +17,9 @@ public class Table
         Identifier = identifier;
         Schema = schema;
         File = file;
+
+        Headers = new List<TableHeader>();
+        Records = new List<TableRecord>();
     }
 
     public void ParseTypes()
@@ -35,24 +38,29 @@ public class Table
         {
             List<Val> tableRecordVals = new List<Val>();
 
-            foreach (string item in File[i])
+            for (int j = 0; j < File[i].Count(); j++)
             {
-                switch (Headers[i].Type)
+                if (Schema.Count != File[i].Count())
+                {
+                    throw new Exception("Row does not match schema");
+                }
+
+                switch (Headers[j].Type)
                 {
                     case IntT:
-                        tableRecordVals.Add(new IntVal(Int32.Parse(item)));
+                        tableRecordVals.Add(new IntVal(Int32.Parse(File[i][j])));
                         break;
 
                     case FloatT:
-                        tableRecordVals.Add(new FloatVal(float.Parse(item, new CultureInfo("en", false))));
+                        tableRecordVals.Add(new FloatVal(float.Parse(File[i][j], new CultureInfo("en", false))));
                         break;
 
                     case BoolT:
-                        tableRecordVals.Add(new BoolVal(bool.Parse(item)));
+                        tableRecordVals.Add(new BoolVal(bool.Parse(File[i][j])));
                         break;
 
                     case StringT:
-                        tableRecordVals.Add(new StringVal(item));
+                        tableRecordVals.Add(new StringVal(File[i][j]));
                         break;
 
                     default:

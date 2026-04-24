@@ -1,8 +1,9 @@
 schema Customers = {
     customer_id : int,
-    name : string
+    name : string,
+    hej : bool
 }
 
-Table<Customers> CustomersTable = read("test.csv");
+table<Customers> CustomersTable = read("test.csv");
 
 print CustomersTable;

@@ -114,21 +114,24 @@ public class TableVal : Val
 
     public override string ToString()
     {
+
+        int padding = 0;
+
         string returnString = "| ";
 
         foreach (TableHeader thead in T.Headers)
         {
-            returnString += thead.Identifier + " |";
+            returnString += thead.Identifier.PadRight(padding) + " | ";
         }
 
         returnString += "\n";
 
-        foreach (TableRecord tRecord in T.Records)
+        for (int i = 0; i < T.Records.Count; i++)
         {
             returnString += "| ";
-            foreach (Val value in tRecord.Values)
+            for (int j = 0; j < T.Records[i].Values.Count; j++)
             {
-                returnString += value.ToString() + " |";
+                returnString += T.Records[i].Values[j].ToString().PadRight(padding) + " | ";
             }
             returnString += "\n";
         }

@@ -1,6 +1,6 @@
-customer_id,name
-1,Alice
-2,Bob
-3,Charlie
-4,Diana
-5,Eve
+customer_id,name,bool
+1,Alice,true
+2,Bob,True
+3,Charlie,False
+4,Diana,false
+5,Eve,true
