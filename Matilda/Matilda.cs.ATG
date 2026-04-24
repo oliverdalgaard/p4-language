@@ -288,6 +288,12 @@ Term<out Expr expr>               (. expr = null; .) =
   | "false"                       (. expr = new BoolV(false, t.line); .)
   | STRING                        (. expr = new StringV(t.val, t.line); .)
   | '(' Expr<out expr> ')'
+  | "FILTER"                      (. int lineNumber = t.line; .)
+    '('
+    Expr<out Expr tableExpr> 
+    ','
+    Expr<out Expr predicate>
+    ')'                           (. expr = new FilterExpr(tableExpr, predicate, lineNumber); .)
 .
 
 END Matilda.
