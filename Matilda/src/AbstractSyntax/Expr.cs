@@ -155,3 +155,16 @@ public enum BinaryOperators
 {
     ADD, SUB, MUL, DIV, LT, EQ, NEQ, AND, OR
 }
+
+public class FilterExpr : Expr
+{
+    public Expr TableExpr { get; }
+    public Expr Predicate { get;}
+    public override int LineNumber { get; }
+
+    public FilterExpr(Expr tableExpr, Expr predicate)
+    {
+        TableExpr = tableExpr;
+        Predicate = predicate;
+    }
+}
