@@ -1,4 +1,4 @@
-customer_id,name,bool
+customer_id,name,hej
 1,Alice,true
 2,Bob,True
 3,Charlie,False

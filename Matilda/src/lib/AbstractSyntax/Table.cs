@@ -31,6 +31,10 @@ public class Table
 
         for (int i = 0; i < Schema.Count; i++)
         {
+            if (File[0][i] != Schema[i].Id)
+            {
+                throw new Exception("Headers in file does not match schema");
+            }
             Headers.Add(new TableHeader(File[0][i], Schema[i].Type));
         }
 
