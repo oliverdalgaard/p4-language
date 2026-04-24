@@ -40,7 +40,7 @@ class TypeChecker
 
                     if (condT != BoolT.Instance)
                     {
-                        errors.Add($"Line {ifStmt.LineNumber} If statement requires a condition with type 'bool', but got '{condT}'.");
+                        errors.Add($"Line {ifStmt.LineNumber}: If statement requires a condition with type 'bool', but got '{condT}'.");
                     }
                 }
                 //then, elseif, else branch
@@ -70,13 +70,13 @@ class TypeChecker
                 // check for null 
                 if (assign.Identifier == null || assign.Value == null)
                 {
-                    errors.Add($"Line {assign.LineNumber} invalid assignment");
+                    errors.Add($"Line {assign.LineNumber}: invalid assignment");
                     break;
                 }
                 // check delclaration 
                 if (!env.ContainsKey(assign.Identifier))
                 {
-                    errors.Add($"Line {assign.LineNumber} varibale {assign.Identifier} is not declared.");
+                    errors.Add($"Line {assign.LineNumber}: varibale {assign.Identifier} is not declared.");
                 }
                 else
                 {
@@ -95,19 +95,19 @@ class TypeChecker
             case Declaration declaration:
                 if (declaration.Identifier == null || declaration.Type == null)
                 {
-                    errors.Add($"Line {declaration.LineNumber} invalid declaration.");
+                    errors.Add($"Line {declaration.LineNumber}: invalid declaration.");
                     break;
                 }
 
                 if (env.ContainsKey(declaration.Identifier))
                 {
-                    errors.Add($"Line {declaration.LineNumber} :varibale '{declaration.Identifier}' is already declared.");
+                    errors.Add($"Line {declaration.LineNumber}: varibale '{declaration.Identifier}' is already declared.");
                     break;
                 }
 
                 if (declaration.Type != ExprT(declaration.Expression))
                 {
-                    errors.Add($"Line {declaration.LineNumber} :declaration type does not match the type of the expression.");
+                    errors.Add($"Line {declaration.LineNumber}: declaration type does not match the type of the expression.");
                     break;
                 }
                 env[declaration.Identifier] = declaration.Type;
@@ -116,7 +116,7 @@ class TypeChecker
             case While whileStmt:
                 if (whileStmt.Condition == null)
                 {
-                    errors.Add($"Line {whileStmt.LineNumber} while statement need a valid condition.");
+                    errors.Add($"Line {whileStmt.LineNumber}: while statement need a valid condition.");
                 }
                 else
                 {
@@ -124,7 +124,7 @@ class TypeChecker
 
                     if (condT != BoolT.Instance)
                     {
-                        errors.Add($"Line {whileStmt.LineNumber} while statement requires a condition with type 'bool', but got '{condT}'.");
+                        errors.Add($"Line {whileStmt.LineNumber}: while statement requires a condition with type 'bool', but got '{condT}'.");
                     }
                 }
 
@@ -138,7 +138,7 @@ class TypeChecker
 
                 if (f.Identifier == null || f.Type == null)
                 {
-                    errors.Add($"Line {f.LineNumber} invalid declaration.");
+                    errors.Add($"Line {f.LineNumber}: invalid declaration.");
                     break;
                 }
 
@@ -208,7 +208,7 @@ class TypeChecker
                 }
                 else
                 {
-                    errors.Add($"Line {r.LineNumber} : Return outside of a function is not allowed.");
+                    errors.Add($"Line {r.LineNumber}: Return outside of a function is not allowed.");
                 }
                 break;
 
@@ -456,7 +456,7 @@ class TypeChecker
                         case UnaryOperators.NOT:
                             if (innertype != BoolT.Instance)
                             {
-                                errors.Add($"Line {unaryOp.LineNumber} Operator '!' expected a operand of type 'Boolean', but got '{innertype}'.");
+                                errors.Add($"Line {unaryOp.LineNumber}: Operator '!' expected a operand of type 'Boolean', but got '{innertype}'.");
                             }
                             return BoolT.Instance;
 
