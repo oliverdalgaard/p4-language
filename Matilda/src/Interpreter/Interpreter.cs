@@ -174,6 +174,13 @@ public static class Interpreter
 
                 return localScope.TryGet("return");
 
+            case FilterExpr filterExpr:
+                {
+                    Val tableVal = EvalExpr(filterExpr, envV, envP, envS);
+                    Table table = tableVal.AsTable();
+                }
+                break;
+
             case BinaryOp binaryOp:
                 Val v1 = EvalExpr(binaryOp.ExprLeft, envV, envP, envS);
                 Val v2 = EvalExpr(binaryOp.ExprRight, envV, envP, envS);
