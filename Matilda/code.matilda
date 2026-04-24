@@ -1,9 +1,13 @@
-int condition = 21;
-
-if(condition < 18) {
-    print "Too young to vote";
-} elseif(80 < condition) {
-    print "Too old to vote";
-} else {
-    print "Ready to vote";
+schema Customers = {
+    customer_id : int,
+    name : string,
+    hej : bool
 }
+
+table<Customers> CustomersTable = read("test.csv");
+
+print CustomersTable;
+
+table<Customers> filteredCustomersTable = FILTER(CustomersTable, customer_id < 4 && 2 < customer_id);
+
+print filteredCustomersTable;

@@ -15,7 +15,7 @@ public class Parser {
 	public const int _NUMBER = 2;
 	public const int _FLOAT = 3;
 	public const int _STRING = 4;
-	public const int maxT = 35;
+	public const int maxT = 41;
 
 	const bool _T = true;
 	const bool _x = false;
@@ -148,7 +148,7 @@ public Stmt mainNode = null;
 	void Stmt(out Stmt stmt) {
 		stmt = Skip.Instance; 
 		switch (la.kind) {
-		case 19: case 20: case 21: case 22: {
+		case 24: case 25: case 26: case 27: {
 			Declaration(out stmt);
 			break;
 		}
@@ -156,7 +156,7 @@ public Stmt mainNode = null;
 			Assignment(out stmt);
 			break;
 		}
-		case 8: {
+		case 16: {
 			FunctionDeclaration(out stmt);
 			break;
 		}
@@ -164,19 +164,27 @@ public Stmt mainNode = null;
 			Print(out stmt);
 			break;
 		}
-		case 15: {
+		case 20: {
 			If(out stmt);
 			break;
 		}
-		case 18: {
+		case 23: {
 			While(out stmt);
 			break;
 		}
-		case 14: {
+		case 19: {
 			Return(out stmt);
 			break;
 		}
-		default: SynErr(36); break;
+		case 9: {
+			SchemaDeclaration(out stmt);
+			break;
+		}
+		case 13: {
+			TableDeclaration(out stmt);
+			break;
+		}
+		default: SynErr(42); break;
 		}
 	}
 
@@ -202,29 +210,29 @@ public Stmt mainNode = null;
 	}
 
 	void FunctionDeclaration(out Stmt stmt) {
-		Expect(8);
+		Expect(16);
 		Type(out Type type);
 		Expect(1);
 		string var = t.val; int lineNumber = t.line; List<Parameter> parameters = new List<Parameter>(); List<Stmt> bodyStmts = new List<Stmt>(); Stmt funcBody = Skip.Instance; 
-		Expect(9);
+		Expect(17);
 		if (StartOf(2)) {
 			Parameter(out Parameter param);
 			parameters.Add(param); 
-			while (la.kind == 10) {
+			while (la.kind == 11) {
 				Get();
 				Parameter(out param);
 				parameters.Add(param); 
 			}
 		}
-		Expect(11);
-		Expect(12);
+		Expect(18);
+		Expect(10);
 		Stmt(out funcBody);
 		bodyStmts.Add(funcBody); 
 		while (StartOf(1)) {
 			Stmt(out funcBody);
 			bodyStmts.Add(funcBody); 
 		}
-		Expect(13);
+		Expect(12);
 		stmt = new FunctionDeclaration(type, var, parameters, bodyStmts, lineNumber); 
 	}
 
@@ -238,57 +246,89 @@ public Stmt mainNode = null;
 
 	void If(out Stmt stmt) {
 		Stmt elseStmt = Skip.Instance; List<If> elseIfStmts = new List<If>(); int lineNumber = -1; 
-		Expect(15);
+		Expect(20);
 		lineNumber = t.line; 
-		Expect(9);
+		Expect(17);
 		Expr(out Expr condition);
-		Expect(11);
-		Expect(12);
+		Expect(18);
+		Expect(10);
 		Stmts(out Stmt thenStmt);
-		Expect(13);
-		while (la.kind == 16) {
+		Expect(12);
+		while (la.kind == 21) {
 			Get();
-			Expect(9);
+			Expect(17);
 			Expr(out Expr elseIfCondition);
-			Expect(11);
-			Expect(12);
+			Expect(18);
+			Expect(10);
 			Stmts(out Stmt elseIfStmt);
-			Expect(13);
+			Expect(12);
 			elseIfStmts.Add(new If(elseIfCondition, elseIfStmt, null, Skip.Instance, lineNumber)); 
 		}
-		if (la.kind == 17) {
+		if (la.kind == 22) {
 			Get();
-			Expect(12);
+			Expect(10);
 			Stmts(out elseStmt);
-			Expect(13);
+			Expect(12);
 		}
 		stmt = new If(condition, thenStmt, elseIfStmts, elseStmt, lineNumber); 
 	}
 
 	void While(out Stmt stmt) {
-		Expect(18);
+		Expect(23);
 		int lineNumber = t.line; 
-		Expect(9);
+		Expect(17);
 		Expr(out Expr condition);
-		Expect(11);
-		Expect(12);
+		Expect(18);
+		Expect(10);
 		Stmts(out Stmt body);
-		Expect(13);
+		Expect(12);
 		stmt = new While(condition, body, lineNumber); 
 	}
 
 	void Return(out Stmt stmt) {
-		Expect(14);
+		Expect(19);
 		Expr(out Expr expr);
 		stmt = new Return(expr, t.line); 
 		Expect(6);
 	}
 
+	void SchemaDeclaration(out Stmt stmt) {
+		List<Column> cols = new List<Column>(); int lineNumber = t.line; 
+		Expect(9);
+		Expect(1);
+		string ident = t.val; 
+		Expect(7);
+		Expect(10);
+		Column(out Column col);
+		cols.Add(col); 
+		while (la.kind == 11) {
+			Get();
+			Column(out col);
+			cols.Add(col); 
+		}
+		Expect(12);
+		stmt = new SchemaDeclaration(ident, cols, lineNumber); 
+	}
+
+	void TableDeclaration(out Stmt stmt) {
+		Expect(13);
+		Expect(14);
+		Expect(1);
+		string schemaId = t.val; 
+		Expect(15);
+		Expect(1);
+		string var = t.val; int lineNumber = t.line; 
+		Expect(7);
+		Expr(out Expr expr);
+		Expect(6);
+		stmt = new TableDeclaration(var, schemaId, expr, lineNumber); 
+	}
+
 	void Expr(out Expr expr) {
 		BinaryOperators op = BinaryOperators.OR; int lineNumber = -1; 
 		EqExpr(out expr);
-		while (la.kind == 23 || la.kind == 24) {
-			if (la.kind == 23) {
+		while (la.kind == 28 || la.kind == 29) {
+			if (la.kind == 28) {
 				Get();
 				op = BinaryOperators.OR; lineNumber = t.line; 
 			} else {
@@ -302,19 +342,27 @@ public Stmt mainNode = null;
 
 	void Type(out Type type) {
 		type = null; 
-		if (la.kind == 19) {
+		if (la.kind == 24) {
 			Get();
 			type = IntT.Instance; 
-		} else if (la.kind == 20) {
+		} else if (la.kind == 25) {
 			Get();
 			type = FloatT.Instance; 
-		} else if (la.kind == 21) {
+		} else if (la.kind == 26) {
 			Get();
 			type = BoolT.Instance; 
-		} else if (la.kind == 22) {
+		} else if (la.kind == 27) {
 			Get();
 			type = StringT.Instance; 
-		} else SynErr(37);
+		} else SynErr(43);
+	}
+
+	void Column(out Column column) {
+		Expect(1);
+		string id = t.val; 
+		Expect(8);
+		Type(out Type type);
+		column = new Column(id, type); 
 	}
 
 	void Parameter(out Parameter param) {
@@ -326,8 +374,8 @@ public Stmt mainNode = null;
 	void EqExpr(out Expr expr) {
 		BinaryOperators op = BinaryOperators.EQ; int lineNumber = -1; 
 		RelExpr(out expr);
-		while (la.kind == 25 || la.kind == 26) {
-			if (la.kind == 25) {
+		while (la.kind == 30 || la.kind == 31) {
+			if (la.kind == 30) {
 				Get();
 				op = BinaryOperators.EQ; lineNumber = t.line; 
 			} else {
@@ -342,7 +390,7 @@ public Stmt mainNode = null;
 	void RelExpr(out Expr expr) {
 		BinaryOperators op = BinaryOperators.LT; int lineNumber = -1; 
 		PlusExpr(out expr);
-		while (la.kind == 27) {
+		while (la.kind == 14) {
 			Get();
 			lineNumber = t.line; 
 			PlusExpr(out Expr expr2);
@@ -353,8 +401,8 @@ public Stmt mainNode = null;
 	void PlusExpr(out Expr expr) {
 		BinaryOperators op = BinaryOperators.ADD; int lineNumber = -1; 
 		MulExpr(out expr);
-		while (la.kind == 28 || la.kind == 29) {
-			if (la.kind == 28) {
+		while (la.kind == 32 || la.kind == 33) {
+			if (la.kind == 32) {
 				Get();
 				op = BinaryOperators.ADD; lineNumber = t.line; 
 			} else {
@@ -369,8 +417,8 @@ public Stmt mainNode = null;
 	void MulExpr(out Expr expr) {
 		BinaryOperators op = BinaryOperators.MUL; int lineNumber = -1; 
 		UnaryExpr(out expr);
-		while (la.kind == 30 || la.kind == 31) {
-			if (la.kind == 30) {
+		while (la.kind == 34 || la.kind == 35) {
+			if (la.kind == 34) {
 				Get();
 				op = BinaryOperators.MUL; lineNumber = t.line; 
 			} else {
@@ -384,7 +432,7 @@ public Stmt mainNode = null;
 
 	void UnaryExpr(out Expr expr) {
 		List<char> unaries = new List<char>(); int lineNumber = -1; 
-		while (la.kind == 32) {
+		while (la.kind == 36) {
 			Get();
 			unaries.Add('!'); lineNumber = t.line; 
 		}
@@ -393,28 +441,28 @@ public Stmt mainNode = null;
 	}
 
 	void Term(out Expr expr) {
-		expr = null; 
+		expr = null; int lineNumber = -1; 
 		switch (la.kind) {
 		case 1: {
 			Get();
-			string name = t.val; int lineNumber = t.line; 
-			if (la.kind == 9) {
+			string name = t.val; lineNumber = t.line; 
+			if (la.kind == 17) {
 				Get();
 				List<Expr> arguments = new List<Expr>(); 
 				if (StartOf(3)) {
 					Expr(out Expr argument);
 					arguments.Add(argument); 
-					while (la.kind == 10) {
+					while (la.kind == 11) {
 						Get();
 						Expr(out argument);
 						arguments.Add(argument); 
 					}
 				}
-				Expect(11);
+				Expect(18);
 				expr = new FunctionRef(name, arguments, lineNumber); 
 			} else if (StartOf(4)) {
 				expr = new Ref(name, lineNumber); 
-			} else SynErr(38);
+			} else SynErr(44);
 			break;
 		}
 		case 2: {
@@ -427,12 +475,12 @@ public Stmt mainNode = null;
 			expr = new FloatV(float.Parse(t.val, new CultureInfo("en", false)), t.line); 
 			break;
 		}
-		case 33: {
+		case 37: {
 			Get();
 			expr = new BoolV(true, t.line); 
 			break;
 		}
-		case 34: {
+		case 38: {
 			Get();
 			expr = new BoolV(false, t.line); 
 			break;
@@ -442,13 +490,33 @@ public Stmt mainNode = null;
 			expr = new StringV(t.val.Substring(1, t.val.Length - 2), t.line); 
 			break;
 		}
-		case 9: {
+		case 17: {
 			Get();
 			Expr(out expr);
-			Expect(11);
+			Expect(18);
 			break;
 		}
-		default: SynErr(39); break;
+		case 39: {
+			Get();
+			lineNumber = t.line; 
+			Expect(17);
+			Expect(4);
+			expr = new Read(t.val, lineNumber); 
+			Expect(18);
+			break;
+		}
+		case 40: {
+			Get();
+			lineNumber = t.line; 
+			Expect(17);
+			Expr(out Expr tableExpr);
+			Expect(11);
+			Expr(out Expr predicate);
+			Expect(18);
+			expr = new FilterExpr(tableExpr, predicate, lineNumber); 
+			break;
+		}
+		default: SynErr(45); break;
 		}
 	}
 
@@ -464,11 +532,11 @@ public Stmt mainNode = null;
 	}
 	
 	static readonly bool[,] set = {
-		{_T,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x},
-		{_x,_T,_x,_x, _x,_T,_x,_x, _T,_x,_x,_x, _x,_x,_T,_T, _x,_x,_T,_T, _T,_T,_T,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x},
-		{_x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_T, _T,_T,_T,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x},
-		{_x,_T,_T,_T, _T,_x,_x,_x, _x,_T,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _T,_T,_T,_x, _x},
-		{_x,_x,_x,_x, _x,_x,_T,_x, _x,_x,_T,_T, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_T, _T,_T,_T,_T, _T,_T,_T,_T, _x,_x,_x,_x, _x}
+		{_T,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x},
+		{_x,_T,_x,_x, _x,_T,_x,_x, _x,_T,_x,_x, _x,_T,_x,_x, _T,_x,_x,_T, _T,_x,_x,_T, _T,_T,_T,_T, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x},
+		{_x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _T,_T,_T,_T, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x},
+		{_x,_T,_T,_T, _T,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_T,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _T,_T,_T,_T, _T,_x,_x},
+		{_x,_x,_x,_x, _x,_x,_T,_x, _x,_x,_x,_T, _x,_x,_T,_x, _x,_x,_T,_x, _x,_x,_x,_x, _x,_x,_x,_x, _T,_T,_T,_T, _T,_T,_T,_T, _x,_x,_x,_x, _x,_x,_x}
 
 	};
 } // end Parser
@@ -490,38 +558,44 @@ public class Errors {
 			case 5: s = "\"print\" expected"; break;
 			case 6: s = "\";\" expected"; break;
 			case 7: s = "\"=\" expected"; break;
-			case 8: s = "\"function\" expected"; break;
-			case 9: s = "\"(\" expected"; break;
-			case 10: s = "\",\" expected"; break;
-			case 11: s = "\")\" expected"; break;
-			case 12: s = "\"{\" expected"; break;
-			case 13: s = "\"}\" expected"; break;
-			case 14: s = "\"return\" expected"; break;
-			case 15: s = "\"if\" expected"; break;
-			case 16: s = "\"elseif\" expected"; break;
-			case 17: s = "\"else\" expected"; break;
-			case 18: s = "\"while\" expected"; break;
-			case 19: s = "\"int\" expected"; break;
-			case 20: s = "\"float\" expected"; break;
-			case 21: s = "\"bool\" expected"; break;
-			case 22: s = "\"string\" expected"; break;
-			case 23: s = "\"||\" expected"; break;
-			case 24: s = "\"&&\" expected"; break;
-			case 25: s = "\"==\" expected"; break;
-			case 26: s = "\"!=\" expected"; break;
-			case 27: s = "\"<\" expected"; break;
-			case 28: s = "\"+\" expected"; break;
-			case 29: s = "\"-\" expected"; break;
-			case 30: s = "\"*\" expected"; break;
-			case 31: s = "\"/\" expected"; break;
-			case 32: s = "\"!\" expected"; break;
-			case 33: s = "\"true\" expected"; break;
-			case 34: s = "\"false\" expected"; break;
-			case 35: s = "??? expected"; break;
-			case 36: s = "invalid Stmt"; break;
-			case 37: s = "invalid Type"; break;
-			case 38: s = "invalid Term"; break;
-			case 39: s = "invalid Term"; break;
+			case 8: s = "\":\" expected"; break;
+			case 9: s = "\"schema\" expected"; break;
+			case 10: s = "\"{\" expected"; break;
+			case 11: s = "\",\" expected"; break;
+			case 12: s = "\"}\" expected"; break;
+			case 13: s = "\"table\" expected"; break;
+			case 14: s = "\"<\" expected"; break;
+			case 15: s = "\">\" expected"; break;
+			case 16: s = "\"function\" expected"; break;
+			case 17: s = "\"(\" expected"; break;
+			case 18: s = "\")\" expected"; break;
+			case 19: s = "\"return\" expected"; break;
+			case 20: s = "\"if\" expected"; break;
+			case 21: s = "\"elseif\" expected"; break;
+			case 22: s = "\"else\" expected"; break;
+			case 23: s = "\"while\" expected"; break;
+			case 24: s = "\"int\" expected"; break;
+			case 25: s = "\"float\" expected"; break;
+			case 26: s = "\"bool\" expected"; break;
+			case 27: s = "\"string\" expected"; break;
+			case 28: s = "\"||\" expected"; break;
+			case 29: s = "\"&&\" expected"; break;
+			case 30: s = "\"==\" expected"; break;
+			case 31: s = "\"!=\" expected"; break;
+			case 32: s = "\"+\" expected"; break;
+			case 33: s = "\"-\" expected"; break;
+			case 34: s = "\"*\" expected"; break;
+			case 35: s = "\"/\" expected"; break;
+			case 36: s = "\"!\" expected"; break;
+			case 37: s = "\"true\" expected"; break;
+			case 38: s = "\"false\" expected"; break;
+			case 39: s = "\"read\" expected"; break;
+			case 40: s = "\"FILTER\" expected"; break;
+			case 41: s = "??? expected"; break;
+			case 42: s = "invalid Stmt"; break;
+			case 43: s = "invalid Type"; break;
+			case 44: s = "invalid Term"; break;
+			case 45: s = "invalid Term"; break;
 
 			default: s = "error " + n; break;
 		}

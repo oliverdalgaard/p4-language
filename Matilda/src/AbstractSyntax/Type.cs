@@ -1,3 +1,5 @@
+using System.Data.Common;
+
 namespace Matilda;
 
 public abstract class Type
@@ -31,4 +33,18 @@ public sealed class StringT : Type
     public static readonly StringT Instance = new StringT();
 
     public StringT() { }
+}
+
+public sealed class SchemaT : Type
+{
+    public static readonly SchemaT Instance = new SchemaT();
+
+    public SchemaT() { }
+}
+
+public sealed class TableT : Type
+{
+    public static readonly TableT Instance = new TableT();
+
+    public TableT() { }
 }
