@@ -112,6 +112,25 @@ public class SchemaDeclaration : Stmt
     }
 }
 
+public class TableDeclaration : Stmt
+{
+    public string Identifier { get; }
+    public string SchemaId { get; }
+    public Expr Expr { get; }
+
+    public override int LineNumber { get; }
+
+
+    public TableDeclaration(string identifier, string schemaId, Expr expr, int lineNumber)
+    {
+        Identifier = identifier;
+        SchemaId = schemaId;
+        Expr = expr;
+
+        LineNumber = lineNumber;
+    }
+}
+
 public class FunctionDeclaration : Stmt
 {
     public Type Type { get; }
@@ -155,7 +174,7 @@ public class Print : Stmt
 
     public Print(Expr value, int lineNumber)
     {
-        this.Value = value;
+        Value = value;
 
         LineNumber = lineNumber;
     }

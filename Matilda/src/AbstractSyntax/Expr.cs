@@ -53,6 +53,26 @@ public class Ref : Expr
     }
 }
 
+public class Read : Expr
+{
+    public string FilePath { get; }
+    public string TableId { get; }
+    public string SchemaId { get; }
+
+    public override int LineNumber { get; }
+
+    public Read(string filePath, string tableId, string schemaId, int lineNumber)
+    {
+        FilePath = filePath;
+        TableId = tableId;
+        SchemaId = schemaId;
+
+        LineNumber = lineNumber;
+    }
+}
+
+// public class TableRef
+
 public class FunctionRef : Expr
 {
     public string Name { get; }

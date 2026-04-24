@@ -1,4 +1,8 @@
-schema Hej = {
-    Test : int,
-    hej : float
+schema Customers = {
+    customer_id : int,
+    name : string
 }
+
+Table<Customers> CustomersTable = read("test.csv");
+
+print CustomersTable;

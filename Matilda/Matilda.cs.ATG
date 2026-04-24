@@ -89,6 +89,7 @@ Stmt<out Stmt stmt> =       (. stmt = Skip.Instance; .)
     | While <out stmt>
     | Return<out stmt>
     | SchemaDeclaration<out stmt>
+    | TableDeclaration<out stmt>
   )
 .
 
@@ -132,15 +133,18 @@ SchemaDeclaration<out Stmt stmt> =    (. List<Column> cols = new List<Column>();
   '}'                                 (. stmt = new SchemaDeclaration(ident, cols, lineNumber); .)
 .
 
-TableDeclaration<out Stmt stmt> =     (.  .)
+TableDeclaration<out Stmt stmt> =
   "table"
   '<'
-  IDENT
+  IDENT                               (. string schemaId = t.val; .)
   '>'
-  IDENT
+  IDENT                               (. string var = t.val; int lineNumber = t.line; .)
   '='
-  Expr<out Expr expr>
-  ';'
+  "read"
+  '('
+  STRING                              (. Expr expr = new Read(t.val, var, schemaId, lineNumber); .)
+  ')'
+  ';'                                 (. stmt = new TableDeclaration(var, schemaId, expr, lineNumber); .)
 .
 
 Parameter<out Parameter param> =
@@ -266,7 +270,7 @@ UnaryExpr<out Expr expr>  (. List<char> unaries = new List<char>(); int lineNumb
 
 
 Term<out Expr expr>               (. expr = null; .) =
-  IDENT                           (. string name = t.val; int lineNumber = t.line; .)     // Either IDENT is a function reference or a variable reference
+  IDENT                           (. string name = t.val; int lineNumber = t.line; .)     // Either IDENT is a function reference or a variable/table reference
   (
     '('                           (. List<Expr> arguments = new List<Expr>(); .)
     [

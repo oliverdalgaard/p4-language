@@ -1,4 +1,4 @@
-using System.Runtime.InteropServices;
+using Microsoft.VisualBasic.FileIO;
 
 namespace Matilda;
 
@@ -39,6 +39,16 @@ public static class Interpreter
 
             case SchemaDeclaration schemaDeclaration:
                 envS.Bind(schemaDeclaration.Identifier, schemaDeclaration.Columns);
+                break;
+
+            case TableDeclaration tableDeclaration:
+                Val t = EvalExpr(tableDeclaration.Expr, envV, envP, envS);
+
+                Table table = t.AsTable();
+                table.ParseTypes();
+                TableVal parsedTable = new TableVal(table);
+
+                envV.Bind(tableDeclaration.Identifier, parsedTable);
                 break;
 
             case FunctionDeclaration functionDeclaration:
@@ -88,16 +98,9 @@ public static class Interpreter
 
             case While whileStmt:
                 {
-                    EnvV whileLocalScope = envV.NewScope();
-
-                    while (EvalExpr(whileStmt.Condition, whileLocalScope, envP, envS).AsBool())
+                    while (EvalExpr(whileStmt.Condition, envV, envP, envS).AsBool())
                     {
-                        EvalStmt(whileStmt.Body, whileLocalScope, envP, envS);
-                        if (whileLocalScope.TryGet("return") != null)
-                        {
-                            envV.Bind("return", whileLocalScope.TryGet("return"));
-                            break;
-                        }
+                        EvalStmt(whileStmt.Body, envV, envP, envS);
                     }
                     break;
                 }
@@ -126,6 +129,20 @@ public static class Interpreter
 
             case Ref reference:
                 return envV.TryGet(reference.Name);
+
+            case Read read:
+                List<string[]> rows = new List<string[]>();
+
+                using (TextFieldParser textFieldParser = new TextFieldParser(read.FilePath))
+                {
+                    textFieldParser.TextFieldType = FieldType.Delimited;
+                    textFieldParser.SetDelimiters(",");
+                    while (!textFieldParser.EndOfData)
+                    {
+                        rows.Add(textFieldParser.ReadFields());
+                    }
+                }
+                return new TableVal(new Table(read.TableId, envS.TryGet(read.SchemaId), rows));
 
             case FunctionRef functionRef:
                 FunctionDeclaration function = envP.TryGet(functionRef.Name);

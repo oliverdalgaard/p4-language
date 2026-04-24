@@ -16,6 +16,11 @@ public abstract class Val
     {
         throw new Exception("Value is not a bool");
     }
+
+    public virtual Table AsTable()
+    {
+        throw new Exception("Value is not a table");
+    }
 }
 
 public class IntVal : Val
@@ -90,5 +95,44 @@ public class StringVal : Val
     public override string ToString()
     {
         return S;
+    }
+}
+
+public class TableVal : Val
+{
+    public Table T { get; }
+
+    public TableVal(Table t)
+    {
+        T = t;
+    }
+
+    public override Table AsTable()
+    {
+        return T;
+    }
+
+    public override string ToString()
+    {
+        string returnString = "| ";
+
+        foreach (TableHeader thead in T.Headers)
+        {
+            returnString += thead.Identifier + " |";
+        }
+
+        returnString += "\n";
+
+        foreach (TableRecord tRecord in T.Records)
+        {
+            returnString += "| ";
+            foreach (Val value in tRecord.Values)
+            {
+                returnString += value.ToString() + " |";
+            }
+            returnString += "\n";
+        }
+
+        return returnString;
     }
 }
