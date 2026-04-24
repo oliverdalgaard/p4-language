@@ -60,6 +60,11 @@ public class ParserTests
         Assert.IsInstanceOfType<Comp>(ast);
         Assert.IsInstanceOfType<Declaration>(declarationStatement);
         Assert.IsInstanceOfType<If>(ifStatement);
+        Assert.IsInstanceOfType<Print>(ifStatement.ThenBody);
+
+        // Check stms inside ifelse and else body
+        Assert.IsInstanceOfType<Print>(ifStatement.ElseIfStmts![0].ThenBody);
+        Assert.IsInstanceOfType<Print>(ifStatement.ElseBody);
     }
 
     [TestMethod]
