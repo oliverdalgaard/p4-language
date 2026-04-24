@@ -1,4 +1,5 @@
 using Matilda;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 namespace MatildaTests;
 
 [TestClass]
@@ -145,4 +146,16 @@ public class ParserTests
         Assert.IsInstanceOfType(subLeft.ExprRight, typeof(IntV));
     }
 
+
+    // Parser must give an error on invalid syntax error
+    [TestMethod]
+    public void ParseInvalidSyntaxHasErrors()
+    {
+        var scanner = new Scanner("../../../Parser/TestMatildaScripts/InvalidSyntaxHasErrors.matilda");
+        var parser = new Parser(scanner);
+
+        parser.Parse();
+
+        Assert.IsTrue(parser.hasErrors());
+    }
 }
