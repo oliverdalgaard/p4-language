@@ -16,6 +16,16 @@ public abstract class Val
     {
         throw new Exception("Value is not a bool");
     }
+
+    public virtual List<string[]> AsRow()
+    {
+        throw new Exception("Value is not a row");
+    }
+
+    public virtual Table AsTable()
+    {
+        throw new Exception("Value is not a table");
+    }
 }
 
 public class IntVal : Val
@@ -90,5 +100,81 @@ public class StringVal : Val
     public override string ToString()
     {
         return S;
+    }
+}
+
+public class RowVal : Val
+{
+    public List<string[]> R { get; }
+
+    public RowVal(List<string[]> r)
+    {
+        R = r;
+    }
+
+    public override List<string[]> AsRow()
+    {
+        return R;
+    }
+}
+
+public class TableVal : Val
+{
+    public Table T { get; }
+
+    public TableVal(Table t)
+    {
+        T = t;
+    }
+
+    public override Table AsTable()
+    {
+        return T;
+    }
+
+    public override string ToString()
+    {
+
+        int padding = 0;
+
+        foreach (TableHeader thead in T.Headers)
+        {
+            if (thead.Identifier.Length > padding)
+            {
+                padding = thead.Identifier.Length;
+            }
+        }
+
+        foreach (TableRecord tRecord in T.Records)
+        {
+            foreach (Val value in tRecord.Values)
+            {
+                if (value.ToString().Length > padding)
+                {
+                    padding = value.ToString().Length;
+                }
+            }
+        }
+
+        string returnString = "| ";
+
+        foreach (TableHeader thead in T.Headers)
+        {
+            returnString += thead.Identifier.PadRight(padding) + " | ";
+        }
+
+        returnString += "\n";
+
+        for (int i = 0; i < T.Records.Count; i++)
+        {
+            returnString += "| ";
+            for (int j = 0; j < T.Records[i].Values.Count; j++)
+            {
+                returnString += T.Records[i].Values[j].ToString().PadRight(padding) + " | ";
+            }
+            returnString += "\n";
+        }
+
+        return returnString;
     }
 }

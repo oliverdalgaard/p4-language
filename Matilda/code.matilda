@@ -1,10 +1,13 @@
-function bool Hej(int i, int a) {
-    print i;
-
-    print a;
-
-    return true;
+schema Customers = {
+    customer_id : int,
+    name : string,
+    hej : bool
 }
 
+table<Customers> CustomersTable = read("test.csv");
 
-print Hej(1, 5);
+print CustomersTable;
+
+table<Customers> filteredCustomersTable = FILTER(CustomersTable, customer_id < 4 && 2 < customer_id);
+
+print filteredCustomersTable;

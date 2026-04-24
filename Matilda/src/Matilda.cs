@@ -32,7 +32,7 @@ class Matilda
 				else
 				{ */
 				Console.WriteLine("Program starting!");
-				Interpreter.EvalStmt(program, new EnvV(), new EnvP());
+				Interpreter.EvalStmt(program, new EnvV(), new EnvP(), new EnvS());
 				Console.WriteLine("Program stopped!");
 				/* } */
 			}
