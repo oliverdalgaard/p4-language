@@ -7,3 +7,9 @@ schema Customers = {
 table<Customers> CustomersTable = read("test.csv");
 
 print CustomersTable;
+
+print "New table: ";
+
+CustomersTable = FILTER(CustomersTable, customer_id < 4 && 2 < customer_id);
+
+print CustomersTable;

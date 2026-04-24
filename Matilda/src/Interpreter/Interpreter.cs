@@ -43,7 +43,6 @@ public static class Interpreter
 
             case TableDeclaration tableDeclaration:
                 Val row = EvalExpr(tableDeclaration.Expr, envV, envP, envS);
-                Console.WriteLine(row);
                 Table table = new Table(tableDeclaration.Identifier, envS.TryGet(tableDeclaration.SchemaId), row.AsRow());
 
                 table.ParseTypes();
@@ -176,42 +175,42 @@ public static class Interpreter
                 return localScope.TryGet("return");
 
             case FilterExpr filterExpr:
-            {
-                Val tableValue = EvalExpr(filterExpr.TableExpr, envV, envP, envS);
-                Table inputTable = tableValue.AsTable();
-
-                List<string[]> filteredFile = new List<string[]>();
-
-                // Add header row
-                filteredFile.Add(inputTable.File[0]);
-
-                for (int rowIndex = 0; rowIndex < inputTable.Records.Count; rowIndex++)
                 {
-                    TableRecord record = inputTable.Records[rowIndex];
+                    Val tableValue = EvalExpr(filterExpr.TableExpr, envV, envP, envS);
+                    Table inputTable = tableValue.AsTable();
 
-                    EnvV rowScope = envV.NewScope();
+                    List<string[]> filteredFile = new List<string[]>();
 
-                    for (int colIndex = 0; colIndex < inputTable.Headers.Count; colIndex++)
+                    // Add header row
+                    filteredFile.Add(inputTable.File[0]);
+
+                    for (int rowIndex = 0; rowIndex < inputTable.Records.Count; rowIndex++)
                     {
-                        string columnName = inputTable.Headers[colIndex].Identifier;
-                        Val columnValue = record.Values[colIndex];
+                        TableRecord record = inputTable.Records[rowIndex];
 
-                        rowScope.Bind(columnName, columnValue);
+                        EnvV rowScope = envV.NewScope();
+
+                        for (int colIndex = 0; colIndex < inputTable.Headers.Count; colIndex++)
+                        {
+                            string columnName = inputTable.Headers[colIndex].Identifier;
+                            Val columnValue = record.Values[colIndex];
+
+                            rowScope.Bind(columnName, columnValue);
+                        }
+
+                        Val predicateResult = EvalExpr(filterExpr.Predicate, rowScope, envP, envS);
+
+                        if (predicateResult.AsBool())
+                        {
+                            filteredFile.Add(inputTable.File[rowIndex + 1]);
+                        }
                     }
 
-                    Val predicateResult = EvalExpr(filterExpr.Predicate, rowScope, envP, envS);
+                    Table resultTable = new Table(inputTable.Identifier, inputTable.Schema, filteredFile);
+                    resultTable.ParseTypes();
 
-                    if (predicateResult.AsBool())
-                    {
-                        filteredFile.Add(inputTable.File[rowIndex + 1]);
-                    }
+                    return new TableVal(resultTable);
                 }
-
-                Table resultTable = new Table(inputTable.Identifier, inputTable.Schema, filteredFile);
-                resultTable.ParseTypes();
-
-                return new TableVal(resultTable);
-            }
 
             case BinaryOp binaryOp:
                 Val v1 = EvalExpr(binaryOp.ExprLeft, envV, envP, envS);

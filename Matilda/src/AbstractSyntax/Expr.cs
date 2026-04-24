@@ -148,10 +148,12 @@ public class FilterExpr : Expr
     public Expr Predicate { get; }
     public override int LineNumber { get; }
 
-    public FilterExpr(Expr tableExpr, Expr predicate)
+    public FilterExpr(Expr tableExpr, Expr predicate, int lineNumber)
     {
         TableExpr = tableExpr;
         Predicate = predicate;
+
+        LineNumber = lineNumber;
     }
 }
 

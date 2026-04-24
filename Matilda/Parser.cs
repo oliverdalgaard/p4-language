@@ -513,7 +513,7 @@ public Stmt mainNode = null;
 			Expect(11);
 			Expr(out Expr predicate);
 			Expect(18);
-			
+			expr = new FilterExpr(tableExpr, predicate, lineNumber); 
 			break;
 		}
 		default: SynErr(45); break;
