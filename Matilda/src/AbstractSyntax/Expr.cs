@@ -56,16 +56,12 @@ public class Ref : Expr
 public class Read : Expr
 {
     public string FilePath { get; }
-    public string TableId { get; }
-    public string SchemaId { get; }
 
     public override int LineNumber { get; }
 
-    public Read(string filePath, string tableId, string schemaId, int lineNumber)
+    public Read(string filePath, int lineNumber)
     {
         FilePath = filePath;
-        TableId = tableId;
-        SchemaId = schemaId;
 
         LineNumber = lineNumber;
     }
@@ -146,6 +142,19 @@ public class StringV : Expr
     }
 }
 
+public class FilterExpr : Expr
+{
+    public Expr TableExpr { get; }
+    public Expr Predicate { get; }
+    public override int LineNumber { get; }
+
+    public FilterExpr(Expr tableExpr, Expr predicate)
+    {
+        TableExpr = tableExpr;
+        Predicate = predicate;
+    }
+}
+
 public enum UnaryOperators
 {
     NOT
@@ -154,17 +163,4 @@ public enum UnaryOperators
 public enum BinaryOperators
 {
     ADD, SUB, MUL, DIV, LT, EQ, NEQ, AND, OR
-}
-
-public class FilterExpr : Expr
-{
-    public Expr TableExpr { get; }
-    public Expr Predicate { get;}
-    public override int LineNumber { get; }
-
-    public FilterExpr(Expr tableExpr, Expr predicate)
-    {
-        TableExpr = tableExpr;
-        Predicate = predicate;
-    }
 }

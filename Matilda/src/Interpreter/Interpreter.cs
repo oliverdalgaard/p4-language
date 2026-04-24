@@ -42,9 +42,10 @@ public static class Interpreter
                 break;
 
             case TableDeclaration tableDeclaration:
-                Val t = EvalExpr(tableDeclaration.Expr, envV, envP, envS);
+                Val row = EvalExpr(tableDeclaration.Expr, envV, envP, envS);
+                Console.WriteLine(row);
+                Table table = new Table(tableDeclaration.Identifier, envS.TryGet(tableDeclaration.SchemaId), row.AsRow());
 
-                Table table = t.AsTable();
                 table.ParseTypes();
                 TableVal parsedTable = new TableVal(table);
 
@@ -142,7 +143,7 @@ public static class Interpreter
                         rows.Add(textFieldParser.ReadFields());
                     }
                 }
-                return new TableVal(new Table(read.TableId, envS.TryGet(read.SchemaId), rows));
+                return new RowVal(rows);
 
             case FunctionRef functionRef:
                 FunctionDeclaration function = envP.TryGet(functionRef.Name);

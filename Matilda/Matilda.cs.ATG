@@ -140,10 +140,7 @@ TableDeclaration<out Stmt stmt> =
   '>'
   IDENT                               (. string var = t.val; int lineNumber = t.line; .)
   '='
-  "read"
-  '('
-  STRING                              (. Expr expr = new Read(t.val, var, schemaId, lineNumber); .)
-  ')'
+  Expr<out Expr expr>
   ';'                                 (. stmt = new TableDeclaration(var, schemaId, expr, lineNumber); .)
 .
 
@@ -269,8 +266,8 @@ UnaryExpr<out Expr expr>  (. List<char> unaries = new List<char>(); int lineNumb
 .
 
 
-Term<out Expr expr>               (. expr = null; .) =
-  IDENT                           (. string name = t.val; int lineNumber = t.line; .)     // Either IDENT is a function reference or a variable/table reference
+Term<out Expr expr>               (. expr = null; int lineNumber = -1; .) =
+  IDENT                           (. string name = t.val; lineNumber = t.line; .)     // Either IDENT is a function reference or a variable/table reference
   (
     '('                           (. List<Expr> arguments = new List<Expr>(); .)
     [
@@ -288,7 +285,11 @@ Term<out Expr expr>               (. expr = null; .) =
   | "false"                       (. expr = new BoolV(false, t.line); .)
   | STRING                        (. expr = new StringV(t.val, t.line); .)
   | '(' Expr<out expr> ')'
-  | "FILTER"                      (. int lineNumber = t.line; .)
+  | "read"                        (. lineNumber = t.line; .)
+    '('
+    STRING                        (. expr = new Read(t.val, lineNumber); .)
+    ')'
+  | "FILTER"                      (. lineNumber = t.line; .)
     '('
     Expr<out Expr tableExpr> 
     ','
