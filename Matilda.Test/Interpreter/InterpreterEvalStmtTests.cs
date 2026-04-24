@@ -71,7 +71,8 @@ public class InterpreterEvalStmtTests
             Assert.AreEqual("42" + Environment.NewLine, sw.ToString());
         }
         finally
-        {
+        {  
+            // Restore original console output => In this case is it for console.write is working again after the test is done, så det ikke påvirker andre tests eller output i konsollen
             Console.SetOut(originalOut);
         }
     }

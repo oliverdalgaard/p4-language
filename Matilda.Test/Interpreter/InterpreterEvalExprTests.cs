@@ -72,6 +72,7 @@ public class InterpreterEvalExprTests
   [TestMethod]
   public void EvalExprPrecedenceCheck3()
   {
+    // Arrange
     Expr left = new BinaryOp(
         BinaryOperators.MUL,
         new IntV(2, -1),
@@ -93,8 +94,10 @@ public class InterpreterEvalExprTests
         -1
     );
 
+    // Act
     var result = Interpreter.EvalExpr(expr, new EnvV(), new EnvP());
 
+    // Assert
     Assert.IsInstanceOfType<IntVal>(result);
     Assert.AreEqual(26, result.AsInt());
   }
@@ -104,6 +107,7 @@ public class InterpreterEvalExprTests
   [TestMethod]
   public void EvalExprPrecedenceCheck4()
   {
+    // Arrange
     Expr div = new BinaryOp(
         BinaryOperators.DIV,
         new IntV(6, -1),
@@ -117,9 +121,11 @@ public class InterpreterEvalExprTests
         div,
         -1
     );
-
+    
+    // Act
     var result = Interpreter.EvalExpr(expr, new EnvV(), new EnvP());
 
+    // Assert
     Assert.IsInstanceOfType<FloatVal>(result);
     Assert.AreEqual(11, result.AsFloat());
   }
@@ -129,6 +135,7 @@ public class InterpreterEvalExprTests
   [TestMethod]
   public void EvalExprPrecedenceCheck7()
   {
+    // Arrange
     Expr mul = new BinaryOp(
         BinaryOperators.MUL,
         new IntV(0, -1),
@@ -143,8 +150,10 @@ public class InterpreterEvalExprTests
         -1
     );
 
+    // Act
     var result = Interpreter.EvalExpr(expr, new EnvV(), new EnvP());
 
+    // Assert
     Assert.IsInstanceOfType<IntVal>(result);
     Assert.AreEqual(5, result.AsInt());
   }

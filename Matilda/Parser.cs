@@ -439,7 +439,7 @@ public Stmt mainNode = null;
 		}
 		case 4: {
 			Get();
-			expr = new StringV(t.val, t.line); 
+			expr = new StringV(t.val.Substring(1, t.val.Length - 2), t.line); 
 			break;
 		}
 		case 9: {
