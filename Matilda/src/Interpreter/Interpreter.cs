@@ -132,8 +132,8 @@ public static class Interpreter
 
             case Read read:
                 List<string[]> rows = new List<string[]>();
-
-                using (TextFieldParser textFieldParser = new TextFieldParser(read.FilePath))
+                // Open file with filename "" removed
+                using (TextFieldParser textFieldParser = new TextFieldParser(read.FilePath.Substring(1, read.FilePath.Length - 2)))
                 {
                     textFieldParser.TextFieldType = FieldType.Delimited;
                     textFieldParser.SetDelimiters(",");
