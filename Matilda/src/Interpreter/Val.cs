@@ -117,6 +117,24 @@ public class TableVal : Val
 
         int padding = 0;
 
+        foreach (TableHeader thead in T.Headers)
+        {
+            if (thead.Identifier.Length > padding)
+            {
+                padding = thead.Identifier.Length;
+            }
+        }
+
+        foreach (TableRecord tRecord in T.Records)
+        {
+            foreach (Val value in tRecord.Values)
+            {
+                if (value.ToString().Length > padding)
+                {
+                    padding = value.ToString().Length;
+                }
+            }
+        }
 
         string returnString = "| ";
 
