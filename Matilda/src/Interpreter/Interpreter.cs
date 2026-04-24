@@ -175,11 +175,42 @@ public static class Interpreter
                 return localScope.TryGet("return");
 
             case FilterExpr filterExpr:
+            {
+                Val tableValue = EvalExpr(filterExpr.TableExpr, envV, envP, envS);
+                Table inputTable = tableValue.AsTable();
+
+                List<string[]> filteredFile = new List<string[]>();
+
+                // Add header row
+                filteredFile.Add(inputTable.File[0]);
+
+                for (int rowIndex = 0; rowIndex < inputTable.Records.Count; rowIndex++)
                 {
-                    Val tableVal = EvalExpr(filterExpr, envV, envP, envS);
-                    Table table = tableVal.AsTable();
+                    TableRecord record = inputTable.Records[rowIndex];
+
+                    EnvV rowScope = envV.NewScope();
+
+                    for (int colIndex = 0; colIndex < inputTable.Headers.Count; colIndex++)
+                    {
+                        string columnName = inputTable.Headers[colIndex].Identifier;
+                        Val columnValue = record.Values[colIndex];
+
+                        rowScope.Bind(columnName, columnValue);
+                    }
+
+                    Val predicateResult = EvalExpr(filterExpr.Predicate, rowScope, envP, envS);
+
+                    if (predicateResult.AsBool())
+                    {
+                        filteredFile.Add(inputTable.File[rowIndex + 1]);
+                    }
                 }
-                break;
+
+                Table resultTable = new Table(inputTable.Identifier, inputTable.Schema, filteredFile);
+                resultTable.ParseTypes();
+
+                return new TableVal(resultTable);
+            }
 
             case BinaryOp binaryOp:
                 Val v1 = EvalExpr(binaryOp.ExprLeft, envV, envP, envS);
