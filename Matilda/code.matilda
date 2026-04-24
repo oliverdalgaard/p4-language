@@ -8,8 +8,6 @@ table<Customers> CustomersTable = read("test.csv");
 
 print CustomersTable;
 
-print "New table: ";
+table<Customers> filteredCustomersTable = FILTER(CustomersTable, customer_id < 4 && 2 < customer_id);
 
-CustomersTable = FILTER(CustomersTable, customer_id < 4 && 2 < customer_id);
-
-print CustomersTable;
+print filteredCustomersTable;

@@ -42,13 +42,19 @@ public static class Interpreter
                 break;
 
             case TableDeclaration tableDeclaration:
-                Val row = EvalExpr(tableDeclaration.Expr, envV, envP, envS);
-                Table table = new Table(tableDeclaration.Identifier, envS.TryGet(tableDeclaration.SchemaId), row.AsRow());
+                Val expr = EvalExpr(tableDeclaration.Expr, envV, envP, envS);
+                if (expr is RowVal)
+                {
+                    Table table = new Table(tableDeclaration.Identifier, envS.TryGet(tableDeclaration.SchemaId), expr.AsRow());
 
-                table.ParseTypes();
-                TableVal parsedTable = new TableVal(table);
-
-                envV.Bind(tableDeclaration.Identifier, parsedTable);
+                    table.ParseTypes();
+                    TableVal parsedTable = new TableVal(table);
+                    envV.Bind(tableDeclaration.Identifier, parsedTable);
+                }
+                else
+                {
+                    envV.Bind(tableDeclaration.Identifier, expr);
+                }
                 break;
 
             case FunctionDeclaration functionDeclaration:
