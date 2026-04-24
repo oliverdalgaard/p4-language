@@ -287,7 +287,7 @@ Term<out Expr expr>               (. expr = null; int lineNumber = -1; .) =
   | '(' Expr<out expr> ')'
   | "read"                        (. lineNumber = t.line; .)
     '('
-    STRING                        (. expr = new Read(t.val, lineNumber); .)
+    STRING                        (. expr = new Read(t.val.Substring(1, t.val.Length - 2), lineNumber); .)
     ')'
   | "FILTER"                      (. lineNumber = t.line; .)
     '('
