@@ -1,5 +1,3 @@
-using System.Reflection.Metadata.Ecma335;
-
 namespace Matilda;
 
 class TypeChecker
