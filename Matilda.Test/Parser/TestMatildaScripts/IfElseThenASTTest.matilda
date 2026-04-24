@@ -1,0 +1,10 @@
+int condition = 21;
+
+if(condition < 18) {
+    print "Not allowed to vote";
+} elseif(80 < condition) {
+    print "Too old to vote";
+} else {
+    print "Ready to vote";
+}
+

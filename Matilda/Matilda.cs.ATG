@@ -283,7 +283,7 @@ Term<out Expr expr>               (. expr = null; int lineNumber = -1; .) =
   | FLOAT                         (. expr = new FloatV(float.Parse(t.val, new CultureInfo("en", false)), t.line); .)
   | "true"                        (. expr = new BoolV(true, t.line); .)
   | "false"                       (. expr = new BoolV(false, t.line); .)
-  | STRING                        (. expr = new StringV(t.val, t.line); .)
+  | STRING                        (. expr = new StringV(t.val.Substring(1, t.val.Length - 2), t.line); .)
   | '(' Expr<out expr> ')'
   | "read"                        (. lineNumber = t.line; .)
     '('

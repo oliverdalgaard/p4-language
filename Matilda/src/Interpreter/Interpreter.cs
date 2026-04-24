@@ -9,7 +9,6 @@ public static class Interpreter
         switch (stmt)
         {
             case Skip:
-                Console.WriteLine("Skipped");
                 break;
 
             case Comp comp:
@@ -66,24 +65,22 @@ public static class Interpreter
                 break;
 
             case If ifStmt:
-                EnvV ifLocalScope = envV.NewScope();
-
                 bool runElse = true;
 
-                Val condition = EvalExpr(ifStmt.Condition, ifLocalScope, envP, envS);
+                Val condition = EvalExpr(ifStmt.Condition, envV, envP, envS);
                 if (condition.AsBool())
                 {
                     runElse = false;
-                    EvalStmt(ifStmt.ThenBody, ifLocalScope, envP, envS);
+                    EvalStmt(ifStmt.ThenBody, envV, envP, envS);
                 }
                 else if (ifStmt.ElseIfStmts.Any())
                 {
                     foreach (If elseIfStmt in ifStmt.ElseIfStmts)
                     {
-                        Val elseIfStmtCondition = EvalExpr(elseIfStmt.Condition, ifLocalScope, envP, envS);
+                        Val elseIfStmtCondition = EvalExpr(elseIfStmt.Condition, envV, envP, envS);
                         if (elseIfStmtCondition.AsBool())
                         {
-                            EvalStmt(elseIfStmt.ThenBody, ifLocalScope, envP, envS);
+                            EvalStmt(elseIfStmt.ThenBody, envV, envP, envS);
                             runElse = false;
                             break;
                         }
@@ -92,14 +89,8 @@ public static class Interpreter
 
                 if (runElse)
                 {
-                    EvalStmt(ifStmt.ElseBody, ifLocalScope, envP, envS);
+                    EvalStmt(ifStmt.ElseBody, envV, envP, envS);
                 }
-
-                if (ifLocalScope.TryGet("return") != null)
-                {
-                    envV.Bind("return", ifLocalScope.TryGet("return"));
-                }
-
                 break;
 
             case While whileStmt:

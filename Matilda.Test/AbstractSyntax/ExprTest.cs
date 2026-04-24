@@ -12,10 +12,10 @@ public class UnaryOpTests
     public void SetUnaryOpProperties()
     {
         // Arrange
-        var expr = new BoolV(true, -1);
+        Expr expr = new BoolV(true, -1);
 
         // Act
-        var unaryOp = new UnaryOp(UnaryOperators.NOT, expr, -1);
+        UnaryOp unaryOp = new UnaryOp(UnaryOperators.NOT, expr, -1);
 
         // Assert
         Assert.AreEqual(UnaryOperators.NOT, unaryOp.Op);
@@ -31,11 +31,11 @@ public class BinaryOpTests
     public void SetBinaryOpProperties()
     {
         // Arrange
-        var exprLeft = new IntV(5, -1);
-        var exprRight = new IntV(10, -1);
+        Expr exprLeft = new IntV(5, -1);
+        Expr exprRight = new IntV(10, -1);
 
         // Act
-        var binaryOp = new BinaryOp(BinaryOperators.ADD, exprLeft, exprRight, -1);
+        BinaryOp binaryOp = new(BinaryOperators.ADD, exprLeft, exprRight, -1);
 
         // Assert
         Assert.AreEqual(BinaryOperators.ADD, binaryOp.Op);
@@ -56,7 +56,7 @@ public class RefTests
         int expectedLineNumber = -1;
 
         // Act
-        var result = new Ref(expectedName, expectedLineNumber);
+        Ref result = new(expectedName, expectedLineNumber);
 
         // Assert
         Assert.AreEqual(expectedName, result.Name);
