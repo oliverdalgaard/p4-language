@@ -1,3 +1,5 @@
+using System.Reflection.Metadata.Ecma335;
+
 namespace Matilda;
 
 class TypeChecker
@@ -472,6 +474,37 @@ class TypeChecker
                     return null;
                 }
                 return env[r.Name];
+
+
+            case FunctionRef functionRef:
+                if (!functions.ContainsKey(functionRef.Name))
+                {
+                    errors.Add($"Line {functionRef.LineNumber}: function {functionRef.Name} is not declared.");
+                    return null;
+                }
+
+                var func = functions[functionRef.Name];
+
+                //check param count 
+                if (functionRef.Arguments.Count != func.Parameters.Count)
+                {
+                    errors.Add($"Line {functionRef.LineNumber}: wrong number of function parameter.");
+                }
+
+                int count = Math.Min(functionRef.Arguments.Count, func.Parameters.Count);
+                //check type on param
+                for (int i = 0; i < count; i++)
+                {
+                    Type argType = ExprT(functionRef.Arguments[i]);
+                    Type paramType = func.Parameters[i].Type;
+
+                    if (argType == null || argType != paramType)
+                    {
+                        errors.Add($"Line {functionRef.Arguments[i].LineNumber}: function {functionRef.Name} expect parameter {i + 1} to have type {paramType} but got {argType}.");
+
+                    }
+                }
+                return functions[functionRef.Name].Type;
 
             default: throw new Exception("Invalid expression");
         }
