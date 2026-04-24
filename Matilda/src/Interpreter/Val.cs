@@ -117,6 +117,7 @@ public class TableVal : Val
 
         int padding = 0;
 
+
         string returnString = "| ";
 
         foreach (TableHeader thead in T.Headers)
