@@ -4,7 +4,7 @@ namespace Matilda;
 
 public static class Interpreter
 {
-    public static void EvalStmt(Stmt stmt, EnvV envV, EnvP envP)
+    public static void EvalStmt(Stmt stmt, EnvV envV, EnvP envP, EnvS envS)
     {
         switch (stmt)
         {
@@ -13,15 +13,15 @@ public static class Interpreter
                 break;
 
             case Comp comp:
-                EvalStmt(comp.Stmt1, envV, envP);
+                EvalStmt(comp.Stmt1, envV, envP, envS);
                 if (envV.TryGet("return") == null)
                 {
-                    EvalStmt(comp.Stmt2, envV, envP);
+                    EvalStmt(comp.Stmt2, envV, envP, envS);
                 }
                 break;
 
             case Print print:
-                Val value = EvalExpr(print.Value, envV, envP);
+                Val value = EvalExpr(print.Value, envV, envP, envS);
                 Console.WriteLine(value.ToString());
                 break;
 
@@ -30,15 +30,15 @@ public static class Interpreter
                 break;
 
             case Declaration declaration:
-                envV.Bind(declaration.Identifier, EvalExpr(declaration.Expression, envV, envP));
+                envV.Bind(declaration.Identifier, EvalExpr(declaration.Expression, envV, envP, envS));
                 break;
 
             case Assign assign:
-                envV.Set(assign.Identifier, EvalExpr(assign.Value, envV, envP));
+                envV.Set(assign.Identifier, EvalExpr(assign.Value, envV, envP, envS));
                 break;
 
             case SchemaDeclaration schemaDeclaration:
-                Console.WriteLine(schemaDeclaration);
+                envS.Bind(schemaDeclaration.Identifier, schemaDeclaration.Columns);
                 break;
 
             case FunctionDeclaration functionDeclaration:
@@ -46,7 +46,7 @@ public static class Interpreter
                 break;
 
             case Return returnVal:
-                envV.Bind("return", EvalExpr(returnVal.Value, envV, envP));
+                envV.Bind("return", EvalExpr(returnVal.Value, envV, envP, envS));
                 break;
 
             case If ifStmt:
@@ -54,20 +54,20 @@ public static class Interpreter
 
                 bool runElse = true;
 
-                Val condition = EvalExpr(ifStmt.Condition, ifLocalScope, envP);
+                Val condition = EvalExpr(ifStmt.Condition, ifLocalScope, envP, envS);
                 if (condition.AsBool())
                 {
                     runElse = false;
-                    EvalStmt(ifStmt.ThenBody, ifLocalScope, envP);
+                    EvalStmt(ifStmt.ThenBody, ifLocalScope, envP, envS);
                 }
                 else if (ifStmt.ElseIfStmts.Any())
                 {
                     foreach (If elseIfStmt in ifStmt.ElseIfStmts)
                     {
-                        Val elseIfStmtCondition = EvalExpr(elseIfStmt.Condition, ifLocalScope, envP);
+                        Val elseIfStmtCondition = EvalExpr(elseIfStmt.Condition, ifLocalScope, envP, envS);
                         if (elseIfStmtCondition.AsBool())
                         {
-                            EvalStmt(elseIfStmt.ThenBody, ifLocalScope, envP);
+                            EvalStmt(elseIfStmt.ThenBody, ifLocalScope, envP, envS);
                             runElse = false;
                             break;
                         }
@@ -76,7 +76,7 @@ public static class Interpreter
 
                 if (runElse)
                 {
-                    EvalStmt(ifStmt.ElseBody, ifLocalScope, envP);
+                    EvalStmt(ifStmt.ElseBody, ifLocalScope, envP, envS);
                 }
 
                 if (ifLocalScope.TryGet("return") != null)
@@ -90,9 +90,9 @@ public static class Interpreter
                 {
                     EnvV whileLocalScope = envV.NewScope();
 
-                    while (EvalExpr(whileStmt.Condition, whileLocalScope, envP).AsBool())
+                    while (EvalExpr(whileStmt.Condition, whileLocalScope, envP, envS).AsBool())
                     {
-                        EvalStmt(whileStmt.Body, whileLocalScope, envP);
+                        EvalStmt(whileStmt.Body, whileLocalScope, envP, envS);
                         if (whileLocalScope.TryGet("return") != null)
                         {
                             envV.Bind("return", whileLocalScope.TryGet("return"));
@@ -108,7 +108,7 @@ public static class Interpreter
         }
     }
 
-    public static Val EvalExpr(Expr expr, EnvV envV, EnvP envP)
+    public static Val EvalExpr(Expr expr, EnvV envV, EnvP envP, EnvS envS)
     {
         switch (expr)
         {
@@ -140,14 +140,14 @@ public static class Interpreter
                 for (int i = 0; i < functionRef.Arguments.Count; i++)
                 {
                     string parameterName = function.Parameters[i].Identifier;
-                    Val value = EvalExpr(functionRef.Arguments[i], envV, envP);
+                    Val value = EvalExpr(functionRef.Arguments[i], envV, envP, envS);
 
                     localScope.Bind(parameterName, value);
                 }
 
                 foreach (Stmt stmt in function.Body)
                 {
-                    EvalStmt(stmt, localScope, envP);
+                    EvalStmt(stmt, localScope, envP, envS);
                     if (localScope.TryGet("return") != null)
                     {
                         break;
@@ -158,8 +158,8 @@ public static class Interpreter
                 return localScope.TryGet("return");
 
             case BinaryOp binaryOp:
-                Val v1 = EvalExpr(binaryOp.ExprLeft, envV, envP);
-                Val v2 = EvalExpr(binaryOp.ExprRight, envV, envP);
+                Val v1 = EvalExpr(binaryOp.ExprLeft, envV, envP, envS);
+                Val v2 = EvalExpr(binaryOp.ExprRight, envV, envP, envS);
 
                 switch (binaryOp.Op)
                 {
@@ -194,7 +194,7 @@ public static class Interpreter
                 }
 
             case UnaryOp unaryOp:
-                Val val = EvalExpr(unaryOp.Expr, envV, envP);
+                Val val = EvalExpr(unaryOp.Expr, envV, envP, envS);
 
                 switch (unaryOp.Op)
                 {

@@ -132,6 +132,17 @@ SchemaDeclaration<out Stmt stmt> =    (. List<Column> cols = new List<Column>();
   '}'                                 (. stmt = new SchemaDeclaration(ident, cols, lineNumber); .)
 .
 
+TableDeclaration<out Stmt stmt> =     (.  .)
+  "table"
+  '<'
+  IDENT
+  '>'
+  IDENT
+  '='
+  Expr<out Expr expr>
+  ';'
+.
+
 Parameter<out Parameter param> =
   Type<out Type type>
   IDENT                             (. param = new Parameter(type, t.val, t.line); .)
