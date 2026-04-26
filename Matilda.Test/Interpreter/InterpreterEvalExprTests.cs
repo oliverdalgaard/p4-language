@@ -19,11 +19,12 @@ public class InterpreterEvalExprTests
 
     Expr expr = new BinaryOp(BinaryOperators.ADD, left, right, -1);
 
-    var envV = new EnvV();
-    var envP = new EnvP();
+    EnvV envV = new EnvV();
+    EnvP envP = new EnvP();
+    EnvS envS = new EnvS();
 
     // Act
-    var result = Interpreter.EvalExpr(expr, envV, envP);
+    var result = Interpreter.EvalExpr(expr, envV, envP, envS);
 
     // Assert
     Assert.IsInstanceOfType(result, typeof(IntVal));
@@ -59,8 +60,12 @@ public class InterpreterEvalExprTests
             -1
         );
 
+    EnvV envV = new EnvV();
+    EnvP envP = new EnvP();
+    EnvS envS = new EnvS();
+
     // Act
-    var result = Interpreter.EvalExpr(expr, new EnvV(), new EnvP());
+    var result = Interpreter.EvalExpr(expr, envV, envP, envS);
 
     // Assert
     Assert.IsInstanceOfType<IntVal>(result);
@@ -94,8 +99,12 @@ public class InterpreterEvalExprTests
         -1
     );
 
+    EnvV envV = new EnvV();
+    EnvP envP = new EnvP();
+    EnvS envS = new EnvS();
+
     // Act
-    var result = Interpreter.EvalExpr(expr, new EnvV(), new EnvP());
+    var result = Interpreter.EvalExpr(expr, envV, envP, envS);
 
     // Assert
     Assert.IsInstanceOfType<IntVal>(result);
@@ -121,9 +130,13 @@ public class InterpreterEvalExprTests
         div,
         -1
     );
+
+    EnvV envV = new EnvV();
+    EnvP envP = new EnvP();
+    EnvS envS = new EnvS();
     
     // Act
-    var result = Interpreter.EvalExpr(expr, new EnvV(), new EnvP());
+    var result = Interpreter.EvalExpr(expr,  envV, envP, envS);
 
     // Assert
     Assert.IsInstanceOfType<FloatVal>(result);
@@ -149,9 +162,13 @@ public class InterpreterEvalExprTests
         mul,
         -1
     );
+    
+    EnvV envV = new EnvV();
+    EnvP envP = new EnvP();
+    EnvS envS = new EnvS();
 
     // Act
-    var result = Interpreter.EvalExpr(expr, new EnvV(), new EnvP());
+    var result = Interpreter.EvalExpr(expr, envV, envP, envS);
 
     // Assert
     Assert.IsInstanceOfType<IntVal>(result);
