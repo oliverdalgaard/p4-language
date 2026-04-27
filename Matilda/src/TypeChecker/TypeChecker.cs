@@ -133,7 +133,7 @@ class TypeChecker
                         column.Type != BoolT.Instance &&
                         column.Type != FloatT.Instance)
                     {
-                        errors.Add($"Line {schemaDeclaration.LineNumber}: Schema contains invalid type for Schema declaration");
+                        errors.Add($"Line {schemaDeclaration.LineNumber}: Schema declaration requires type of either 'int', 'string', 'bool', or 'float' but got '{column.Type}'");
                     }
                 }
 
