@@ -61,7 +61,7 @@ public class ParameterTests
     public void ParameterStoresProperties()
     {
         // Arrange
-        var expectedType = new IntT();
+        IntT expectedType = new IntT();
         string expectedIdentifier = "x";
         int expectedLineNumber = -1;
 
@@ -82,7 +82,7 @@ public class DeclarationTests
     public void DeclarationStoresProperties()
     {
         // Arrange
-        var expectedType = new IntT();
+        IntT expectedType = new IntT();
         string expectedIdentifier = "Test";
         Expr expectedExpression = new IntV(10, -1);
         int expectedLineNumber = -1;
@@ -126,7 +126,7 @@ public class FunctionDeclarationTests
     public void FunctionDeclarationStoresProperties()
     {
         // Arrange
-        var expectedType = new IntT();
+        IntT expectedType = new IntT();
         string expectedIdentifier = "x";
         var expectedParameters = new List<Parameter>
         {

@@ -11,9 +11,9 @@ public class InterpreterEvalStmtTests
     public void EvalStmtCompExecutesBothStatementsWhenNoReturn()
     {
         // Arrange
-        EnvV envV = new();
-        EnvP envP = new();
-        EnvS envS = new();
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
 
         Stmt stmt = new Comp(
             new Declaration(new StringT(), "x", new IntV(1, -1), -1),
@@ -33,10 +33,9 @@ public class InterpreterEvalStmtTests
     public void EvalStmtCompDoesNotExecuteSecondStatementWhenReturnExists()
     {
         // Arrange
-        EnvV envV = new();
-        EnvP envP = new();
-        EnvS envS = new();
-
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
         envV.Bind("x", new IntVal(0));
 
         Stmt stmt = new Comp(
@@ -57,10 +56,9 @@ public class InterpreterEvalStmtTests
     public void EvalStmtPrintPrintsExpressionValue()
     {
         // Arrange
-        EnvV envV = new();
-        EnvP envP = new();
-        EnvS envS = new();
-
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
         Stmt stmt = new Print(new IntV(42, -1), -1);
 
         var sw = new StringWriter();
@@ -88,10 +86,9 @@ public class InterpreterEvalStmtTests
     public void EvalStmtDeclarationWithExpressionBindsEvaluatedValue()
     {
         // Arrange
-        EnvV envV = new();
-        EnvP envP = new();
-        EnvS envS = new();
-
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
         Stmt stmt = new Declaration(new StringT(), "x", new StringV("Test", -1), -1);
 
         // Act
@@ -108,10 +105,9 @@ public class InterpreterEvalStmtTests
     public void EvalStmtAssignUpdatesExistingVariable()
     {
         // Arrange
-        EnvV envV = new();
-        EnvP envP = new();
-        EnvS envS = new();
-
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
         envV.Bind("x", new IntVal(1));
 
         Stmt stmt = new Assign("x", new IntV(67, -1), -1);
@@ -129,9 +125,9 @@ public class InterpreterEvalStmtTests
     public void EvalStmtFunctionDeclarationBindsFunctionInProcedureEnvironment()
     {
         // Arrange
-        EnvV envV = new();
-        EnvP envP = new();
-        EnvS envS = new();
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
 
         var function = new FunctionDeclaration(
             new IntT(),
@@ -154,10 +150,9 @@ public class InterpreterEvalStmtTests
     public void EvalStmt_Return_BindsReturnValue()
     {
         // Arrange
-        EnvV envV = new();
-        EnvP envP = new();
-        EnvS envS = new();
-
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
         Stmt stmt = new Return(new IntV(67, -1), -1);
 
         // Act
@@ -174,10 +169,9 @@ public class InterpreterEvalStmtTests
     public void EvalStmtIfThenBranchRunsWhenConditionTrue()
     {
         // Arrange
-        EnvV envV = new();
-        EnvP envP = new();
-        EnvS envS = new();
-
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
         envV.Bind("x", new IntVal(0));
 
         Stmt stmt = new If(
@@ -201,10 +195,9 @@ public class InterpreterEvalStmtTests
     public void EvalStmtIfElseBranchRunsWhenConditionFalse()
     {
         // Arrange
-        EnvV envV = new();
-        EnvP envP = new();
-        EnvS envS = new();
-
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
         envV.Bind("x", new IntVal(0));
 
         Stmt stmt = new If(
@@ -228,9 +221,9 @@ public class InterpreterEvalStmtTests
     public void EvalStmtIfPropagatesReturnToOuterScope()
     {
         // Arrange
-        EnvV envV = new();
-        EnvP envP = new();
-        EnvS envS = new();
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
 
         Stmt stmt = new If(
             new BoolV(true, -1),
@@ -254,10 +247,9 @@ public class InterpreterEvalStmtTests
     public void EvalStmtWhileRepeatsUntilConditionFalse()
     {
         // Arrange
-        EnvV envV = new();
-        EnvP envP = new();
-        EnvS envS = new();
-
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
         envV.Bind("x", new IntVal(0));
 
         Stmt body = new Assign(
@@ -291,25 +283,25 @@ public class InterpreterEvalStmtTests
 
     // Stmt while propagates return to outer scope => Muligvis ændres på baggrund af side effekter i at den ændre globale variabler
 
-/*     [TestMethod]
-    public void EvalStmtWhileStopsAndPropagatesReturn()
-    {
-        // Arrange
-        EnvV envV = new();
-        EnvP envP = new();
-        EnvS envS = new();
+    // [TestMethod]
+    // public void EvalStmtWhileStopsAndPropagatesReturn()
+    // {
+    //     // Arrange
+    //     EnvV envV = new EnvV();
+    //     EnvP envP = new EnvP();
+    //     EnvS envS = new EnvS();
 
-        Stmt stmt = new While(
-            new BoolV(true, -1),
-            new Return(new IntV(10, -1), -1),
-            -1
-        );
+    //     Stmt stmt = new While(
+    //         new BoolV(true, -1),
+    //         new Return(new IntV(10, -1), -1),
+    //         -1
+    //     );
 
-        // Act
-        Interpreter.EvalStmt(stmt, envV, envP, envS);
+    //     // Act
+    //     Interpreter.EvalStmt(stmt, envV, envP, envS);
 
-        // Assert
-        Assert.IsNotNull(envV.TryGet("return"));
-        Assert.AreEqual(10, envV.TryGet("return")!.AsInt());
-    } */
+    //     // Assert
+    //     Assert.IsNotNull(envV.TryGet("return"));
+    //     Assert.AreEqual(10, envV.TryGet("return")!.AsInt());
+    // }
 }

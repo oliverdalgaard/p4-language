@@ -19,9 +19,9 @@ public class InterpreterEvalExprTests
 
         Expr expr = new BinaryOp(BinaryOperators.ADD, left, right, -1);
 
-        var envV = new EnvV();
-        var envP = new EnvP();
-        var envS = new EnvS();
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
 
         // Act
         var result = Interpreter.EvalExpr(expr, envV, envP, envS);
@@ -60,8 +60,12 @@ public class InterpreterEvalExprTests
                 -1
             );
 
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
+
         // Act
-        var result = Interpreter.EvalExpr(expr, new EnvV(), new EnvP(), new EnvS());
+        var result = Interpreter.EvalExpr(expr, envV, envP, envS);
 
         // Assert
         Assert.IsInstanceOfType<IntVal>(result);
@@ -95,8 +99,12 @@ public class InterpreterEvalExprTests
             -1
         );
 
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
+
         // Act
-        var result = Interpreter.EvalExpr(expr, new EnvV(), new EnvP(), new EnvS());
+        var result = Interpreter.EvalExpr(expr, envV, envP, envS);
 
         // Assert
         Assert.IsInstanceOfType<IntVal>(result);
@@ -123,8 +131,12 @@ public class InterpreterEvalExprTests
             -1
         );
 
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
+
         // Act
-        var result = Interpreter.EvalExpr(expr, new EnvV(), new EnvP(), new EnvS());
+        var result = Interpreter.EvalExpr(expr, envV, envP, envS);
 
         // Assert
         Assert.IsInstanceOfType<FloatVal>(result);
@@ -151,8 +163,12 @@ public class InterpreterEvalExprTests
             -1
         );
 
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
+
         // Act
-        var result = Interpreter.EvalExpr(expr, new EnvV(), new EnvP(), new EnvS());
+        var result = Interpreter.EvalExpr(expr, envV, envP, envS);
 
         // Assert
         Assert.IsInstanceOfType<IntVal>(result);

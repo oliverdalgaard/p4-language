@@ -8,8 +8,8 @@ public class ParserTests
     // Helper method for all the test methods
     private Stmt Parse(string source)
     {
-        var scanner = new Scanner(source);
-        var parser = new Parser(scanner);
+        Scanner scanner = new Scanner(source);
+        Parser parser = new Parser(scanner);
 
         parser.Parse();
 
@@ -42,10 +42,10 @@ public class ParserTests
         // Assert
         Assert.IsInstanceOfType<Print>(ast);
 
-        var print = (Print)ast;
+        Print print = (Print)ast;
         Assert.IsInstanceOfType<IntV>(print.Value);
 
-        var value = (IntV)print.Value;
+        var value = (IntV)print.Value; // Er dette rigtigt sat ind?
         Assert.AreEqual(5, value.Value);
     }
 
@@ -58,7 +58,7 @@ public class ParserTests
 
         // Arange
         Assert.IsInstanceOfType(ast, typeof(Declaration));
-        var declaration = (Declaration)ast;
+        Declaration declaration = (Declaration)ast;
 
         // Check identifier name
         Assert.AreEqual("number", declaration.Identifier);
@@ -83,11 +83,11 @@ public class ParserTests
 
         // Assert
         Assert.IsInstanceOfType<Comp>(ast);
-        var comp = (Comp)ast;
+        Comp comp = (Comp)ast;
 
         // First stmt (declaration)
         Assert.IsInstanceOfType<Declaration>(comp.Stmt1);
-        var declaration = (Declaration)comp.Stmt1;
+        Declaration declaration = (Declaration)comp.Stmt1;
 
         Assert.AreEqual("name", declaration.Identifier);
 
@@ -97,7 +97,7 @@ public class ParserTests
 
         // Second stmt (assign)
         Assert.IsInstanceOfType<Assign>(comp.Stmt2);
-        var assign = (Assign)comp.Stmt2;
+        Assign assign = (Assign)comp.Stmt2;
 
         Assert.AreEqual("name", assign.Identifier);
 
@@ -115,23 +115,23 @@ public class ParserTests
 
         // Assert
         Assert.IsInstanceOfType<Comp>(ast);
-        var comp = (Comp)ast;
+        Comp comp = (Comp)ast;
 
         // First stmt (declaration)
         Assert.IsInstanceOfType<Declaration>(comp.Stmt1);
-        var declaration = (Declaration)comp.Stmt1;
+        Declaration declaration = (Declaration)comp.Stmt1;
 
         Assert.AreEqual("number", declaration.Identifier);
         Assert.IsInstanceOfType<IntV>(declaration.Expression);
 
         // Second stmt (while)
         Assert.IsInstanceOfType<While>(comp.Stmt2);
-        var whileStmt = (While)comp.Stmt2;
+        While whileStmt = (While)comp.Stmt2;
 
         // Condition
         Assert.IsInstanceOfType<BinaryOp>(whileStmt.Condition);
 
-        var condition = (BinaryOp)whileStmt.Condition;
+        BinaryOp condition = (BinaryOp)whileStmt.Condition;
         Assert.AreEqual(BinaryOperators.LT, condition.Op);
 
         // Body
@@ -145,9 +145,9 @@ public class ParserTests
         // Arrange & act
         Stmt ast = ParseFile("IfElseThenASTTest.matilda");
 
-        var comp = (Comp)ast;
-        var declarationStatement = (Declaration)comp.Stmt1!;
-        var ifStatement = (If)comp.Stmt2!;
+        Comp comp = (Comp)ast;
+        Declaration declarationStatement = (Declaration)comp.Stmt1!;
+        If ifStatement = (If)comp.Stmt2!;
 
         // Assert
         Assert.IsInstanceOfType<Comp>(ast);
@@ -169,10 +169,10 @@ public class ParserTests
 
 
         // Act
-        var print = (Print)ast;
-        var addRight = (BinaryOp)print.Value;               // (1 + (2 * 3)) + 1
-        var addLeft = (BinaryOp)addRight.ExprLeft;          // 1 + (2 * 3)
-        var mul = (BinaryOp)addLeft.ExprRight;              // 2 * 3
+        Print print = (Print)ast;
+        BinaryOp addRight = (BinaryOp)print.Value;               // (1 + (2 * 3)) + 1
+        BinaryOp addLeft = (BinaryOp)addRight.ExprLeft;          // 1 + (2 * 3)
+        BinaryOp mul = (BinaryOp)addLeft.ExprRight;              // 2 * 3
 
         // Assert
         // Add right first ...
@@ -197,11 +197,11 @@ public class ParserTests
         Stmt ast = ParseFile("PrecedenceASTTest2.matilda");
 
         // Act
-        var print = (Print)ast;
-        var subRight = (BinaryOp)print.Value;               // (1 - ((2 / 3) / 2)) - 1
-        var subLeft = (BinaryOp)subRight.ExprLeft;          // 1 - ((2 / 3) / 2)
-        var divRight = (BinaryOp)subLeft.ExprRight;         // (2 / 3) / 2
-        var divLeft = (BinaryOp)divRight.ExprLeft;          // 2 / 3
+        Print print = (Print)ast;
+        BinaryOp subRight = (BinaryOp)print.Value;               // (1 - ((2 / 3) / 2)) - 1
+        BinaryOp subLeft = (BinaryOp)subRight.ExprLeft;          // 1 - ((2 / 3) / 2)
+        BinaryOp divRight = (BinaryOp)subLeft.ExprRight;         // (2 / 3) / 2
+        BinaryOp divLeft = (BinaryOp)divRight.ExprLeft;          // 2 / 3
 
         // Assert
         Assert.AreEqual(BinaryOperators.SUB, subRight.Op);
@@ -229,10 +229,10 @@ public class ParserTests
         Stmt ast = ParseFile("PrecedenceASTTest3.matilda");
 
         // Act
-        var print = (Print)ast;
-        var subRight = (BinaryOp)print.Value;            // ((5 - 4) - 3) - 2
-        var subMid = (BinaryOp)subRight.ExprLeft;        // (5 - 4) - 3
-        var subLeft = (BinaryOp)subMid.ExprLeft;         // 5 - 4
+        Print print = (Print)ast;
+        BinaryOp subRight = (BinaryOp)print.Value;            // ((5 - 4) - 3) - 2
+        BinaryOp subMid = (BinaryOp)subRight.ExprLeft;        // (5 - 4) - 3
+        BinaryOp subLeft = (BinaryOp)subMid.ExprLeft;         // 5 - 4
 
         // Assert
         Assert.AreEqual(BinaryOperators.SUB, subRight.Op);
@@ -254,8 +254,8 @@ public class ParserTests
     public void ParseInvalidSyntaxHasErrors()
     {
         // Arrange
-        var scanner = new Scanner("../../../Parser/TestMatildaScripts/InvalidSyntaxHasErrors.matilda");
-        var parser = new Parser(scanner);
+        Scanner scanner = new Scanner("../../../Parser/TestMatildaScripts/InvalidSyntaxHasErrors.matilda");
+        Parser parser = new Parser(scanner);
 
         // Act
         parser.Parse();
