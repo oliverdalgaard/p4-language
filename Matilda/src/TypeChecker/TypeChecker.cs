@@ -117,6 +117,28 @@ class TypeChecker
                 envVT.Bind(declaration.Identifier, declaration.Type);
                 break;
 
+            case SchemaDeclaration schemaDeclaration:
+
+                if (envVT.TryGet("return") != null)
+                {
+                    errors.Add($"Line {schemaDeclaration.LineNumber}: Schemas can only be declared in the global scope.");
+                }
+
+                List<Column> columns = schemaDeclaration.Columns;
+
+                foreach (Column column in columns)
+                {
+                    if (column.Type != IntT.Instance &&
+                        column.Type != StringT.Instance &&
+                        column.Type != BoolT.Instance &&
+                        column.Type != FloatT.Instance)
+                    {
+                        errors.Add($"Line {schemaDeclaration.LineNumber}: Schema contains invalid type for Schema declaration");
+                    }
+                }
+
+                break;
+
             case While whileStmt:
                 if (whileStmt.Condition == null)
                 {
@@ -157,14 +179,14 @@ class TypeChecker
                     break;
                 }
 
-                // register function
+                // Register function
                 envPT.Bind(f.Identifier, new FunctionType(f));
 
                 // New local scope
                 EnvVT localScope = envVT.NewScope();
                 localScope.Bind("return", f.Type);
 
-                //param 
+                // Param 
                 foreach (Parameter param in f.Parameters)
                 {
                     if (localScope.TryGetLocal(param.Identifier) != null)
@@ -177,7 +199,7 @@ class TypeChecker
                     }
                 }
 
-                // body
+                // Body
                 foreach (Stmt stmtInBody in f.Body)
                 {
                     StmtT(stmtInBody, localScope, envPT, envST);
@@ -200,7 +222,7 @@ class TypeChecker
 
                 if (functionReturnType != null)
                 {
-                    // inside function
+                    // Inside function
                     if (currentType != functionReturnType)
                     {
                         errors.Add($"Line {r.LineNumber}: Return type '{currentType}' does not match function return type '{functionReturnType}'.");
