@@ -16,14 +16,22 @@ table<Customers> filteredCustomersTable = filterCustomers(CustomersTable);
 print filteredCustomersTable;
 */
 
-int number = 10;
-print number;
-
-function int add(){
-    number = 20;
-    return number;
+schema test = {
+    name: string,
+    age: int
 }
 
-print add();
+schema test2 = {
+    age: int,
+    name : string
+}
 
-print number;
+function table<test2> hej(table<test> test) {
+    table<test> hollo = read("dasd");
+    return read("hej");
+}
+
+table<test> testTable = read("123");
+table<test2> testTable2 = read("123");
+
+testTable = FILTER(testTable2, true);

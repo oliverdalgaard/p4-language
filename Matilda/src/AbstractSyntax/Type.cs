@@ -35,6 +35,13 @@ public sealed class StringT : Type
     public StringT() { }
 }
 
+public sealed class RowValT : Type
+{
+    public static readonly RowValT Instance = new RowValT();
+
+    public RowValT() { }
+}
+
 public sealed class SchemaT : Type
 {
     public static readonly SchemaT Instance = new SchemaT();
