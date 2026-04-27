@@ -237,10 +237,10 @@ public class Scanner {
 		start[123] = 9; 
 		start[44] = 10; 
 		start[125] = 11; 
-		start[60] = 12; 
-		start[62] = 13; 
-		start[40] = 14; 
-		start[41] = 15; 
+		start[40] = 12; 
+		start[41] = 13; 
+		start[60] = 14; 
+		start[62] = 15; 
 		start[124] = 16; 
 		start[38] = 18; 
 		start[33] = 27; 
@@ -362,13 +362,13 @@ public class Scanner {
 		switch (t.val) {
 			case "print": t.kind = 5; break;
 			case "schema": t.kind = 9; break;
-			case "table": t.kind = 13; break;
-			case "function": t.kind = 16; break;
-			case "return": t.kind = 19; break;
-			case "if": t.kind = 20; break;
-			case "elseif": t.kind = 21; break;
-			case "else": t.kind = 22; break;
-			case "while": t.kind = 23; break;
+			case "function": t.kind = 13; break;
+			case "return": t.kind = 16; break;
+			case "if": t.kind = 17; break;
+			case "elseif": t.kind = 18; break;
+			case "else": t.kind = 19; break;
+			case "while": t.kind = 20; break;
+			case "table": t.kind = 21; break;
 			case "int": t.kind = 24; break;
 			case "float": t.kind = 25; break;
 			case "bool": t.kind = 26; break;
@@ -441,9 +441,9 @@ public class Scanner {
 			case 13:
 				{t.kind = 15; break;}
 			case 14:
-				{t.kind = 17; break;}
+				{t.kind = 22; break;}
 			case 15:
-				{t.kind = 18; break;}
+				{t.kind = 23; break;}
 			case 16:
 				if (ch == '|') {AddCh(); goto case 17;}
 				else {goto case 0;}

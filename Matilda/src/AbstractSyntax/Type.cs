@@ -44,7 +44,10 @@ public sealed class SchemaT : Type
 
 public sealed class TableT : Type
 {
-    public static readonly TableT Instance = new TableT();
+    public string SchemaId { get; }
 
-    public TableT() { }
+    public TableT(string schemaId)
+    {
+        SchemaId = schemaId;
+    }
 }

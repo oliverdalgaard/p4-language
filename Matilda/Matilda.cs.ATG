@@ -134,28 +134,31 @@ SchemaDeclaration<out Stmt stmt> =    (. List<Column> cols = new List<Column>();
 .
 
 TableDeclaration<out Stmt stmt> =
-  "table"
-  '<'
-  IDENT                               (. string schemaId = t.val; .)
-  '>'
+  CustomType<out Type type>           (. string schemaId = ((TableT)type).SchemaId; .)
   IDENT                               (. string var = t.val; int lineNumber = t.line; .)
   '='
   Expr<out Expr expr>
   ';'                                 (. stmt = new TableDeclaration(var, schemaId, expr, lineNumber); .)
 .
 
-Parameter<out Parameter param> =
-  Type<out Type type>
+Parameter<out Parameter param>      (. Type type = null; .) =
+  (
+    Type<out type>
+    | CustomType<out type>
+  )
   IDENT                             (. param = new Parameter(type, t.val, t.line); .)
 .
 
-FunctionDeclaration<out Stmt stmt> =
+FunctionDeclaration<out Stmt stmt>            (.Type type = null; .) =
   "function"
-  Type<out Type type>
+  (
+    Type<out type>
+    | CustomType<out type>
+  )
   IDENT                                       (. string var = t.val; int lineNumber = t.line; List<Parameter> parameters = new List<Parameter>(); List<Stmt> bodyStmts = new List<Stmt>(); Stmt funcBody = Skip.Instance; .)
   '('
   [
-    Parameter<out Parameter param>          (. parameters.Add(param); .)
+    Parameter<out Parameter param>            (. parameters.Add(param); .)
     {
       ',' Parameter<out param>                (. parameters.Add(param); .)
     }
@@ -194,6 +197,13 @@ While <out Stmt stmt> =
   '(' Expr<out Expr condition> ')'
   '{' Stmts<out Stmt body> '}'
                                     (. stmt = new While(condition, body, lineNumber); .)
+.
+
+CustomType<out Type table> =
+  "table"
+  '<'
+    IDENT                     (. table = new TableT(t.val); .)
+  '>'
 .
 
 Type<out Type type> (. type = null; .)

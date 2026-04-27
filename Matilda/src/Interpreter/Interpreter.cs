@@ -176,10 +176,7 @@ public static class Interpreter
                     Val tableValue = EvalExpr(filterExpr.TableExpr, envV, envP, envS);
                     Table inputTable = tableValue.AsTable();
 
-                    List<string[]> filteredFile = new List<string[]>();
-
-                    // Add header row
-                    filteredFile.Add(inputTable.File[0]);
+                    Table filteredTable = new Table(inputTable.Identifier, inputTable.Schema, inputTable.Headers, new List<TableRecord>());
 
                     for (int rowIndex = 0; rowIndex < inputTable.Records.Count; rowIndex++)
                     {
@@ -187,10 +184,10 @@ public static class Interpreter
 
                         EnvV rowScope = envV.NewScope();
 
-                        for (int colIndex = 0; colIndex < inputTable.Headers.Count; colIndex++)
+                        for (int valIndex = 0; valIndex < inputTable.Headers.Count; valIndex++)
                         {
-                            string columnName = inputTable.Headers[colIndex].Identifier;
-                            Val columnValue = record.Values[colIndex];
+                            string columnName = inputTable.Headers[valIndex].Identifier;
+                            Val columnValue = record.Values[valIndex];
 
                             rowScope.Bind(columnName, columnValue);
                         }
@@ -199,14 +196,11 @@ public static class Interpreter
 
                         if (predicateResult.AsBool())
                         {
-                            filteredFile.Add(inputTable.File[rowIndex + 1]);
+                            filteredTable.addRecord(record);
                         }
                     }
 
-                    Table resultTable = new Table(inputTable.Identifier, inputTable.Schema, filteredFile);
-                    resultTable.ParseTypes();
-
-                    return new TableVal(resultTable);
+                    return new TableVal(filteredTable);
                 }
 
             case BinaryOp binaryOp:
