@@ -12,6 +12,14 @@ public class InterpreterHelperFunction
         {
             return af.AsFloat() == bf.AsFloat();
         }
+        else if (a is FloatVal af2 && b is IntVal bi2)
+        {
+            return af2.AsFloat() == bi2.AsInt();
+        }
+        else if (a is IntVal ai2 && b is FloatVal bf2)
+        {
+            return ai2.AsInt() == bf2.AsFloat();
+        }
         else if (a is BoolVal ab && b is BoolVal bb)
         {
             return ab.AsBool() == bb.AsBool();
