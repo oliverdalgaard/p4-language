@@ -1,43 +1,59 @@
-using System.Runtime.InteropServices;
+using Microsoft.VisualBasic.FileIO;
 
 namespace Matilda;
 
 public static class Interpreter
 {
-    public static void EvalStmt(Stmt stmt, EnvV envV, EnvP envP)
+    public static void EvalStmt(Stmt stmt, EnvV envV, EnvP envP, EnvS envS)
     {
         switch (stmt)
         {
             case Skip:
-                Console.WriteLine("Skipped");
                 break;
 
             case Comp comp:
-                EvalStmt(comp.Stmt1, envV, envP);
+                EvalStmt(comp.Stmt1, envV, envP, envS);
                 if (envV.TryGet("return") == null)
                 {
-                    EvalStmt(comp.Stmt2, envV, envP);
+                    EvalStmt(comp.Stmt2, envV, envP, envS);
                 }
                 break;
 
             case Print print:
-                Val value = EvalExpr(print.Value, envV, envP);
+                Val value = EvalExpr(print.Value, envV, envP, envS);
                 Console.WriteLine(value.ToString());
                 break;
 
+            case Parameter parameter:
+                envV.Bind(parameter.Identifier, null);
+                break;
+
             case Declaration declaration:
-                if (declaration.Expression == null)
-                {
-                    envV.Bind(declaration.Identifier, null);
-                }
-                else
-                {
-                    envV.Bind(declaration.Identifier, EvalExpr(declaration.Expression, envV, envP));
-                }
+                envV.Bind(declaration.Identifier, EvalExpr(declaration.Expression, envV, envP, envS));
                 break;
 
             case Assign assign:
-                envV.Set(assign.Identifier, EvalExpr(assign.Value, envV, envP));
+                envV.Set(assign.Identifier, EvalExpr(assign.Value, envV, envP, envS));
+                break;
+
+            case SchemaDeclaration schemaDeclaration:
+                envS.Bind(schemaDeclaration.Identifier, schemaDeclaration.Columns);
+                break;
+
+            case TableDeclaration tableDeclaration:
+                Val expr = EvalExpr(tableDeclaration.Expr, envV, envP, envS);
+                if (expr is RowVal)
+                {
+                    Table table = new Table(tableDeclaration.Identifier, envS.TryGet(tableDeclaration.SchemaId), expr.AsRow());
+
+                    table.ParseTypes();
+                    TableVal parsedTable = new TableVal(table);
+                    envV.Bind(tableDeclaration.Identifier, parsedTable);
+                }
+                else
+                {
+                    envV.Bind(tableDeclaration.Identifier, expr);
+                }
                 break;
 
             case FunctionDeclaration functionDeclaration:
@@ -45,28 +61,26 @@ public static class Interpreter
                 break;
 
             case Return returnVal:
-                envV.Bind("return", EvalExpr(returnVal.Value, envV, envP));
+                envV.Bind("return", EvalExpr(returnVal.Value, envV, envP, envS));
                 break;
 
             case If ifStmt:
-                EnvV ifLocalScope = envV.NewScope();
-
                 bool runElse = true;
 
-                Val condition = EvalExpr(ifStmt.Condition, ifLocalScope, envP);
+                Val condition = EvalExpr(ifStmt.Condition, envV, envP, envS);
                 if (condition.AsBool())
                 {
                     runElse = false;
-                    EvalStmt(ifStmt.ThenBody, ifLocalScope, envP);
+                    EvalStmt(ifStmt.ThenBody, envV, envP, envS);
                 }
                 else if (ifStmt.ElseIfStmts.Any())
                 {
                     foreach (If elseIfStmt in ifStmt.ElseIfStmts)
                     {
-                        Val elseIfStmtCondition = EvalExpr(elseIfStmt.Condition, ifLocalScope, envP);
+                        Val elseIfStmtCondition = EvalExpr(elseIfStmt.Condition, envV, envP, envS);
                         if (elseIfStmtCondition.AsBool())
                         {
-                            EvalStmt(elseIfStmt.ThenBody, ifLocalScope, envP);
+                            EvalStmt(elseIfStmt.ThenBody, envV, envP, envS);
                             runElse = false;
                             break;
                         }
@@ -75,28 +89,15 @@ public static class Interpreter
 
                 if (runElse)
                 {
-                    EvalStmt(ifStmt.ElseBody, ifLocalScope, envP);
+                    EvalStmt(ifStmt.ElseBody, envV, envP, envS);
                 }
-
-                if (ifLocalScope.TryGet("return") != null)
-                {
-                    envV.Bind("return", ifLocalScope.TryGet("return"));
-                }
-
                 break;
 
             case While whileStmt:
                 {
-                    EnvV whileLocalScope = envV.NewScope();
-
-                    while (EvalExpr(whileStmt.Condition, whileLocalScope, envP).AsBool())
+                    while (EvalExpr(whileStmt.Condition, envV, envP, envS).AsBool())
                     {
-                        EvalStmt(whileStmt.Body, whileLocalScope, envP);
-                        if (whileLocalScope.TryGet("return") != null)
-                        {
-                            envV.Bind("return", whileLocalScope.TryGet("return"));
-                            break;
-                        }
+                        EvalStmt(whileStmt.Body, envV, envP, envS);
                     }
                     break;
                 }
@@ -107,7 +108,7 @@ public static class Interpreter
         }
     }
 
-    public static Val EvalExpr(Expr expr, EnvV envV, EnvP envP)
+    public static Val EvalExpr(Expr expr, EnvV envV, EnvP envP, EnvS envS)
     {
         switch (expr)
         {
@@ -126,6 +127,20 @@ public static class Interpreter
             case Ref reference:
                 return envV.TryGet(reference.Name);
 
+            case Read read:
+                List<string[]> rows = new List<string[]>();
+                // Open file with filename "" removed
+                using (TextFieldParser textFieldParser = new TextFieldParser(read.FilePath))
+                {
+                    textFieldParser.TextFieldType = FieldType.Delimited;
+                    textFieldParser.SetDelimiters(",");
+                    while (!textFieldParser.EndOfData)
+                    {
+                        rows.Add(textFieldParser.ReadFields());
+                    }
+                }
+                return new RowVal(rows);
+
             case FunctionRef functionRef:
                 FunctionDeclaration function = envP.TryGet(functionRef.Name);
 
@@ -139,14 +154,14 @@ public static class Interpreter
                 for (int i = 0; i < functionRef.Arguments.Count; i++)
                 {
                     string parameterName = function.Parameters[i].Identifier;
-                    Val value = EvalExpr(functionRef.Arguments[i], envV, envP);
+                    Val value = EvalExpr(functionRef.Arguments[i], envV, envP, envS);
 
                     localScope.Bind(parameterName, value);
                 }
 
                 foreach (Stmt stmt in function.Body)
                 {
-                    EvalStmt(stmt, localScope, envP);
+                    EvalStmt(stmt, localScope, envP, envS);
                     if (localScope.TryGet("return") != null)
                     {
                         break;
@@ -156,9 +171,47 @@ public static class Interpreter
 
                 return localScope.TryGet("return");
 
+            case FilterExpr filterExpr:
+                {
+                    Val tableValue = EvalExpr(filterExpr.TableExpr, envV, envP, envS);
+                    Table inputTable = tableValue.AsTable();
+
+                    List<string[]> filteredFile = new List<string[]>();
+
+                    // Add header row
+                    filteredFile.Add(inputTable.File[0]);
+
+                    for (int rowIndex = 0; rowIndex < inputTable.Records.Count; rowIndex++)
+                    {
+                        TableRecord record = inputTable.Records[rowIndex];
+
+                        EnvV rowScope = envV.NewScope();
+
+                        for (int colIndex = 0; colIndex < inputTable.Headers.Count; colIndex++)
+                        {
+                            string columnName = inputTable.Headers[colIndex].Identifier;
+                            Val columnValue = record.Values[colIndex];
+
+                            rowScope.Bind(columnName, columnValue);
+                        }
+
+                        Val predicateResult = EvalExpr(filterExpr.Predicate, rowScope, envP, envS);
+
+                        if (predicateResult.AsBool())
+                        {
+                            filteredFile.Add(inputTable.File[rowIndex + 1]);
+                        }
+                    }
+
+                    Table resultTable = new Table(inputTable.Identifier, inputTable.Schema, filteredFile);
+                    resultTable.ParseTypes();
+
+                    return new TableVal(resultTable);
+                }
+
             case BinaryOp binaryOp:
-                Val v1 = EvalExpr(binaryOp.ExprLeft, envV, envP);
-                Val v2 = EvalExpr(binaryOp.ExprRight, envV, envP);
+                Val v1 = EvalExpr(binaryOp.ExprLeft, envV, envP, envS);
+                Val v2 = EvalExpr(binaryOp.ExprRight, envV, envP, envS);
 
                 switch (binaryOp.Op)
                 {
@@ -178,22 +231,22 @@ public static class Interpreter
                         return new BoolVal(InterpreterHelperFunction.HelperFunctionLT(v1, v2));
 
                     case BinaryOperators.ADD:
-                        return new FloatVal(InterpreterHelperFunction.HelperFunctionADD(v1, v2));
+                        return InterpreterHelperFunction.HelperFunctionADD(v1, v2);
 
                     case BinaryOperators.SUB:
-                        return new FloatVal(InterpreterHelperFunction.HelperFunctionSUB(v1, v2));
+                        return InterpreterHelperFunction.HelperFunctionSUB(v1, v2);
 
                     case BinaryOperators.MUL:
-                        return new FloatVal(InterpreterHelperFunction.HelperFunctionMUL(v1, v2));
+                        return InterpreterHelperFunction.HelperFunctionMUL(v1, v2);
 
                     case BinaryOperators.DIV:
-                        return new FloatVal(InterpreterHelperFunction.HelperFunctionDIV(v1, v2));
+                        return InterpreterHelperFunction.HelperFunctionDIV(v1, v2);
 
                     default: throw new Exception("Not a valid binaryOp expression");
                 }
 
             case UnaryOp unaryOp:
-                Val val = EvalExpr(unaryOp.Expr, envV, envP);
+                Val val = EvalExpr(unaryOp.Expr, envV, envP, envS);
 
                 switch (unaryOp.Op)
                 {

@@ -88,6 +88,8 @@ Stmt<out Stmt stmt> =       (. stmt = Skip.Instance; .)
     | If<out stmt>
     | While <out stmt>
     | Return<out stmt>
+    | SchemaDeclaration<out stmt>
+    | TableDeclaration<out stmt>
   )
 .
 
@@ -101,7 +103,7 @@ Declaration<out Stmt stmt> =
   Type<out Type type>
   IDENT                       (. string var = t.val; .)
   '='                         (. int lineNumber = t.line; .)
-  Expr<out Expr expr>         (. stmt = new Declaration(type, var, t.line, expr); .)
+  Expr<out Expr expr>         (. stmt = new Declaration(type, var, expr, t.line); .)
   ';'
 .
 
@@ -112,18 +114,48 @@ Assignment<out Stmt stmt> =
   ';'
 .
 
-Parameter<out Declaration param> =
+Column<out Column column> =
+  IDENT                       (. string id = t.val; .)
+  ':'
+  Type<out Type type>         (. column = new Column(id, type); .)
+.
+
+SchemaDeclaration<out Stmt stmt> =    (. List<Column> cols = new List<Column>(); int lineNumber = t.line; .)
+  "schema"
+  IDENT                               (. string ident = t.val; .)
+  '='
+  '{'
+  Column<out Column col>              (. cols.Add(col); .)
+  {
+    ','
+    Column<out col>                   (. cols.Add(col); .)
+  }
+  '}'                                 (. stmt = new SchemaDeclaration(ident, cols, lineNumber); .)
+.
+
+TableDeclaration<out Stmt stmt> =
+  "table"
+  '<'
+  IDENT                               (. string schemaId = t.val; .)
+  '>'
+  IDENT                               (. string var = t.val; int lineNumber = t.line; .)
+  '='
+  Expr<out Expr expr>
+  ';'                                 (. stmt = new TableDeclaration(var, schemaId, expr, lineNumber); .)
+.
+
+Parameter<out Parameter param> =
   Type<out Type type>
-  IDENT                             (. param = new Declaration(type, t.val, t.line); .)
+  IDENT                             (. param = new Parameter(type, t.val, t.line); .)
 .
 
 FunctionDeclaration<out Stmt stmt> =
   "function"
   Type<out Type type>
-  IDENT                                       (. string var = t.val; int lineNumber = t.line; List<Declaration> parameters = new List<Declaration>(); List<Stmt> bodyStmts = new List<Stmt>(); Stmt funcBody = Skip.Instance; .)
+  IDENT                                       (. string var = t.val; int lineNumber = t.line; List<Parameter> parameters = new List<Parameter>(); List<Stmt> bodyStmts = new List<Stmt>(); Stmt funcBody = Skip.Instance; .)
   '('
   [
-    Parameter<out Declaration param>          (. parameters.Add(param); .)
+    Parameter<out Parameter param>          (. parameters.Add(param); .)
     {
       ',' Parameter<out param>                (. parameters.Add(param); .)
     }
@@ -163,6 +195,7 @@ While <out Stmt stmt> =
   '{' Stmts<out Stmt body> '}'
                                     (. stmt = new While(condition, body, lineNumber); .)
 .
+
 Type<out Type type> (. type = null; .)
   =
   "int"             (. type = IntT.Instance; .)
@@ -233,8 +266,8 @@ UnaryExpr<out Expr expr>  (. List<char> unaries = new List<char>(); int lineNumb
 .
 
 
-Term<out Expr expr>               (. expr = null; .) =
-  IDENT                           (. string name = t.val; int lineNumber = t.line; .)     // Either IDENT is a function reference or a variable reference
+Term<out Expr expr>               (. expr = null; int lineNumber = -1; .) =
+  IDENT                           (. string name = t.val; lineNumber = t.line; .)     // Either IDENT is a function reference or a variable/table reference
   (
     '('                           (. List<Expr> arguments = new List<Expr>(); .)
     [
@@ -250,8 +283,18 @@ Term<out Expr expr>               (. expr = null; .) =
   | FLOAT                         (. expr = new FloatV(float.Parse(t.val, new CultureInfo("en", false)), t.line); .)
   | "true"                        (. expr = new BoolV(true, t.line); .)
   | "false"                       (. expr = new BoolV(false, t.line); .)
-  | STRING                        (. expr = new StringV(t.val, t.line); .)
+  | STRING                        (. expr = new StringV(t.val.Substring(1, t.val.Length - 2), t.line); .)
   | '(' Expr<out expr> ')'
+  | "read"                        (. lineNumber = t.line; .)
+    '('
+    STRING                        (. expr = new Read(t.val.Substring(1, t.val.Length - 2), lineNumber); .)
+    ')'
+  | "FILTER"                      (. lineNumber = t.line; .)
+    '('
+    Expr<out Expr tableExpr> 
+    ','
+    Expr<out Expr predicate>
+    ')'                           (. expr = new FilterExpr(tableExpr, predicate, lineNumber); .)
 .
 
 END Matilda.

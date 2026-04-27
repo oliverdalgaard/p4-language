@@ -1,21 +1,13 @@
-function bool yaMama(int yes, bool man) {
-    int number = yes + 10;
-
-    if (man) {
-        return 20;
-    }
-    return 0;
+schema Customers = {
+    customer_id : int,
+    name : string,
+    hej : bool
 }
 
-print yaMama(5, true);
+table<Customers> CustomersTable = read("test.csv");
 
-print yaMama(5, false);
+print CustomersTable;
 
-print "Hej";
+table<Customers> filteredCustomersTable = FILTER(CustomersTable, customer_id < 4 && 2 < customer_id);
 
-
-
-int x = 5;
-
-
-print x;
+print filteredCustomersTable;

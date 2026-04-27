@@ -14,7 +14,7 @@ public class Skip : Stmt
 
     public static readonly Skip Instance = new Skip();
 
-    private Skip() { }
+    public Skip() { }
 
 }
 
@@ -44,16 +44,32 @@ public class Comp : Stmt
     }
 }
 
+public class Parameter : Stmt
+{
+    public Type Type { get; }
+    public string Identifier { get; }
+
+    public override int LineNumber { get; }
+
+    public Parameter(Type type, string identifier, int lineNumber)
+    {
+        Type = type;
+        Identifier = identifier;
+
+        LineNumber = lineNumber;
+    }
+}
+
 public class Declaration : Stmt
 {
     public Type Type { get; }
     public string Identifier { get; }
 
-    public Expr? Expression { get; }
+    public Expr Expression { get; }
 
     public override int LineNumber { get; }
 
-    public Declaration(Type? type, string? identifier, int lineNumber, Expr? expression = null)
+    public Declaration(Type type, string identifier, Expr expression, int lineNumber)
     {
         Type = type;
         Identifier = identifier;
@@ -79,16 +95,52 @@ public class Assign : Stmt
     }
 }
 
+public class SchemaDeclaration : Stmt
+{
+    public string Identifier { get; }
+    public List<Column> Columns { get; }
+
+    public override int LineNumber { get; }
+
+
+    public SchemaDeclaration(string identifier, List<Column> columns, int lineNumber)
+    {
+        Identifier = identifier;
+        Columns = columns;
+
+        LineNumber = lineNumber;
+    }
+}
+
+public class TableDeclaration : Stmt
+{
+    public string Identifier { get; }
+    public string SchemaId { get; }
+    public Expr Expr { get; }
+
+    public override int LineNumber { get; }
+
+
+    public TableDeclaration(string identifier, string schemaId, Expr expr, int lineNumber)
+    {
+        Identifier = identifier;
+        SchemaId = schemaId;
+        Expr = expr;
+
+        LineNumber = lineNumber;
+    }
+}
+
 public class FunctionDeclaration : Stmt
 {
     public Type Type { get; }
     public string Identifier { get; }
-    public List<Declaration> Parameters { get; }
+    public List<Parameter> Parameters { get; }
     public List<Stmt> Body { get; }
 
     public override int LineNumber { get; }
 
-    public FunctionDeclaration(Type type, string identifier, List<Declaration> parameters, List<Stmt> body, int lineNumber)
+    public FunctionDeclaration(Type type, string identifier, List<Parameter> parameters, List<Stmt> body, int lineNumber)
     {
         Type = type;
         Identifier = identifier;
@@ -122,7 +174,7 @@ public class Print : Stmt
 
     public Print(Expr value, int lineNumber)
     {
-        this.Value = value;
+        Value = value;
 
         LineNumber = lineNumber;
     }
