@@ -74,7 +74,7 @@ public class InterpreterEvalStmtTests
             Assert.AreEqual("42" + Environment.NewLine, sw.ToString());
         }
         finally
-        {  
+        {
             // Restore original console output => In this case is it for console.write is working again after the test is done, så det ikke påvirker andre tests eller output i konsollen
             Console.SetOut(originalOut);
         }
@@ -96,7 +96,7 @@ public class InterpreterEvalStmtTests
 
         // Assert
         Assert.AreEqual("Test", envV.TryGet("x")!.ToString());
-        
+
     }
 
     // Stmt assign updates existing variable => First x is bound to 1, then updated to 67

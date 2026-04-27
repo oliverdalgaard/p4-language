@@ -167,7 +167,7 @@ class TypeChecker
                 //param 
                 foreach (Parameter param in f.Parameters)
                 {
-                    if (localScope.TryGet(param.Identifier) != null)
+                    if (localScope.TryGetLocal(param.Identifier) != null)
                     {
                         errors.Add($"Line {param.LineNumber}: Duplicate parameter '{param.Identifier}'.");
                     }

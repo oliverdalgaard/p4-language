@@ -54,6 +54,15 @@ public class EnvVT
         }
     }
 
+    public Type? TryGetLocal(string variable)
+    {
+        if (IsLocal(variable))
+        {
+            return bindings[variable];
+        }
+        return null;
+    }
+
     private bool IsLocal(string variable)
     {
         return bindings.ContainsKey(variable);
