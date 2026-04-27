@@ -208,9 +208,9 @@ class TypeChecker
 
                 TableT tableType = (TableT)type;
 
-                if (tableType.SchemaId != tableDeclaration.SchemaId)
+                if (!CompareSchema.Compare(envST.TryGet(tableType.SchemaId), envST.TryGet(tableDeclaration.SchemaId)))
                 {
-                    errors.Add($"Line {tableDeclaration.LineNumber}: Declaration type does not match the type of the expression.");
+                    errors.Add($"Line {tableDeclaration.LineNumber}: Declaration schema '{tableDeclaration.SchemaId}' does not match the schema '{tableType.SchemaId}' of the expression.");
                     break;
                 }
 

@@ -26,12 +26,6 @@ schema test2 = {
     name : string
 }
 
-function table<test2> hej(table<test> test) {
-    table<test> hollo = read("dasd");
-    return read("hej");
-}
-
 table<test> testTable = read("123");
-table<test2> testTable2 = read("123");
 
-testTable = FILTER(testTable2, true);
+table<test2> Hej = testTable;
