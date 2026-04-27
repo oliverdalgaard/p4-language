@@ -184,10 +184,10 @@ public static class Interpreter
 
                         EnvV rowScope = envV.NewScope();
 
-                        for (int colIndex = 0; colIndex < inputTable.Headers.Count; colIndex++)
+                        for (int valIndex = 0; valIndex < inputTable.Headers.Count; valIndex++)
                         {
-                            string columnName = inputTable.Headers[colIndex].Identifier;
-                            Val columnValue = record.Values[colIndex];
+                            string columnName = inputTable.Headers[valIndex].Identifier;
+                            Val columnValue = record.Values[valIndex];
 
                             rowScope.Bind(columnName, columnValue);
                         }
