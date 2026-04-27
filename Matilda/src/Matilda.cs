@@ -21,7 +21,7 @@ class Matilda
 			{
 				Stmt program = parser.mainNode;
 
-				TypeChecker typeChecker = new TypeChecker(program, new EnvVT(), new EnvPT(), new EnvST());
+				/* TypeChecker typeChecker = new TypeChecker(program, new EnvVT(), new EnvPT(), new EnvST());
 
 				if (typeChecker.HasErrors())
 				{
@@ -30,11 +30,11 @@ class Matilda
 					Console.WriteLine("Errors during static analysis!");
 				}
 				else
-				{
-					Console.WriteLine("Program starting!");
-					Interpreter.EvalStmt(program, new EnvV(), new EnvP(), new EnvS());
-					Console.WriteLine("Program stopped!");
-				}
+				{ */
+				Console.WriteLine("Program starting!");
+				Interpreter.EvalStmt(program, new EnvV(), new EnvP(), new EnvS());
+				Console.WriteLine("Program stopped!");
+				/* } */
 			}
 
 
