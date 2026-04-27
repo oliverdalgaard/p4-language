@@ -4,10 +4,12 @@ schema Customers = {
     hej : bool
 }
 
+function table<Customers> filterCustomers(table<Customers> customers_table) {
+    return FILTER(customers_table, customer_id < 5 && 1 < customer_id);
+}
+
 table<Customers> CustomersTable = read("test.csv");
 
-print CustomersTable;
-
-table<Customers> filteredCustomersTable = FILTER(CustomersTable, customer_id < 4 && 2 < customer_id);
+table<Customers> filteredCustomersTable = filterCustomers(CustomersTable);
 
 print filteredCustomersTable;
