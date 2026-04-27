@@ -1,3 +1,4 @@
+/*
 schema Customers = {
     customer_id : int,
     name : string,
@@ -13,3 +14,16 @@ table<Customers> CustomersTable = read("test.csv");
 table<Customers> filteredCustomersTable = filterCustomers(CustomersTable);
 
 print filteredCustomersTable;
+*/
+
+int number = 10;
+print number;
+
+function int add(){
+    number = 20;
+    return number;
+}
+
+print add();
+
+print number;

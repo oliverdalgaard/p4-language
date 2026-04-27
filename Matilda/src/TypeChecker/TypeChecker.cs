@@ -70,30 +70,34 @@ class TypeChecker
                 break;
 
             case Assign assign:
-                // check for null 
+                // Check for null 
                 if (assign.Identifier == null || assign.Value == null)
                 {
                     errors.Add($"Line {assign.LineNumber}: Invalid assignment");
                     break;
                 }
 
-                // check delclaration 
+                // Check delclaration 
                 if (envVT.TryGet(assign.Identifier) == null)
                 {
                     errors.Add($"Line {assign.LineNumber}: Varibale {assign.Identifier} is not declared.");
+                    break;
                 }
-                else
+
+                if (envVT.TryGetLocal(assign.Identifier) == null)
                 {
-                    // check type match 
-                    Type expectedType = envVT.TryGet(assign.Identifier);
-                    Type actualType = ExprT(assign.Value, envVT, envPT, envST);
-
-                    if (expectedType != actualType)
-                    {
-                        errors.Add($"Line {assign.LineNumber}: Cannot assign '{actualType}' to variable '{assign.Identifier}' of type '{expectedType}'.");
-                    }
+                    errors.Add($"Line {assign.LineNumber}: Cannot reassign global varibale '{assign.Identifier}'.");
+                    break;
                 }
 
+                // Check type match 
+                Type expectedType = envVT.TryGet(assign.Identifier);
+                Type actualType = ExprT(assign.Value, envVT, envPT, envST);
+
+                if (expectedType != actualType)
+                {
+                    errors.Add($"Line {assign.LineNumber}: Cannot assign '{actualType}' to variable '{assign.Identifier}' of type '{expectedType}'.");
+                }
                 break;
 
             case Declaration declaration:
@@ -103,7 +107,7 @@ class TypeChecker
                     break;
                 }
 
-                if (envVT.TryGet(declaration.Identifier) != null)
+                if (envVT.TryGetLocal(declaration.Identifier) != null)
                 {
                     errors.Add($"Line {declaration.LineNumber}: Varibale '{declaration.Identifier}' is already declared.");
                     break;
@@ -122,6 +126,7 @@ class TypeChecker
                 if (envVT.TryGet("return") != null)
                 {
                     errors.Add($"Line {schemaDeclaration.LineNumber}: Schemas can only be declared in the global scope.");
+                    break;
                 }
 
                 List<Column> columns = schemaDeclaration.Columns;
