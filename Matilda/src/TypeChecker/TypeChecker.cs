@@ -564,7 +564,16 @@ class TypeChecker
                     return null;
                 }
 
-                if (ExprT(filter.Predicate, envVT, envPT, envST) != BoolT.Instance)
+                TableT filterTable = (TableT)tableExprType;
+                List<Column> filterTableSchema = envST.TryGet(filterTable.SchemaId);
+                EnvVT rowEnv = envVT.NewScope();
+
+                foreach (Column col in filterTableSchema)
+                {
+                    rowEnv.Bind(col.Id, col.Type);
+                }
+
+                if (ExprT(filter.Predicate, rowEnv, envPT, envST) != BoolT.Instance)
                 {
                     errors.Add($"Line {filter.LineNumber}: Argument 2 must be of type 'BoolT'.");
                     return null;
@@ -603,9 +612,16 @@ class TypeChecker
                     Type argType = ExprT(functionRef.Arguments[i], envVT, envPT, envST);
                     Type paramType = funcType.Parameters[i];
 
-                    if (argType != paramType)
+                    if (argType is TableT currentTableType && paramType is TableT functionReturnTableType)
                     {
-                        errors.Add($"Line {functionRef.Arguments[i].LineNumber}: Function {functionRef.Name} expect parameter {i + 1} to have type {paramType} but got {argType}.");
+                        if (!CompareSchema.Compare(envST.TryGet(currentTableType.SchemaId), envST.TryGet(functionReturnTableType.SchemaId)))
+                        {
+                            errors.Add($"Line {functionRef.Arguments[i].LineNumber}: Function '{functionRef.Name}' expect parameter {i + 1} to have table with schema '{currentTableType.SchemaId}' but got '{functionReturnTableType.SchemaId}'.");
+                        }
+                    }
+                    else if (argType != paramType)
+                    {
+                        errors.Add($"Line {functionRef.Arguments[i].LineNumber}: Function '{functionRef.Name}' expect parameter {i + 1} to have type '{paramType}' but got '{argType}'.");
 
                     }
                 }

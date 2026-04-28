@@ -1,4 +1,3 @@
-/*
 schema Customers = {
     customer_id : int,
     name : string,
@@ -14,18 +13,3 @@ table<Customers> CustomersTable = read("test.csv");
 table<Customers> filteredCustomersTable = filterCustomers(CustomersTable);
 
 print filteredCustomersTable;
-*/
-
-schema test = {
-    name: string,
-    age: int
-}
-
-schema test2 = {
-    age: int,
-    name : string
-}
-
-table<test> testTable = read("123");
-
-table<test2> Hej = testTable;
