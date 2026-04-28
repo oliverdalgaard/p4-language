@@ -156,7 +156,7 @@ public Stmt mainNode = null;
 			Assignment(out stmt);
 			break;
 		}
-		case 16: {
+		case 13: {
 			FunctionDeclaration(out stmt);
 			break;
 		}
@@ -164,15 +164,15 @@ public Stmt mainNode = null;
 			Print(out stmt);
 			break;
 		}
-		case 20: {
+		case 17: {
 			If(out stmt);
 			break;
 		}
-		case 23: {
+		case 20: {
 			While(out stmt);
 			break;
 		}
-		case 19: {
+		case 16: {
 			Return(out stmt);
 			break;
 		}
@@ -180,7 +180,7 @@ public Stmt mainNode = null;
 			SchemaDeclaration(out stmt);
 			break;
 		}
-		case 13: {
+		case 21: {
 			TableDeclaration(out stmt);
 			break;
 		}
@@ -210,12 +210,17 @@ public Stmt mainNode = null;
 	}
 
 	void FunctionDeclaration(out Stmt stmt) {
-		Expect(16);
-		Type(out Type type);
+		Type type = null; 
+		Expect(13);
+		if (StartOf(2)) {
+			Type(out type);
+		} else if (la.kind == 21) {
+			CustomType(out type);
+		} else SynErr(43);
 		Expect(1);
 		string var = t.val; int lineNumber = t.line; List<Parameter> parameters = new List<Parameter>(); List<Stmt> bodyStmts = new List<Stmt>(); Stmt funcBody = Skip.Instance; 
-		Expect(17);
-		if (StartOf(2)) {
+		Expect(14);
+		if (StartOf(3)) {
 			Parameter(out Parameter param);
 			parameters.Add(param); 
 			while (la.kind == 11) {
@@ -224,7 +229,7 @@ public Stmt mainNode = null;
 				parameters.Add(param); 
 			}
 		}
-		Expect(18);
+		Expect(15);
 		Expect(10);
 		Stmt(out funcBody);
 		bodyStmts.Add(funcBody); 
@@ -246,25 +251,25 @@ public Stmt mainNode = null;
 
 	void If(out Stmt stmt) {
 		Stmt elseStmt = Skip.Instance; List<If> elseIfStmts = new List<If>(); int lineNumber = -1; 
-		Expect(20);
-		lineNumber = t.line; 
 		Expect(17);
+		lineNumber = t.line; 
+		Expect(14);
 		Expr(out Expr condition);
-		Expect(18);
+		Expect(15);
 		Expect(10);
 		Stmts(out Stmt thenStmt);
 		Expect(12);
-		while (la.kind == 21) {
+		while (la.kind == 18) {
 			Get();
-			Expect(17);
+			Expect(14);
 			Expr(out Expr elseIfCondition);
-			Expect(18);
+			Expect(15);
 			Expect(10);
 			Stmts(out Stmt elseIfStmt);
 			Expect(12);
 			elseIfStmts.Add(new If(elseIfCondition, elseIfStmt, null, Skip.Instance, lineNumber)); 
 		}
-		if (la.kind == 22) {
+		if (la.kind == 19) {
 			Get();
 			Expect(10);
 			Stmts(out elseStmt);
@@ -274,11 +279,11 @@ public Stmt mainNode = null;
 	}
 
 	void While(out Stmt stmt) {
-		Expect(23);
+		Expect(20);
 		int lineNumber = t.line; 
-		Expect(17);
+		Expect(14);
 		Expr(out Expr condition);
-		Expect(18);
+		Expect(15);
 		Expect(10);
 		Stmts(out Stmt body);
 		Expect(12);
@@ -286,7 +291,7 @@ public Stmt mainNode = null;
 	}
 
 	void Return(out Stmt stmt) {
-		Expect(19);
+		Expect(16);
 		Expr(out Expr expr);
 		stmt = new Return(expr, t.line); 
 		Expect(6);
@@ -311,11 +316,8 @@ public Stmt mainNode = null;
 	}
 
 	void TableDeclaration(out Stmt stmt) {
-		Expect(13);
-		Expect(14);
-		Expect(1);
-		string schemaId = t.val; 
-		Expect(15);
+		CustomType(out Type type);
+		string schemaId = ((TableT)type).SchemaId; 
 		Expect(1);
 		string var = t.val; int lineNumber = t.line; 
 		Expect(7);
@@ -354,7 +356,7 @@ public Stmt mainNode = null;
 		} else if (la.kind == 27) {
 			Get();
 			type = StringT.Instance; 
-		} else SynErr(43);
+		} else SynErr(44);
 	}
 
 	void Column(out Column column) {
@@ -365,8 +367,21 @@ public Stmt mainNode = null;
 		column = new Column(id, type); 
 	}
 
+	void CustomType(out Type table) {
+		Expect(21);
+		Expect(22);
+		Expect(1);
+		table = new TableT(t.val); 
+		Expect(23);
+	}
+
 	void Parameter(out Parameter param) {
-		Type(out Type type);
+		Type type = null; 
+		if (StartOf(2)) {
+			Type(out type);
+		} else if (la.kind == 21) {
+			CustomType(out type);
+		} else SynErr(45);
 		Expect(1);
 		param = new Parameter(type, t.val, t.line); 
 	}
@@ -390,7 +405,7 @@ public Stmt mainNode = null;
 	void RelExpr(out Expr expr) {
 		BinaryOperators op = BinaryOperators.LT; int lineNumber = -1; 
 		PlusExpr(out expr);
-		while (la.kind == 14) {
+		while (la.kind == 22) {
 			Get();
 			lineNumber = t.line; 
 			PlusExpr(out Expr expr2);
@@ -446,10 +461,10 @@ public Stmt mainNode = null;
 		case 1: {
 			Get();
 			string name = t.val; lineNumber = t.line; 
-			if (la.kind == 17) {
+			if (la.kind == 14) {
 				Get();
 				List<Expr> arguments = new List<Expr>(); 
-				if (StartOf(3)) {
+				if (StartOf(4)) {
 					Expr(out Expr argument);
 					arguments.Add(argument); 
 					while (la.kind == 11) {
@@ -458,11 +473,11 @@ public Stmt mainNode = null;
 						arguments.Add(argument); 
 					}
 				}
-				Expect(18);
+				Expect(15);
 				expr = new FunctionRef(name, arguments, lineNumber); 
-			} else if (StartOf(4)) {
+			} else if (StartOf(5)) {
 				expr = new Ref(name, lineNumber); 
-			} else SynErr(44);
+			} else SynErr(46);
 			break;
 		}
 		case 2: {
@@ -490,33 +505,33 @@ public Stmt mainNode = null;
 			expr = new StringV(t.val.Substring(1, t.val.Length - 2), t.line); 
 			break;
 		}
-		case 17: {
+		case 14: {
 			Get();
 			Expr(out expr);
-			Expect(18);
+			Expect(15);
 			break;
 		}
 		case 39: {
 			Get();
 			lineNumber = t.line; 
-			Expect(17);
+			Expect(14);
 			Expect(4);
 			expr = new Read(t.val.Substring(1, t.val.Length - 2), lineNumber); 
-			Expect(18);
+			Expect(15);
 			break;
 		}
 		case 40: {
 			Get();
 			lineNumber = t.line; 
-			Expect(17);
+			Expect(14);
 			Expr(out Expr tableExpr);
 			Expect(11);
 			Expr(out Expr predicate);
-			Expect(18);
+			Expect(15);
 			expr = new FilterExpr(tableExpr, predicate, lineNumber); 
 			break;
 		}
-		default: SynErr(45); break;
+		default: SynErr(47); break;
 		}
 	}
 
@@ -533,10 +548,11 @@ public Stmt mainNode = null;
 	
 	static readonly bool[,] set = {
 		{_T,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x},
-		{_x,_T,_x,_x, _x,_T,_x,_x, _x,_T,_x,_x, _x,_T,_x,_x, _T,_x,_x,_T, _T,_x,_x,_T, _T,_T,_T,_T, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x},
+		{_x,_T,_x,_x, _x,_T,_x,_x, _x,_T,_x,_x, _x,_T,_x,_x, _T,_T,_x,_x, _T,_T,_x,_x, _T,_T,_T,_T, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x},
 		{_x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _T,_T,_T,_T, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x},
-		{_x,_T,_T,_T, _T,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_T,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _T,_T,_T,_T, _T,_x,_x},
-		{_x,_x,_x,_x, _x,_x,_T,_x, _x,_x,_x,_T, _x,_x,_T,_x, _x,_x,_T,_x, _x,_x,_x,_x, _x,_x,_x,_x, _T,_T,_T,_T, _T,_T,_T,_T, _x,_x,_x,_x, _x,_x,_x}
+		{_x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_T,_x,_x, _T,_T,_T,_T, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x},
+		{_x,_T,_T,_T, _T,_x,_x,_x, _x,_x,_x,_x, _x,_x,_T,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _T,_T,_T,_T, _T,_x,_x},
+		{_x,_x,_x,_x, _x,_x,_T,_x, _x,_x,_x,_T, _x,_x,_x,_T, _x,_x,_x,_x, _x,_x,_T,_x, _x,_x,_x,_x, _T,_T,_T,_T, _T,_T,_T,_T, _x,_x,_x,_x, _x,_x,_x}
 
 	};
 } // end Parser
@@ -563,17 +579,17 @@ public class Errors {
 			case 10: s = "\"{\" expected"; break;
 			case 11: s = "\",\" expected"; break;
 			case 12: s = "\"}\" expected"; break;
-			case 13: s = "\"table\" expected"; break;
-			case 14: s = "\"<\" expected"; break;
-			case 15: s = "\">\" expected"; break;
-			case 16: s = "\"function\" expected"; break;
-			case 17: s = "\"(\" expected"; break;
-			case 18: s = "\")\" expected"; break;
-			case 19: s = "\"return\" expected"; break;
-			case 20: s = "\"if\" expected"; break;
-			case 21: s = "\"elseif\" expected"; break;
-			case 22: s = "\"else\" expected"; break;
-			case 23: s = "\"while\" expected"; break;
+			case 13: s = "\"function\" expected"; break;
+			case 14: s = "\"(\" expected"; break;
+			case 15: s = "\")\" expected"; break;
+			case 16: s = "\"return\" expected"; break;
+			case 17: s = "\"if\" expected"; break;
+			case 18: s = "\"elseif\" expected"; break;
+			case 19: s = "\"else\" expected"; break;
+			case 20: s = "\"while\" expected"; break;
+			case 21: s = "\"table\" expected"; break;
+			case 22: s = "\"<\" expected"; break;
+			case 23: s = "\">\" expected"; break;
 			case 24: s = "\"int\" expected"; break;
 			case 25: s = "\"float\" expected"; break;
 			case 26: s = "\"bool\" expected"; break;
@@ -593,9 +609,11 @@ public class Errors {
 			case 40: s = "\"FILTER\" expected"; break;
 			case 41: s = "??? expected"; break;
 			case 42: s = "invalid Stmt"; break;
-			case 43: s = "invalid Type"; break;
-			case 44: s = "invalid Term"; break;
-			case 45: s = "invalid Term"; break;
+			case 43: s = "invalid FunctionDeclaration"; break;
+			case 44: s = "invalid Type"; break;
+			case 45: s = "invalid Parameter"; break;
+			case 46: s = "invalid Term"; break;
+			case 47: s = "invalid Term"; break;
 
 			default: s = "error " + n; break;
 		}

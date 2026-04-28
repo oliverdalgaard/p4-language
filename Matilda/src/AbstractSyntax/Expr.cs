@@ -86,6 +86,21 @@ public class FunctionRef : Expr
     }
 }
 
+public class FilterExpr : Expr
+{
+    public Expr TableExpr { get; }
+    public Expr Predicate { get; }
+    public override int LineNumber { get; }
+
+    public FilterExpr(Expr tableExpr, Expr predicate, int lineNumber)
+    {
+        TableExpr = tableExpr;
+        Predicate = predicate;
+
+        LineNumber = lineNumber;
+    }
+}
+
 public class IntV : Expr
 {
     public int Value { get; }
@@ -137,21 +152,6 @@ public class StringV : Expr
     public StringV(string value, int lineNumber)
     {
         Value = value;
-
-        LineNumber = lineNumber;
-    }
-}
-
-public class FilterExpr : Expr
-{
-    public Expr TableExpr { get; }
-    public Expr Predicate { get; }
-    public override int LineNumber { get; }
-
-    public FilterExpr(Expr tableExpr, Expr predicate, int lineNumber)
-    {
-        TableExpr = tableExpr;
-        Predicate = predicate;
 
         LineNumber = lineNumber;
     }
