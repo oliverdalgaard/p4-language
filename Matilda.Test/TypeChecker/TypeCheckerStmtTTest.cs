@@ -247,7 +247,7 @@ public class ReturnTestsTypeChecker : RunTypeChecker
         CollectionAssert.AreEqual(expected, checker.errors);
     }
     [TestMethod]
-    public void ReturnCheck()
+    public void ReturnCheckInsideFunction()
     {
         //arrange
         Stmt stmt = new FunctionDeclaration(IntT.Instance, "func1",
