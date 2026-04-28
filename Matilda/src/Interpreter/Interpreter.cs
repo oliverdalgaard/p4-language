@@ -4,6 +4,26 @@ namespace Matilda;
 
 public static class Interpreter
 {
+    public static void EvalTopLevelDeclarations(List<TopLevelDeclaration> topLevelDeclarations, EnvP envP, EnvS envS)
+    {
+        foreach (TopLevelDeclaration topLevelDeclaration in topLevelDeclarations)
+        {
+            switch (topLevelDeclaration)
+            {
+                case SchemaDeclaration schemaDeclaration:
+                    envS.Bind(schemaDeclaration.Identifier, schemaDeclaration.Columns);
+                    break;
+
+                case FunctionDeclaration functionDeclaration:
+                    envP.Bind(functionDeclaration);
+                    break;
+
+                default:
+                    throw new Exception("Not a valid TopLevelDeclaration");
+            }
+        }
+    }
+
     public static void EvalStmt(Stmt stmt, EnvV envV, EnvP envP, EnvS envS)
     {
         switch (stmt)
@@ -28,7 +48,7 @@ public static class Interpreter
                 envV.Bind(parameter.Identifier, null);
                 break;
 
-            case Declaration declaration:
+            case LocalDeclaration declaration:
                 envV.Bind(declaration.Identifier, EvalExpr(declaration.Expression, envV, envP, envS));
                 break;
 
@@ -36,28 +56,25 @@ public static class Interpreter
                 envV.Set(assign.Identifier, EvalExpr(assign.Value, envV, envP, envS));
                 break;
 
-            case SchemaDeclaration schemaDeclaration:
-                envS.Bind(schemaDeclaration.Identifier, schemaDeclaration.Columns);
-                break;
-
             case TableDeclaration tableDeclaration:
-                Val expr = EvalExpr(tableDeclaration.Expr, envV, envP, envS);
-                if (expr is RowVal)
+                List<string[]> rows = new List<string[]>();
+                // Open file with filename "" removed
+                using (TextFieldParser textFieldParser = new TextFieldParser(tableDeclaration.FilePath))
                 {
-                    Table table = new Table(tableDeclaration.Identifier, envS.TryGet(tableDeclaration.SchemaId), expr.AsRow());
-
-                    table.ParseTypes();
-                    TableVal parsedTable = new TableVal(table);
-                    envV.Bind(tableDeclaration.Identifier, parsedTable);
+                    textFieldParser.TextFieldType = FieldType.Delimited;
+                    textFieldParser.SetDelimiters(",");
+                    while (!textFieldParser.EndOfData)
+                    {
+                        rows.Add(textFieldParser.ReadFields());
+                    }
                 }
-                else
-                {
-                    envV.Bind(tableDeclaration.Identifier, expr);
-                }
-                break;
 
-            case FunctionDeclaration functionDeclaration:
-                envP.Bind(functionDeclaration);
+                Table table = new Table(tableDeclaration.Identifier, envS.TryGet(((TableT)tableDeclaration.Type).SchemaId), rows);
+                table.ParseTypes();
+
+                TableVal parsedTable = new TableVal(table);
+                envV.Bind(tableDeclaration.Identifier, parsedTable);
+
                 break;
 
             case Return returnVal:
@@ -127,20 +144,6 @@ public static class Interpreter
             case Ref reference:
                 return envV.TryGet(reference.Name);
 
-            case Read read:
-                List<string[]> rows = new List<string[]>();
-                // Open file with filename "" removed
-                using (TextFieldParser textFieldParser = new TextFieldParser(read.FilePath))
-                {
-                    textFieldParser.TextFieldType = FieldType.Delimited;
-                    textFieldParser.SetDelimiters(",");
-                    while (!textFieldParser.EndOfData)
-                    {
-                        rows.Add(textFieldParser.ReadFields());
-                    }
-                }
-                return new RowVal(rows);
-
             case FunctionRef functionRef:
                 FunctionDeclaration function = envP.TryGet(functionRef.Name);
 
@@ -159,15 +162,7 @@ public static class Interpreter
                     localScope.Bind(parameterName, value);
                 }
 
-                foreach (Stmt stmt in function.Body)
-                {
-                    EvalStmt(stmt, localScope, envP, envS);
-                    if (localScope.TryGet("return") != null)
-                    {
-                        break;
-                    }
-                }
-
+                EvalStmt(function.Body, localScope, envP, envS);
 
                 return localScope.TryGet("return");
 

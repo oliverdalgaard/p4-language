@@ -19,7 +19,7 @@ class Matilda
 			}
 			else
 			{
-				Stmt program = parser.mainNode;
+				Program program = parser.mainNode;
 
 				TypeChecker typeChecker = new TypeChecker(program, new EnvVT(), new EnvPT(), new EnvST());
 
@@ -32,7 +32,14 @@ class Matilda
 				else
 				{
 					Console.WriteLine("Program starting!");
-					Interpreter.EvalStmt(program, new EnvV(), new EnvP(), new EnvS());
+
+					EnvV envV = new EnvV();
+					EnvP envP = new EnvP();
+					EnvS envS = new EnvS();
+
+					Interpreter.EvalTopLevelDeclarations(program.TopLevelDeclarations, envP, envS);
+					Interpreter.EvalStmt(program.Stmt, envV, envP, envS);
+
 					Console.WriteLine("Program stopped!");
 				}
 			}
