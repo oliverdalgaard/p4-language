@@ -52,3 +52,34 @@ public class FunctionTestsTypeChecker : RunTypeChecker
 
 //schema decla test
 
+[TestClass]
+public class SchemaTestsTypechecker : RunTypeChecker
+{
+    [TestMethod]
+    public void SchemaDeclarationCheck()
+    {
+        //arrange
+        TopLevelDeclaration topLevelDeclaration = new SchemaDeclaration("schema1", new List<Column> { new Column("1", IntT.Instance) }, -1);
+        //act
+        var checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }));
+        // assert
+        Assert.IsFalse(checker.HasErrors());
+    }
+
+    [TestMethod]
+    public void SchemaDeclarationCheckDuplicateId()
+    {
+        //arrange
+        TopLevelDeclaration topLevelDeclaration = new SchemaDeclaration("schema1", new List<Column> { new Column("1", IntT.Instance), new Column("1", IntT.Instance) }, -1);
+        //act
+        var checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }));
+        //assert
+        var expected = new List<string>
+    {
+        "Line -s: Schema 'schema1' may not contain duplicate identifiers.",
+    };
+        CollectionAssert.AreEqual(expected, checker.errors);
+    }
+}
+
+
