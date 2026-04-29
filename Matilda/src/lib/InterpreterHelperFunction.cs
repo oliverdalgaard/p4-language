@@ -115,18 +115,34 @@ public class InterpreterHelperFunction
     {
         if (v1 is IntVal ai && v2 is IntVal bi)
         {
+            if (bi.AsInt() == 0)
+            {
+                throw new Exception("Division by zero not allowed.");
+            }
             return new FloatVal(ai.AsInt() / bi.AsInt());
         }
         else if (v1 is FloatVal af && v2 is FloatVal bf)
         {
+            if (bf.AsFloat() == 0)
+            {
+                throw new Exception("Division by zero not allowed.");
+            }
             return new FloatVal(af.AsFloat() / bf.AsFloat());
         }
         else if (v1 is FloatVal af2 && v2 is IntVal bi2)
         {
+            if (bi2.AsInt() == 0)
+            {
+                throw new Exception("Division by zero not allowed.");
+            }
             return new FloatVal(af2.AsFloat() / bi2.AsInt());
         }
         else if (v1 is IntVal ai2 && v2 is FloatVal bf2)
         {
+            if (bf2.AsFloat() == 0)
+            {
+                throw new Exception("Division by zero not allowed.");
+            }
             return new FloatVal(ai2.AsInt() / bf2.AsFloat());
         }
         throw new Exception("Type error: '/' supports only numeric types (int/float)");
