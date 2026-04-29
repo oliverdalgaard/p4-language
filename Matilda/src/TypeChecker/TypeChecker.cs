@@ -1,6 +1,6 @@
 namespace Matilda;
 
-class TypeChecker
+public class TypeChecker
 {
     public List<string> errors { get; }
 
@@ -174,8 +174,7 @@ class TypeChecker
                 // Check delclaration 
                 if (envVT.TryGet(assign.Identifier) == null)
                 {
-                    errors.Add($"Line {assign.LineNumber}: Varibale {assign.Identifier} is not declared.");
-                    break;
+                    errors.Add($"Line {assign.LineNumber}: Variable {assign.Identifier} is not declared.");
                 }
 
                 if (envVT.TryGetLocal(assign.Identifier) == null)
@@ -217,7 +216,7 @@ class TypeChecker
 
                 if (envVT.TryGetLocal(declaration.Identifier) != null)
                 {
-                    errors.Add($"Line {declaration.LineNumber}: Varibale '{declaration.Identifier}' is already declared.");
+                    errors.Add($"Line {declaration.LineNumber}: Variable '{declaration.Identifier}' is already declared.");
                     break;
                 }
 
@@ -450,22 +449,22 @@ class TypeChecker
                     case BinaryOperators.EQ:
                         if (typeLeft != BoolT.Instance && typeLeft != IntT.Instance && typeLeft != FloatT.Instance)
                         {
-                            errors.Add($"Line {binaryOp.ExprLeft.LineNumber}: Operator '==' expected a left operand of type 'boolean','int' or 'float', but got '{typeLeft}'.");
+                            errors.Add($"Line {binaryOp.ExprLeft.LineNumber}: Operator '==' expected a left operand of type 'bool','int' or 'float', but got '{typeLeft}'.");
                         }
 
                         if (typeRight != BoolT.Instance && typeRight != IntT.Instance && typeRight != FloatT.Instance)
                         {
-                            errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Operator '==' expected a right operand of type 'Boolean','int' or 'float', but got '{typeRight}'.");
+                            errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Operator '==' expected a right operand of type 'bool','int' or 'float', but got '{typeRight}'.");
                         }
 
                         if (typeRight == BoolT.Instance && typeLeft != BoolT.Instance)
                         {
-                            errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Operator '==' expected a right and left operand of type 'Boolean', but got '{typeLeft}'.");
+                            errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Operator '==' expected a right and left operand of type 'bool', but got '{typeLeft}'.");
                         }
 
                         if (typeRight != BoolT.Instance && typeLeft == BoolT.Instance)
                         {
-                            errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Operator '==' expected a right and left operand of type 'Boolean', but got '{typeRight}'.");
+                            errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Operator '==' expected a right and left operand of type 'bool', but got '{typeRight}'.");
                         }
 
                         // Return
@@ -474,22 +473,22 @@ class TypeChecker
                     case BinaryOperators.NEQ:
                         if (typeLeft != BoolT.Instance && typeLeft != IntT.Instance && typeLeft != FloatT.Instance)
                         {
-                            errors.Add($"Line {binaryOp.ExprLeft.LineNumber}: Operator '!=' expected a left operand of type 'boolean','int' or 'float', but got '{typeLeft}'.");
+                            errors.Add($"Line {binaryOp.ExprLeft.LineNumber}: Operator '!=' expected a left operand of type 'bool','int' or 'float', but got '{typeLeft}'.");
                         }
 
                         if (typeRight != BoolT.Instance && typeRight != IntT.Instance && typeRight != FloatT.Instance)
                         {
-                            errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Operator '!=' expected a right operand of type 'Boolean','int' or 'float', but got '{typeRight}'.");
+                            errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Operator '!=' expected a right operand of type 'bool','int' or 'float', but got '{typeRight}'.");
                         }
 
                         if (typeRight == BoolT.Instance && typeLeft != BoolT.Instance)
                         {
-                            errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Operator '==' expected a right and left operand of type 'Boolean', but got '{typeLeft}'.");
+                            errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Operator '!=' expected a right and left operand of type 'bool', but got '{typeLeft}'.");
                         }
 
                         if (typeRight != BoolT.Instance && typeLeft == BoolT.Instance)
                         {
-                            errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Operator '==' expected a right and left operand of type 'Boolean', but got '{typeRight}'.");
+                            errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Operator '!=' expected a right and left operand of type 'bool', but got '{typeRight}'.");
                         }
 
                         // Return
@@ -498,12 +497,12 @@ class TypeChecker
                     case BinaryOperators.AND:
                         if (typeLeft != BoolT.Instance)
                         {
-                            errors.Add($"Line {binaryOp.ExprLeft.LineNumber}: Operator '&&' expected a left operand of type 'Boolean', but got '{typeLeft}'.");
+                            errors.Add($"Line {binaryOp.ExprLeft.LineNumber}: Operator '&&' expected a left operand of type 'bool', but got '{typeLeft}'.");
                         }
                         if (typeRight != BoolT.Instance)
                         {
 
-                            errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Operator '&&' expected a right operand of type 'Boolean', but got '{typeRight}'.");
+                            errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Operator '&&' expected a right operand of type 'bool', but got '{typeRight}'.");
                         }
 
                         // Return
@@ -512,12 +511,12 @@ class TypeChecker
                     case BinaryOperators.OR:
                         if (typeLeft != BoolT.Instance)
                         {
-                            errors.Add($"Line {binaryOp.ExprLeft.LineNumber}: Operator '||' expected a left operand of type 'Boolean', but got '{typeLeft}'.");
+                            errors.Add($"Line {binaryOp.ExprLeft.LineNumber}: Operator '||' expected a left operand of type 'bool', but got '{typeLeft}'.");
                         }
                         if (typeRight != BoolT.Instance)
                         {
 
-                            errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Operator '||' expected a right operand of type 'Boolean', but got '{typeRight}'.");
+                            errors.Add($"Line {binaryOp.ExprRight.LineNumber}: Operator '||' expected a right operand of type 'bool', but got '{typeRight}'.");
                         }
 
                         // Return
@@ -535,7 +534,7 @@ class TypeChecker
                         case UnaryOperators.NOT:
                             if (innertype != BoolT.Instance)
                             {
-                                errors.Add($"Line {unaryOp.LineNumber}: Operator '!' expected a operand of type 'Boolean', but got '{innertype}'.");
+                                errors.Add($"Line {unaryOp.LineNumber}: Operator '!' expected a operand of type 'bool', but got '{innertype}'.");
                             }
 
                             // Return
