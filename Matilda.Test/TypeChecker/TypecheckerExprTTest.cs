@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Windows.Markup;
 using Matilda;
 
@@ -108,8 +110,36 @@ public class RefTestsTypeChecker : RunTypeChecker
         Assert.IsFalse(checker.HasErrors());
     }
 }
-[TestClass]
+/*[TestClass]
 public class FunctionRefTestsTypeChecker : RunTypeChecker
 {
+    //function not declared
+    [TestMethod]
+    public void FunctionRefTestTypeCheckerFails()
+    {
 
-}
+    }
+    //function with wrong param
+    [TestMethod]
+    public void FunctionRefTestTypeCheckerWithWrongParam()
+    {
+
+    }
+    [TestMethod]
+    public void FunctionRefTestTypeChecker()
+    {
+        //arrange
+        Stmt stmt = new Comp(new FunctionDeclaration(IntT.Instance, "func1",
+        new List<Parameter>(),
+        new List<Stmt>
+        {
+            new Declaration(IntT.Instance, "x", new IntV(2, 1), -1),
+            new Return(new IntV(5, 1), -1)
+        },
+        -1), new FunctionRef("func1", new List<Expr>(), -1));
+        //act
+        var checker = Run(stmt);
+        //assert
+        Assert.IsFalse(checker.HasErrors());
+    }
+}*/
