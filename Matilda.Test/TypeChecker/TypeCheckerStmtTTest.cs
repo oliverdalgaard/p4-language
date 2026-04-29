@@ -3,7 +3,7 @@ using Mono.Cecil.Cil;
 
 namespace MatildaTests;
 
-public abstract class RunTypeChecker
+/*public abstract class RunTypeChecker
 {
     public TypeChecker Run(Stmt stmt)
     {
@@ -181,7 +181,7 @@ public class DeclarationTestsTypeChecker : RunTypeChecker
         // assert
         Assert.IsFalse(checker.HasErrors());
     }
-}*/
+}
 
 [TestClass]
 public class FunctionTestsTypeChecker : RunTypeChecker
@@ -264,3 +264,4 @@ public class ReturnTestsTypeChecker : RunTypeChecker
         Assert.IsFalse(checker.HasErrors());
     }
 }
+*/

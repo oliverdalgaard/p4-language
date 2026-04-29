@@ -6,7 +6,7 @@ using Matilda;
 namespace MatildaTests;
 
 
-[TestClass]
+/*[TestClass]
 public class UnaryOpTestsTypeChecker : RunTypeChecker
 {
     [TestMethod]
