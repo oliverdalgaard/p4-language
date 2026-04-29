@@ -22,6 +22,27 @@ public class Table
         Records = new List<TableRecord>();
     }
 
+    public Table(string identifier, List<Column> schema, List<TableHeader> headers, List<TableRecord> records)
+    {
+        Identifier = identifier;
+        Schema = schema;
+
+        File = new List<string[]>();
+
+        Headers = headers;
+        Records = records;
+    }
+
+    public void addRecord(List<Val> values)
+    {
+        Records.Add(new TableRecord(values));
+    }
+
+    public void addRecord(TableRecord record)
+    {
+        Records.Add(record);
+    }
+
     public void ParseTypes()
     {
         if (Schema.Count != File[0].Count())
@@ -73,7 +94,7 @@ public class Table
                 }
             }
 
-            Records.Add(new TableRecord(tableRecordVals));
+            addRecord(tableRecordVals);
         }
     }
 }

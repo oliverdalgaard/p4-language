@@ -60,7 +60,7 @@ public class Parameter : Stmt
     }
 }
 
-public class Declaration : Stmt
+public class LocalDeclaration : Stmt
 {
     public Type Type { get; }
     public string Identifier { get; }
@@ -69,7 +69,7 @@ public class Declaration : Stmt
 
     public override int LineNumber { get; }
 
-    public Declaration(Type type, string identifier, Expr expression, int lineNumber)
+    public LocalDeclaration(Type type, string identifier, Expr expression, int lineNumber)
     {
         Type = type;
         Identifier = identifier;
@@ -95,57 +95,20 @@ public class Assign : Stmt
     }
 }
 
-public class SchemaDeclaration : Stmt
-{
-    public string Identifier { get; }
-    public List<Column> Columns { get; }
-
-    public override int LineNumber { get; }
-
-
-    public SchemaDeclaration(string identifier, List<Column> columns, int lineNumber)
-    {
-        Identifier = identifier;
-        Columns = columns;
-
-        LineNumber = lineNumber;
-    }
-}
-
 public class TableDeclaration : Stmt
-{
-    public string Identifier { get; }
-    public string SchemaId { get; }
-    public Expr Expr { get; }
-
-    public override int LineNumber { get; }
-
-
-    public TableDeclaration(string identifier, string schemaId, Expr expr, int lineNumber)
-    {
-        Identifier = identifier;
-        SchemaId = schemaId;
-        Expr = expr;
-
-        LineNumber = lineNumber;
-    }
-}
-
-public class FunctionDeclaration : Stmt
 {
     public Type Type { get; }
     public string Identifier { get; }
-    public List<Parameter> Parameters { get; }
-    public List<Stmt> Body { get; }
+    public string FilePath { get; }
 
     public override int LineNumber { get; }
 
-    public FunctionDeclaration(Type type, string identifier, List<Parameter> parameters, List<Stmt> body, int lineNumber)
+
+    public TableDeclaration(Type type, string identifier, string filePath, int lineNumber)
     {
         Type = type;
         Identifier = identifier;
-        Parameters = parameters;
-        Body = body;
+        FilePath = filePath;
 
         LineNumber = lineNumber;
     }

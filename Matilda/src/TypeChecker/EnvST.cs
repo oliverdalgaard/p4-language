@@ -3,12 +3,12 @@ namespace Matilda;
 public class EnvST
 {
     private readonly EnvST? parentScope;
-    private Dictionary<string, List<Type>?> bindings;
+    private Dictionary<string, List<Column>?> bindings;
 
-    public EnvST(EnvST? parentScope = null, Dictionary<string, List<Type>?>? bindings = null)
+    public EnvST(EnvST? parentScope = null, Dictionary<string, List<Column>?>? bindings = null)
     {
         this.parentScope = parentScope;
-        this.bindings = bindings ?? new Dictionary<string, List<Type>?>();
+        this.bindings = bindings ?? new Dictionary<string, List<Column>?>();
     }
 
     public EnvST NewScope()
@@ -16,7 +16,7 @@ public class EnvST
         return new EnvST(this);
     }
 
-    public void Bind(string variable, List<Type>? value)
+    public void Bind(string variable, List<Column>? value)
     {
         if (IsLocal(variable))
         {
@@ -26,7 +26,7 @@ public class EnvST
         bindings[variable] = value;
     }
 
-    public void Set(string variable, List<Type>? value)
+    public void Set(string variable, List<Column>? value)
     {
         if (bindings.ContainsKey(variable))
         {
@@ -42,7 +42,7 @@ public class EnvST
         }
     }
 
-    public List<Type>? TryGet(string variable)
+    public List<Column>? TryGet(string variable)
     {
         if (IsLocal(variable))
         {
