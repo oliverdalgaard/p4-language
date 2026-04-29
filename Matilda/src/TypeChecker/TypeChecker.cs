@@ -34,7 +34,7 @@ public class TypeChecker
 
                     if (envST.TryGet(schemaDeclaration.Identifier) != null)
                     {
-                        errors.Add($"Line {schemaDeclaration.LineNumber}: Varibale '{schemaDeclaration.Identifier}' is already declared.");
+                        errors.Add($"Line {schemaDeclaration.LineNumber}: Variable '{schemaDeclaration.Identifier}' is already declared.");
                         break;
                     }
 
@@ -179,7 +179,7 @@ public class TypeChecker
 
                 if (envVT.TryGetLocal(assign.Identifier) == null)
                 {
-                    errors.Add($"Line {assign.LineNumber}: Cannot reassign global varibale '{assign.Identifier}'.");
+                    errors.Add($"Line {assign.LineNumber}: Cannot reassign global variable '{assign.Identifier}'.");
                     break;
                 }
 
