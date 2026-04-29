@@ -9,12 +9,106 @@ public class TypeChecker
         return errors.Count > 0;
     }
 
-    public TypeChecker(Stmt stmt, EnvVT envVT, EnvPT envPT, EnvST envST)
+    public TypeChecker(Program program, EnvVT envVT, EnvPT envPT, EnvST envST)
     {
         errors = new List<string>();
 
         envVT.Bind("return", null);
-        StmtT(stmt, envVT, envPT, envST);
+        TopLevelDeclarationT(program.TopLevelDeclarations, envVT, envPT, envST);
+        StmtT(program.Stmt, envVT, envPT, envST);
+    }
+
+    private void TopLevelDeclarationT(List<TopLevelDeclaration> topLevelDeclarations, EnvVT envVT, EnvPT envPT, EnvST envST)
+    {
+        foreach (TopLevelDeclaration topLevelDeclaration in topLevelDeclarations)
+        {
+            switch (topLevelDeclaration)
+            {
+                case SchemaDeclaration schemaDeclaration:
+
+                    if (envVT.TryGet("return") != null)
+                    {
+                        errors.Add($"Line {schemaDeclaration.LineNumber}: Schemas can only be declared in the global scope.");
+                        break;
+                    }
+
+                    if (envST.TryGet(schemaDeclaration.Identifier) != null)
+                    {
+                        errors.Add($"Line {schemaDeclaration.LineNumber}: Varibale '{schemaDeclaration.Identifier}' is already declared.");
+                        break;
+                    }
+
+                    List<Column> columns = schemaDeclaration.Columns;
+
+                    if (CompareSchema.ContainsDuplicate(columns))
+                    {
+                        errors.Add($"Line {schemaDeclaration.LineNumber}: Schema '{schemaDeclaration.Identifier}' may not contain duplicate identifiers.");
+                        break;
+                    }
+
+                    foreach (Column column in columns)
+                    {
+                        if (column.Type != IntT.Instance &&
+                            column.Type != StringT.Instance &&
+                            column.Type != BoolT.Instance &&
+                            column.Type != FloatT.Instance)
+                        {
+                            errors.Add($"Line {schemaDeclaration.LineNumber}: Schema declaration requires type of either 'int', 'string', 'bool', or 'float' but got '{column.Type}'");
+                            break;
+                        }
+                    }
+
+                    envST.Bind(schemaDeclaration.Identifier, columns);
+                    break;
+
+                case FunctionDeclaration f:
+
+                    if (envVT.TryGet("return") != null)
+                    {
+                        errors.Add($"Line {f.LineNumber}: Functions can only be declared in the global scope.");
+                    }
+
+                    if (f.Identifier == null || f.Type == null)
+                    {
+                        errors.Add($"Line {f.LineNumber}: Invalid declaration.");
+                        break;
+                    }
+
+                    if (envPT.TryGet(f.Identifier) != null)
+                    {
+                        errors.Add($"Line {f.LineNumber}: Function '{f.Identifier}' already declared.");
+                        break;
+                    }
+
+                    // Register function
+                    envPT.Bind(f.Identifier, new FunctionType(f));
+
+                    // New local scope
+                    EnvVT localScope = envVT.NewScope();
+                    localScope.Bind("return", f.Type);
+
+                    // Param 
+                    foreach (Parameter param in f.Parameters)
+                    {
+                        if (localScope.TryGetLocal(param.Identifier) != null)
+                        {
+                            errors.Add($"Line {param.LineNumber}: Duplicate parameter '{param.Identifier}'.");
+                        }
+                        else
+                        {
+                            localScope.Bind(param.Identifier, param.Type);
+                        }
+                    }
+
+                    StmtT(f.Body, localScope, envPT, envST);
+
+                    if (localScope.TryGet("hasReturn") == null)
+                    {
+                        errors.Add($"Line {f.LineNumber}: Missing return in function {f.Identifier}.");
+                    }
+                    break;
+            }
+        }
     }
 
     private void StmtT(Stmt stmt, EnvVT envVT, EnvPT envPT, EnvST envST)
@@ -70,51 +164,107 @@ public class TypeChecker
                 break;
 
             case Assign assign:
-                // check for null 
+                // Check for null 
                 if (assign.Identifier == null || assign.Value == null)
                 {
                     errors.Add($"Line {assign.LineNumber}: Invalid assignment");
                     break;
                 }
 
-                // check delclaration 
+                // Check delclaration 
                 if (envVT.TryGet(assign.Identifier) == null)
                 {
                     errors.Add($"Line {assign.LineNumber}: Variable {assign.Identifier} is not declared.");
                 }
-                else
-                {
-                    // check type match 
-                    Type expectedType = envVT.TryGet(assign.Identifier);
-                    Type actualType = ExprT(assign.Value, envVT, envPT, envST);
 
-                    if (expectedType != actualType)
+                if (envVT.TryGetLocal(assign.Identifier) == null)
+                {
+                    errors.Add($"Line {assign.LineNumber}: Cannot reassign global varibale '{assign.Identifier}'.");
+                    break;
+                }
+
+
+                Type expectedType = envVT.TryGet(assign.Identifier);
+                Type actualType = ExprT(assign.Value, envVT, envPT, envST);
+
+                // Check table type (unique)
+                if (expectedType is TableT expectedTableType && actualType is TableT actualTableType)
+                {
+                    if (!CompareSchema.Compare(envST.TryGet(expectedTableType.SchemaId), envST.TryGet(actualTableType.SchemaId)))
                     {
-                        errors.Add($"Line {assign.LineNumber}: Cannot assign '{actualType}' to variable '{assign.Identifier}' of type '{expectedType}'.");
+                        errors.Add($"Line {assign.LineNumber}: Cannot assign table with schema '{actualTableType.SchemaId}' to table '{assign.Identifier}' with schema '{expectedTableType.SchemaId}'.");
+                        break;
                     }
+                    break;
+                }
+
+                // Check type match 
+                if (expectedType != actualType)
+                {
+                    errors.Add($"Line {assign.LineNumber}: Cannot assign '{actualType}' to variable '{assign.Identifier}' of type '{expectedType}'.");
+                    break;
                 }
 
                 break;
 
-            case Declaration declaration:
+            case LocalDeclaration declaration:
                 if (declaration.Identifier == null || declaration.Type == null)
                 {
                     errors.Add($"Line {declaration.LineNumber}: Invalid declaration.");
                     break;
                 }
 
-                if (envVT.TryGet(declaration.Identifier) != null)
+                if (envVT.TryGetLocal(declaration.Identifier) != null)
                 {
                     errors.Add($"Line {declaration.LineNumber}: Variable '{declaration.Identifier}' is already declared.");
                     break;
                 }
 
-                if (declaration.Type != ExprT(declaration.Expression, envVT, envPT, envST))
+                Type declarationExprType = ExprT(declaration.Expression, envVT, envPT, envST);
+
+                if (declaration.Type is TableT declarationTableType)
+                {
+                    if (declarationExprType is not TableT)
+                    {
+                        errors.Add($"Line {declaration.LineNumber}: Declaration type does not match the type of the expression.");
+                        break;
+                    }
+
+                    if (!CompareSchema.Compare(envST.TryGet(declarationTableType.SchemaId), envST.TryGet(((TableT)declarationExprType).SchemaId)))
+                    {
+                        errors.Add($"Line {declaration.LineNumber}: Declaration schema does not match the schema of the expression.");
+                        break;
+                    }
+                }
+                else if (declaration.Type != declarationExprType)
                 {
                     errors.Add($"Line {declaration.LineNumber}: Declaration type does not match the type of the expression.");
                     break;
                 }
+
                 envVT.Bind(declaration.Identifier, declaration.Type);
+                break;
+
+            case TableDeclaration tableDeclaration:
+                if (tableDeclaration.Identifier == null || tableDeclaration.Type is not TableT tableDeclarationType)
+                {
+                    errors.Add($"Line {tableDeclaration.LineNumber}: Invalid table declaration.");
+                    break;
+                }
+
+                if (envST.TryGet(tableDeclarationType.SchemaId) == null)
+                {
+                    errors.Add($"Line {tableDeclaration.LineNumber}: Schema with identifier '{tableDeclarationType.SchemaId}' is not declared.");
+                    break;
+                }
+
+                if (envVT.TryGetLocal(tableDeclaration.Identifier) != null)
+                {
+                    errors.Add($"Line {tableDeclaration.LineNumber}: Table '{tableDeclaration.Identifier}' is already declared.");
+                    break;
+                }
+
+                envVT.Bind(tableDeclaration.Identifier, new TableT(tableDeclarationType.SchemaId));
                 break;
 
             case While whileStmt:
@@ -138,57 +288,6 @@ public class TypeChecker
                 }
                 break;
 
-            case FunctionDeclaration f:
-
-                if (envVT.TryGet("return") != null)
-                {
-                    errors.Add($"Line {f.LineNumber}: Functions can only be declared in the global scope.");
-                }
-
-                if (f.Identifier == null || f.Type == null)
-                {
-                    errors.Add($"Line {f.LineNumber}: Invalid declaration.");
-                    break;
-                }
-
-                if (envPT.TryGet(f.Identifier) != null)
-                {
-                    errors.Add($"Line {f.LineNumber}: Function '{f.Identifier}' already declared.");
-                    break;
-                }
-
-                // register function
-                envPT.Bind(f.Identifier, new FunctionType(f));
-
-                // New local scope
-                EnvVT localScope = envVT.NewScope();
-                localScope.Bind("return", f.Type);
-
-                //param 
-                foreach (Parameter param in f.Parameters)
-                {
-                    if (localScope.TryGetLocal(param.Identifier) != null)
-                    {
-                        errors.Add($"Line {param.LineNumber}: Duplicate parameter '{param.Identifier}'.");
-                    }
-                    else
-                    {
-                        localScope.Bind(param.Identifier, param.Type);
-                    }
-                }
-
-                // body
-                foreach (Stmt stmtInBody in f.Body)
-                {
-                    StmtT(stmtInBody, localScope, envPT, envST);
-                }
-
-                if (localScope.TryGet("hasReturn") == null)
-                {
-                    errors.Add($"Line {f.LineNumber}: Missing return in function {f.Identifier}.");
-                }
-                break;
-
             case Return r:
                 if (r.Value == null)
                 {
@@ -200,8 +299,15 @@ public class TypeChecker
 
                 if (functionReturnType != null)
                 {
-                    // inside function
-                    if (currentType != functionReturnType)
+                    // Inside function
+                    if (currentType is TableT currentTableType && functionReturnType is TableT functionReturnTableType)
+                    {
+                        if (!CompareSchema.Compare(envST.TryGet(currentTableType.SchemaId), envST.TryGet(functionReturnTableType.SchemaId)))
+                        {
+                            errors.Add($"Line {r.LineNumber}: Return type schema '{currentTableType.SchemaId}' does not match function return type schema '{functionReturnTableType.SchemaId}'.");
+                        }
+                    }
+                    else if (currentType != functionReturnType)
                     {
                         errors.Add($"Line {r.LineNumber}: Return type '{currentType}' does not match function return type '{functionReturnType}'.");
                     }
@@ -439,6 +545,32 @@ public class TypeChecker
                     }
                 }
 
+            case FilterExpr filter:
+                Type tableExprType = ExprT(filter.TableExpr, envVT, envPT, envST);
+
+                if (tableExprType is not TableT)
+                {
+                    errors.Add($"Line {filter.LineNumber}: Argument 1 must be of type 'TableT'.");
+                    return null;
+                }
+
+                TableT filterTable = (TableT)tableExprType;
+                List<Column> filterTableSchema = envST.TryGet(filterTable.SchemaId);
+                EnvVT rowEnv = envVT.NewScope();
+
+                foreach (Column col in filterTableSchema)
+                {
+                    rowEnv.Bind(col.Id, col.Type);
+                }
+
+                if (ExprT(filter.Predicate, rowEnv, envPT, envST) != BoolT.Instance)
+                {
+                    errors.Add($"Line {filter.LineNumber}: Argument 2 must be of type 'BoolT'.");
+                    return null;
+                }
+
+                return (TableT)tableExprType;
+
             case Ref r:
                 if (envVT.TryGet(r.Name) == null)
                 {
@@ -470,9 +602,16 @@ public class TypeChecker
                     Type argType = ExprT(functionRef.Arguments[i], envVT, envPT, envST);
                     Type paramType = funcType.Parameters[i];
 
-                    if (argType != paramType)
+                    if (argType is TableT currentTableType && paramType is TableT functionReturnTableType)
                     {
-                        errors.Add($"Line {functionRef.Arguments[i].LineNumber}: Function {functionRef.Name} expect parameter {i + 1} to have type {paramType} but got {argType}.");
+                        if (!CompareSchema.Compare(envST.TryGet(currentTableType.SchemaId), envST.TryGet(functionReturnTableType.SchemaId)))
+                        {
+                            errors.Add($"Line {functionRef.Arguments[i].LineNumber}: Function '{functionRef.Name}' expect parameter {i + 1} to have table with schema '{currentTableType.SchemaId}' but got '{functionReturnTableType.SchemaId}'.");
+                        }
+                    }
+                    else if (argType != paramType)
+                    {
+                        errors.Add($"Line {functionRef.Arguments[i].LineNumber}: Function '{functionRef.Name}' expect parameter {i + 1} to have type '{paramType}' but got '{argType}'.");
 
                     }
                 }

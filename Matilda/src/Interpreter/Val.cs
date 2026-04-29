@@ -103,21 +103,6 @@ public class StringVal : Val
     }
 }
 
-public class RowVal : Val
-{
-    public List<string[]> R { get; }
-
-    public RowVal(List<string[]> r)
-    {
-        R = r;
-    }
-
-    public override List<string[]> AsRow()
-    {
-        return R;
-    }
-}
-
 public class TableVal : Val
 {
     public Table T { get; }

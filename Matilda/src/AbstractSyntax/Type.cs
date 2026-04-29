@@ -35,6 +35,13 @@ public sealed class StringT : Type
     public StringT() { }
 }
 
+public sealed class RowValT : Type
+{
+    public static readonly RowValT Instance = new RowValT();
+
+    public RowValT() { }
+}
+
 public sealed class SchemaT : Type
 {
     public static readonly SchemaT Instance = new SchemaT();
@@ -44,7 +51,10 @@ public sealed class SchemaT : Type
 
 public sealed class TableT : Type
 {
-    public static readonly TableT Instance = new TableT();
+    public string SchemaId { get; }
 
-    public TableT() { }
+    public TableT(string schemaId)
+    {
+        SchemaId = schemaId;
+    }
 }
