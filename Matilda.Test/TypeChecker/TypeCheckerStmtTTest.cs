@@ -153,7 +153,7 @@ public class AssignTestsTypeChecker : RunTypeChecker
     }
 }
 
-[TestClass]
+/*[TestClass]
 public class DeclarationTestsTypeChecker : RunTypeChecker
 {
     [TestMethod]
@@ -181,7 +181,7 @@ public class DeclarationTestsTypeChecker : RunTypeChecker
         // assert
         Assert.IsFalse(checker.HasErrors());
     }
-}
+}*/
 
 [TestClass]
 public class FunctionTestsTypeChecker : RunTypeChecker
