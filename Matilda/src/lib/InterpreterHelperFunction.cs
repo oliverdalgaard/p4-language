@@ -113,6 +113,11 @@ public class InterpreterHelperFunction
 
     public static Val HelperFunctionDIV(Val v1, Val v2)
     {
+        if ((v2 is IntVal intValue && intValue.AsInt() == 0) || (v2 is FloatVal floatValue && floatValue.AsFloat() == 0))
+        {
+            throw new Exception("Division by zero not allowed.");
+        }
+
         if (v1 is IntVal ai && v2 is IntVal bi)
         {
             return new FloatVal(ai.AsInt() / bi.AsInt());
