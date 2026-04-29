@@ -179,7 +179,7 @@ public class TypeChecker
 
                 if (envVT.TryGetLocal(assign.Identifier) == null)
                 {
-                    errors.Add($"Line {assign.LineNumber}: Cannot reassign global varibale '{assign.Identifier}'.");
+                    errors.Add($"Line {assign.LineNumber}: Cannot reassign global variable '{assign.Identifier}'.");
                     break;
                 }
 

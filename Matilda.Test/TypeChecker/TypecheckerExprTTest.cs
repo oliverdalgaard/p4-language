@@ -6,20 +6,20 @@ using Matilda;
 namespace MatildaTests;
 
 
-/*[TestClass]
+[TestClass]
 public class UnaryOpTestsTypeChecker : RunTypeChecker
 {
     [TestMethod]
     public void NeqTestTypecheck()
     {
         //arrange
-        Stmt stmt = new Declaration(
+        Stmt stmt = new LocalDeclaration(
         BoolT.Instance,
         "x",
         new UnaryOp(UnaryOperators.NOT,
             new BoolV(true, 1), -1), -1);
         //act
-        var checker = Run(stmt);
+        var checker = Run(new Program(stmt));
         //assert
         Assert.IsFalse(checker.HasErrors());
     }
@@ -27,13 +27,13 @@ public class UnaryOpTestsTypeChecker : RunTypeChecker
     public void NeqTestTypecheckFails()
     {
         //arrange
-        Stmt stmt = new Declaration(
+        Stmt stmt = new LocalDeclaration(
         BoolT.Instance,
         "x",
         new UnaryOp(UnaryOperators.NOT,
             new IntV(5, 1), -1), -1);
         //act
-        var checker = Run(stmt);
+        var checker = Run(new Program(stmt));
         //assert
         var expected = new List<string>
     {
@@ -51,12 +51,12 @@ public class BinaryOpTestsTypeChecker : RunTypeChecker
     public void AddTestTypeChecker()
     {
         //arrange
-        Stmt stmt = new Declaration(
+        Stmt stmt = new LocalDeclaration(
         IntT.Instance,
         "x",
         new BinaryOp(BinaryOperators.ADD, new IntV(5, 1), new IntV(3, 1), -1), -1);
         //act
-        var checker = Run(stmt);
+        var checker = Run(new Program(stmt));
         //assert
         Assert.IsFalse(checker.HasErrors());
     }
@@ -69,7 +69,7 @@ public class BinaryOpTestsTypeChecker : RunTypeChecker
                         new IntV(5, 1),
                         new BoolV(true, 1), -1), -1);
         //act
-        var checker = Run(stmt);
+        var checker = Run(new Program(stmt));
         //assert
         var expected = new List<string>
         {
@@ -88,7 +88,7 @@ public class RefTestsTypeChecker : RunTypeChecker
         //arrange
         Stmt stmt = new Print(new Ref("x", -1), -1);
         //act
-        var checker = Run(stmt);
+        var checker = Run(new Program(stmt));
         //assert
         var expected = new List<string>
     {
@@ -101,16 +101,16 @@ public class RefTestsTypeChecker : RunTypeChecker
     {
         //arrange
         Stmt stmt = new Comp(
-          new Declaration(IntT.Instance, "x", new IntV(5, 1), -1),
+          new LocalDeclaration(IntT.Instance, "x", new IntV(5, 1), -1),
           new Print(new Ref("x", -1), -1)
       );
         //act
-        var checker = Run(stmt);
+        var checker = Run(new Program(stmt));
         //assert
         Assert.IsFalse(checker.HasErrors());
     }
 }
-/*[TestClass]
+[TestClass]
 public class FunctionRefTestsTypeChecker : RunTypeChecker
 {
     //function not declared
@@ -129,17 +129,22 @@ public class FunctionRefTestsTypeChecker : RunTypeChecker
     public void FunctionRefTestTypeChecker()
     {
         //arrange
-        Stmt stmt = new Comp(new FunctionDeclaration(IntT.Instance, "func1",
+        TopLevelDeclaration topLevelDeclaration = new FunctionDeclaration(IntT.Instance, "func1",
         new List<Parameter>(),
-        new List<Stmt>
-        {
-            new Declaration(IntT.Instance, "x", new IntV(2, 1), -1),
+        new Comp
+        (
+            new LocalDeclaration(IntT.Instance, "x", new IntV(2, 1), -1),
             new Return(new IntV(5, 1), -1)
-        },
-        -1), new FunctionRef("func1", new List<Expr>(), -1));
+        ),
+        -1);
+
+        Stmt stmt = new Print(new FunctionRef("func1", new List<Expr>(), -1), -1);
+
         //act
-        var checker = Run(stmt);
+        var checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }, stmt));
         //assert
         Assert.IsFalse(checker.HasErrors());
     }
-}*/
+}
+
+//filter expr test
