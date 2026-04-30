@@ -19,17 +19,6 @@
     <PackageReference Include="MSTest" Version="4.0.2" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <CollectCoverage>true</CollectCoverage>
-    <CoverletOutput>./TestResults/Coverage/</CoverletOutput>
-    <CoverletOutputFormat>cobertura</CoverletOutputFormat>
-  </PropertyGroup>
-
-  <Target Name="GenerateHtmlCoverageReport" AfterTargets="GenerateCoverageResultAfterTest">
-    <Exec Command="reportgenerator -reports:./TestResults/Coverage/coverage.cobertura.xml -targetdir:./TestResults/Coverage/Html -reporttypes:Html_Dark" />
-  </Target>
-
-
   <ItemGroup>
     <ProjectReference Include="..\Matilda\Matilda.csproj" />
   </ItemGroup>
