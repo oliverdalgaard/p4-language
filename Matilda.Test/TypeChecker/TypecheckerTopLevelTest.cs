@@ -76,7 +76,7 @@ public class SchemaTestsTypechecker : RunTypeChecker
         //assert
         var expected = new List<string>
     {
-        "Line -s: Schema 'schema1' may not contain duplicate identifiers.",
+        "Line -1: Schema 'schema1' may not contain duplicate identifiers.",
     };
         CollectionAssert.AreEqual(expected, checker.errors);
     }
