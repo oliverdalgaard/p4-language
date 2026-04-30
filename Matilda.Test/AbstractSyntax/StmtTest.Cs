@@ -1,6 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Matilda;
-using System.Collections.Generic;
 
 namespace MatildaTests;
 
@@ -17,12 +15,12 @@ public class CompTests
 
         // Act
         Comp comp = new Comp(stmt1, stmt2);
-        
+
         // Assert
         Assert.AreSame(stmt1, comp.Stmt1);
         Assert.AreSame(stmt2, comp.Stmt2);
     }
-    
+
     // Test to see if Comp returns correct line numbers for statements.
     [TestMethod]
     public void CompLineNumberReturnsFirstStatementLineNumber()
@@ -56,7 +54,7 @@ public class CompTests
 
 [TestClass]
 public class ParameterTests
-    {
+{
     [TestMethod]
     public void ParameterStoresProperties()
     {
@@ -76,10 +74,10 @@ public class ParameterTests
 }
 
 [TestClass]
-public class DeclarationTests
+public class LocalDeclarationTests
 {
     [TestMethod]
-    public void DeclarationStoresProperties()
+    public void LocalDeclarationStoresProperties()
     {
         // Arrange
         IntT expectedType = new IntT();
@@ -88,13 +86,32 @@ public class DeclarationTests
         int expectedLineNumber = -1;
 
         // Act
-        Declaration declaration = new Declaration(expectedType, expectedIdentifier, expectedExpression, expectedLineNumber);
+        LocalDeclaration localDeclaration = new LocalDeclaration(expectedType, expectedIdentifier, expectedExpression, expectedLineNumber);
 
         // Assert
-        Assert.AreSame(expectedType, declaration.Type);
-        Assert.AreEqual(expectedIdentifier, declaration.Identifier);
-        Assert.AreSame(expectedExpression, declaration.Expression);
-        Assert.AreEqual(expectedLineNumber, declaration.LineNumber);
+        Assert.AreSame(expectedType, localDeclaration.Type);
+        Assert.AreEqual(expectedIdentifier, localDeclaration.Identifier);
+        Assert.AreSame(expectedExpression, localDeclaration.Expression);
+        Assert.AreEqual(expectedLineNumber, localDeclaration.LineNumber);
+    }
+
+    [TestMethod]
+    public void TableDeclarationStoresProperties()
+    {
+        // Arrange
+        IntT expectedType = new IntT();
+        string expectedIdentifier = "TestTable";
+        string expectedFilePath = "123";
+        int expectedLineNumber = -1;
+
+        // Act
+        TableDeclaration tableDeclaration = new TableDeclaration(expectedType, expectedIdentifier, expectedFilePath, expectedLineNumber);
+
+        // Assert
+        Assert.AreSame(expectedType, tableDeclaration.Type);
+        Assert.AreEqual(expectedIdentifier, tableDeclaration.Identifier);
+        Assert.AreSame(expectedFilePath, tableDeclaration.FilePath);
+        Assert.AreEqual(expectedLineNumber, tableDeclaration.LineNumber);
     }
 }
 
@@ -106,7 +123,7 @@ public class AssignTests
     {
         // Arrange
         string expectedIdentifier = "x";
-        Expr expectedValue = new IntV(5,-1);
+        Expr expectedValue = new IntV(5, -1);
         int expectedLineNumber = -1;
 
         // Act
@@ -120,49 +137,13 @@ public class AssignTests
 }
 
 [TestClass]
-public class FunctionDeclarationTests
-{
-    [TestMethod]
-    public void FunctionDeclarationStoresProperties()
-    {
-        // Arrange
-        IntT expectedType = new IntT();
-        string expectedIdentifier = "x";
-        var expectedParameters = new List<Parameter>
-        {
-            new Parameter(new IntT(), "x", -1)
-        };
-        var expectedBody = new List<Stmt>
-        {
-            new Return(new Ref("x", -1), -2)
-        };
-
-        // Act
-        FunctionDeclaration function = new FunctionDeclaration(
-            expectedType,
-            expectedIdentifier,
-            expectedParameters,
-            expectedBody,
-            -1
-        );
-
-        // Assert
-        Assert.AreEqual(expectedType, function.Type);
-        Assert.AreEqual(expectedIdentifier, function.Identifier);
-        Assert.AreSame(expectedParameters, function.Parameters);
-        Assert.AreSame(expectedBody, function.Body);
-        Assert.AreEqual(-1, function.LineNumber);
-    }
-}
-
-[TestClass]
 public class ReturnTests
 {
     [TestMethod]
     public void ReturnStoresProperties()
     {
         // Arrange
-        Expr expectedValue = new IntV(5,-1);
+        Expr expectedValue = new IntV(5, -1);
         int expectedLineNumber = -1;
 
         // Act
@@ -181,7 +162,7 @@ public class PrintTests
     public void PrintStoresProperties()
     {
         // Arrange
-        Expr expectedValue = new IntV(5,-1);
+        Expr expectedValue = new IntV(5, -1);
         int expectedLineNumber = -1;
 
         // Act

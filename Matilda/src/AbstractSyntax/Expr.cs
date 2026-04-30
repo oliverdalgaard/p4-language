@@ -53,20 +53,6 @@ public class Ref : Expr
     }
 }
 
-public class Read : Expr
-{
-    public string FilePath { get; }
-
-    public override int LineNumber { get; }
-
-    public Read(string filePath, int lineNumber)
-    {
-        FilePath = filePath;
-
-        LineNumber = lineNumber;
-    }
-}
-
 // public class TableRef
 
 public class FunctionRef : Expr
@@ -81,6 +67,21 @@ public class FunctionRef : Expr
     {
         Name = name;
         Arguments = arguments;
+
+        LineNumber = lineNumber;
+    }
+}
+
+public class FilterExpr : Expr
+{
+    public Expr TableExpr { get; }
+    public Expr Predicate { get; }
+    public override int LineNumber { get; }
+
+    public FilterExpr(Expr tableExpr, Expr predicate, int lineNumber)
+    {
+        TableExpr = tableExpr;
+        Predicate = predicate;
 
         LineNumber = lineNumber;
     }
@@ -137,21 +138,6 @@ public class StringV : Expr
     public StringV(string value, int lineNumber)
     {
         Value = value;
-
-        LineNumber = lineNumber;
-    }
-}
-
-public class FilterExpr : Expr
-{
-    public Expr TableExpr { get; }
-    public Expr Predicate { get; }
-    public override int LineNumber { get; }
-
-    public FilterExpr(Expr tableExpr, Expr predicate, int lineNumber)
-    {
-        TableExpr = tableExpr;
-        Predicate = predicate;
 
         LineNumber = lineNumber;
     }
