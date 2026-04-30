@@ -36,7 +36,7 @@ jobs:
         with:
           reports: "**/coverage.cobertura.xml"
           targetdir: "coveragereport"
-          reporttypes: "Html_Dark;Badges"
+          reporttypes: "Html_Dark"
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
