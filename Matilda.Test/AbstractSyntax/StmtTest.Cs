@@ -15,12 +15,12 @@ public class CompTests
 
         // Act
         Comp comp = new Comp(stmt1, stmt2);
-        
+
         // Assert
         Assert.AreSame(stmt1, comp.Stmt1);
         Assert.AreSame(stmt2, comp.Stmt2);
     }
-    
+
     // Test to see if Comp returns correct line numbers for statements.
     [TestMethod]
     public void CompLineNumberReturnsFirstStatementLineNumber()
@@ -54,7 +54,7 @@ public class CompTests
 
 [TestClass]
 public class ParameterTests
-    {
+{
     [TestMethod]
     public void ParameterStoresProperties()
     {
@@ -74,7 +74,7 @@ public class ParameterTests
 }
 
 [TestClass]
-public class DeclarationTests
+public class LocalDeclarationTests
 {
     [TestMethod]
     public void LocalDeclarationStoresProperties()
@@ -123,7 +123,7 @@ public class AssignTests
     {
         // Arrange
         string expectedIdentifier = "x";
-        Expr expectedValue = new IntV(5,-1);
+        Expr expectedValue = new IntV(5, -1);
         int expectedLineNumber = -1;
 
         // Act
@@ -143,7 +143,7 @@ public class ReturnTests
     public void ReturnStoresProperties()
     {
         // Arrange
-        Expr expectedValue = new IntV(5,-1);
+        Expr expectedValue = new IntV(5, -1);
         int expectedLineNumber = -1;
 
         // Act
@@ -162,7 +162,7 @@ public class PrintTests
     public void PrintStoresProperties()
     {
         // Arrange
-        Expr expectedValue = new IntV(5,-1);
+        Expr expectedValue = new IntV(5, -1);
         int expectedLineNumber = -1;
 
         // Act
