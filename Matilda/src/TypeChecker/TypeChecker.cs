@@ -175,6 +175,7 @@ public class TypeChecker
                 if (envVT.TryGet(assign.Identifier) == null)
                 {
                     errors.Add($"Line {assign.LineNumber}: Variable {assign.Identifier} is not declared.");
+                    break;
                 }
 
                 if (envVT.TryGetLocal(assign.Identifier) == null)

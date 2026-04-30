@@ -117,13 +117,41 @@ public class FunctionRefTestsTypeChecker : RunTypeChecker
     [TestMethod]
     public void FunctionRefTestTypeCheckerFails()
     {
+        //arrange
+        Stmt stmt = new Print(new FunctionRef("func1", new List<Expr>(), -1), -1);
 
+        //act
+        var checker = Run(new Program(stmt));
+        //assert
+        var expected = new List<string>
+    {
+        "Line -1: Function func1 is not declared."
+    };
+        CollectionAssert.AreEqual(expected, checker.errors);
     }
     //function with wrong param
     [TestMethod]
     public void FunctionRefTestTypeCheckerWithWrongParam()
     {
+        //arrange
+        TopLevelDeclaration topLevelDeclaration = new FunctionDeclaration(IntT.Instance, "func1",
+        new List<Parameter>(),
+        new Comp
+        (
+            new LocalDeclaration(IntT.Instance, "x", new IntV(2, 1), -1),
+            new Return(new IntV(5, 1), -1)
+        ),
+        -1);
+        Stmt stmt = new Print(new FunctionRef("func1", new List<Expr> { new IntV(5, 1) }, -1), -1);
 
+        //act
+        var checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }, stmt));
+        //assert
+        var expected = new List<string>
+    {
+        "Line -1: Function func1 argument count mismatch."
+    };
+        CollectionAssert.AreEqual(expected, checker.errors);
     }
     [TestMethod]
     public void FunctionRefTestTypeChecker()
@@ -148,3 +176,47 @@ public class FunctionRefTestsTypeChecker : RunTypeChecker
 }
 
 //filter expr test
+[TestClass]
+public class FilterExprTestsTypechecker : RunTypeChecker
+{
+    /*[TestMethod]
+    public void FilterExprTestType()
+    {
+        //arrange
+        TopLevelDeclaration topLevelDeclaration = new SchemaDeclaration("schema1", new List<Column> { new Column("1", IntT.Instance), new Column("1", IntT.Instance) }, -1);
+        Stmt stmt = new Comp(new TableDeclaration(,"tab1",,-1), new Print(new FilterExpr(, , -1), -1));
+        //act
+        var checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }, stmt));
+        //assert
+        Assert.IsFalse(checker.HasErrors());
+    }*/
+    // check not tableT and not bool for agr 2
+    [TestMethod]
+    public void FilterExprTestTypeFailsArg1()
+    {
+        //arrange
+        Stmt stmt = new Print(new FilterExpr(new IntV(2, 1), new IntV(5, 1), -1), -1);
+        //act
+        var checker = Run(new Program(stmt));
+        //assert
+        var expected = new List<string>
+        {
+            "Line -1: Argument 1 must be of type 'TableT'."
+        };
+        CollectionAssert.AreEqual(expected, checker.errors);
+    }
+    /*[TestMethod]
+    public void FilterExprTestTypeFailsArg2()
+    {
+        //arrange
+        Stmt stmt = new Print(new FilterExpr(, new IntV(5, 1), -1), -1);
+        //act
+        var checker = Run(new Program(stmt));
+        //assert
+        var expected = new List<string>
+        {
+            "Line -1: Argument 2 must be of type 'BoolT'."
+        };
+        CollectionAssert.AreEqual(expected, checker.errors);
+    }*/
+}
