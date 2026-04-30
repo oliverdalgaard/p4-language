@@ -1,0 +1,40 @@
+name: Test & Coverage
+
+on:
+  push:
+    branches: ["main", "dev"]
+  pull_request:
+    branches: ["main", "dev"]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Run tests with coverage
+        run: |
+          dotnet test \
+          /p:CollectCoverage=true \
+          /p:CoverletOutputFormat=cobertura \
+          /p:CoverletOutput=./TestResults/Coverage
+
+      - name: Generate report
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.5.7
+        with:
+          reports: "**/coverage.cobertura.xml"
+          targetdir: "coveragereport"
+          reporttypes: "Html_Dark"
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: CoverageReport
+          path: coveragereport
