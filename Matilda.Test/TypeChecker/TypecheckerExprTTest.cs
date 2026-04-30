@@ -179,17 +179,32 @@ public class FunctionRefTestsTypeChecker : RunTypeChecker
 [TestClass]
 public class FilterExprTestsTypechecker : RunTypeChecker
 {
-    /*[TestMethod]
+    [TestMethod]
     public void FilterExprTestType()
     {
         //arrange
-        TopLevelDeclaration topLevelDeclaration = new SchemaDeclaration("schema1", new List<Column> { new Column("1", IntT.Instance), new Column("1", IntT.Instance) }, -1);
-        Stmt stmt = new Comp(new TableDeclaration(,"tab1",,-1), new Print(new FilterExpr(, , -1), -1));
+        TopLevelDeclaration topLevelDeclaration = new SchemaDeclaration(
+                "schema1",
+                new List<Column>
+                {
+            new Column("Id", IntT.Instance),
+            new Column("name", StringT.Instance)
+                },
+                -1
+            );
+
+        Stmt stmt = new Comp(new TableDeclaration(
+            new TableT("schema1"),
+            "tab1",
+            "../../../TypeChecker/TestMatildaScriptTypeChecker/TableDeclaration.csv",
+            -1),
+            new Print(new FilterExpr(new Ref("tab1", -1), new BoolV(true, 1), -1), -1)
+            );
         //act
         var checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }, stmt));
         //assert
         Assert.IsFalse(checker.HasErrors());
-    }*/
+    }
     // check not tableT and not bool for agr 2
     [TestMethod]
     public void FilterExprTestTypeFailsArg1()
@@ -205,18 +220,34 @@ public class FilterExprTestsTypechecker : RunTypeChecker
         };
         CollectionAssert.AreEqual(expected, checker.errors);
     }
-    /*[TestMethod]
+    [TestMethod]
     public void FilterExprTestTypeFailsArg2()
     {
         //arrange
-        Stmt stmt = new Print(new FilterExpr(, new IntV(5, 1), -1), -1);
+        TopLevelDeclaration topLevelDeclaration = new SchemaDeclaration(
+                "schema1",
+                new List<Column>
+                {
+            new Column("Id", IntT.Instance),
+            new Column("name", StringT.Instance)
+                },
+                -1
+            );
+
+        Stmt stmt = new Comp(new TableDeclaration(
+            new TableT("schema1"),
+            "tab1",
+            "../../../TypeChecker/TestMatildaScriptTypeChecker/TableDeclaration.csv",
+            -1),
+            new Print(new FilterExpr(new Ref("tab1", -1), new IntV(5, 1), -1), -1)
+            );
         //act
-        var checker = Run(new Program(stmt));
+        var checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }, stmt));
         //assert
         var expected = new List<string>
         {
             "Line -1: Argument 2 must be of type 'BoolT'."
         };
         CollectionAssert.AreEqual(expected, checker.errors);
-    }*/
+    }
 }
