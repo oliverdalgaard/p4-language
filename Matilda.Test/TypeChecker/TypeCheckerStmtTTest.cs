@@ -1,3 +1,4 @@
+using System.Data;
 using System.Net.Mail;
 using Matilda;
 using Mono.Cecil.Cil;
@@ -222,20 +223,25 @@ public class ReturnTestsTypeChecker : RunTypeChecker
 }
 
 //table declaration test
-/* [TestClass]
+[TestClass]
 public class tableDeclarationtestsTypeChecker : RunTypeChecker
 {
     [TestMethod]
     public void tableDeclarationTestWrongType()
     {
         //arrange
-        //need a schema decla and a table decla.
+        Stmt stmt = new TableDeclaration(
+            new TableT("schema1"),
+            "tab1",
+            "../../../TypeChecker/TestMatildaScriptTypeChecker/TableDeclaration.csv",
+            -1
+        );
         //act
         var checker = Run(new Program(stmt));
         //assert
         var expected = new List<string>
     {
-        "",
+        "Line -1: Schema with identifier 'schema1' is not declared."
     };
         CollectionAssert.AreEqual(expected, checker.errors);
     }
@@ -244,10 +250,25 @@ public class tableDeclarationtestsTypeChecker : RunTypeChecker
     public void tableDeclarationcheck()
     {
         //arrange
-        //need a schema decla and a table decla.
+        TopLevelDeclaration topLevelDeclaration = new SchemaDeclaration(
+                "schema1",
+                new List<Column>
+                {
+            new Column("Id", IntT.Instance),
+            new Column("name", StringT.Instance)
+                },
+                -1
+            );
+
+        Stmt stmt = new TableDeclaration(
+            new TableT("schema1"),
+            "tab1",
+            "../../../TypeChecker/TestMatildaScriptTypeChecker/TableDeclaration.csv",
+            -1
+        );
         //act
-        var checker = Run(new Program(stmt));
+        var checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }, stmt));
         // assert
         Assert.IsFalse(checker.HasErrors());
-    } */
-
+    }
+}
