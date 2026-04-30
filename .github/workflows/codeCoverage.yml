@@ -24,6 +24,7 @@ jobs:
           dotnet test \
           /p:CollectCoverage=true \
           /p:CoverletOutputFormat=cobertura \
+          /p:ExcludeByFile=\"**/Parser.cs,**/Scanner.cs,**/Matilda.cs\" \
 
       - name: Upload to Codecov
         uses: codecov/codecov-action@v5
