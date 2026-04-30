@@ -1,12 +1,12 @@
 using Matilda;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+
 namespace MatildaTests;
 
 [TestClass]
 public class ParserTests
 {
     // Helper method for all the test methods
-    private Stmt Parse(string source)
+    private Program Parse(string source)
     {
         Scanner scanner = new Scanner(source);
         Parser parser = new Parser(scanner);
@@ -25,7 +25,7 @@ public class ParserTests
                 "../../../Parser/TestMatildaScripts"));
 
     // Helper method to parse a file from the TestMatildaScripts directory
-    private Stmt ParseFile(string fileName)
+    private Program ParseFile(string fileName)
     {
         string path = Path.Combine(ScriptFolder, fileName);
         return Parse(path);
@@ -37,12 +37,12 @@ public class ParserTests
     public void ParsePrintLiteralReturnsPrintNode()
     {
         // Arrange & act
-        Stmt ast = ParseFile("PrintASTTest.matilda");
+        Program ast = ParseFile("PrintASTTest.matilda");
 
         // Assert
-        Assert.IsInstanceOfType<Print>(ast);
+        Assert.IsInstanceOfType<Print>(ast.Stmt);
 
-        Print print = (Print)ast;
+        Print print = (Print)ast.Stmt;
         Assert.IsInstanceOfType<IntV>(print.Value);
 
         var value = (IntV)print.Value; // Er dette rigtigt sat ind?
@@ -54,11 +54,11 @@ public class ParserTests
     public void ParseDeclarationProgram()
     {
         // Arrange + Act
-        Stmt ast = ParseFile("DeclarationASTTest.matilda");
+        Program ast = ParseFile("DeclarationASTTest.matilda");
 
         // Arange
-        Assert.IsInstanceOfType(ast, typeof(Declaration));
-        Declaration declaration = (Declaration)ast;
+        Assert.IsInstanceOfType(ast.Stmt, typeof(LocalDeclaration));
+        LocalDeclaration declaration = (LocalDeclaration)ast.Stmt;
 
         // Check identifier name
         Assert.AreEqual("number", declaration.Identifier);
@@ -79,15 +79,15 @@ public class ParserTests
     public void ParseAssignProgram()
     {
         // Arrange & act
-        Stmt ast = ParseFile("AssignASTTest.matilda");
+        Program ast = ParseFile("AssignASTTest.matilda");
 
         // Assert
-        Assert.IsInstanceOfType<Comp>(ast);
-        Comp comp = (Comp)ast;
+        Assert.IsInstanceOfType<Comp>(ast.Stmt);
+        Comp comp = (Comp)ast.Stmt;
 
         // First stmt (declaration)
-        Assert.IsInstanceOfType<Declaration>(comp.Stmt1);
-        Declaration declaration = (Declaration)comp.Stmt1;
+        Assert.IsInstanceOfType<LocalDeclaration>(comp.Stmt1);
+        LocalDeclaration declaration = (LocalDeclaration)comp.Stmt1;
 
         Assert.AreEqual("name", declaration.Identifier);
 
@@ -111,15 +111,15 @@ public class ParserTests
     public void ParseWhileProgram()
     {
         // Arrange + Act
-        Stmt ast = ParseFile("WhileASTTest.matilda");
+        Program ast = ParseFile("WhileASTTest.matilda");
 
         // Assert
-        Assert.IsInstanceOfType<Comp>(ast);
-        Comp comp = (Comp)ast;
+        Assert.IsInstanceOfType<Comp>(ast.Stmt);
+        Comp comp = (Comp)ast.Stmt;
 
         // First stmt (declaration)
-        Assert.IsInstanceOfType<Declaration>(comp.Stmt1);
-        Declaration declaration = (Declaration)comp.Stmt1;
+        Assert.IsInstanceOfType<LocalDeclaration>(comp.Stmt1);
+        LocalDeclaration declaration = (LocalDeclaration)comp.Stmt1;
 
         Assert.AreEqual("number", declaration.Identifier);
         Assert.IsInstanceOfType<IntV>(declaration.Expression);
@@ -143,15 +143,15 @@ public class ParserTests
     public void ParseIfElseifElseProgram()
     {
         // Arrange & act
-        Stmt ast = ParseFile("IfElseThenASTTest.matilda");
+        Program ast = ParseFile("IfElseThenASTTest.matilda");
 
-        Comp comp = (Comp)ast;
-        Declaration declarationStatement = (Declaration)comp.Stmt1!;
+        Comp comp = (Comp)ast.Stmt;
+        LocalDeclaration declarationStatement = (LocalDeclaration)comp.Stmt1!;
         If ifStatement = (If)comp.Stmt2!;
 
         // Assert
-        Assert.IsInstanceOfType<Comp>(ast);
-        Assert.IsInstanceOfType<Declaration>(declarationStatement);
+        Assert.IsInstanceOfType<Comp>(ast.Stmt);
+        Assert.IsInstanceOfType<LocalDeclaration>(declarationStatement);
         Assert.IsInstanceOfType<If>(ifStatement);
         Assert.IsInstanceOfType<Print>(ifStatement.ThenBody);
 
@@ -165,11 +165,11 @@ public class ParserTests
     {
         // print 1 + 2 * 3 + 1;
         // Arrange
-        Stmt ast = ParseFile("PrecedenceASTTest1.matilda");
+        Program ast = ParseFile("PrecedenceASTTest1.matilda");
 
 
         // Act
-        Print print = (Print)ast;
+        Print print = (Print)ast.Stmt;
         BinaryOp addRight = (BinaryOp)print.Value;               // (1 + (2 * 3)) + 1
         BinaryOp addLeft = (BinaryOp)addRight.ExprLeft;          // 1 + (2 * 3)
         BinaryOp mul = (BinaryOp)addLeft.ExprRight;              // 2 * 3
@@ -194,10 +194,10 @@ public class ParserTests
     {
         // print 1 - 2 / 3 / 2 - 1;
         // Arrange
-        Stmt ast = ParseFile("PrecedenceASTTest2.matilda");
+        Program ast = ParseFile("PrecedenceASTTest2.matilda");
 
         // Act
-        Print print = (Print)ast;
+        Print print = (Print)ast.Stmt;
         BinaryOp subRight = (BinaryOp)print.Value;               // (1 - ((2 / 3) / 2)) - 1
         BinaryOp subLeft = (BinaryOp)subRight.ExprLeft;          // 1 - ((2 / 3) / 2)
         BinaryOp divRight = (BinaryOp)subLeft.ExprRight;         // (2 / 3) / 2
@@ -226,10 +226,10 @@ public class ParserTests
     {
         // print 5 - 4 - 3 - 2;
         // Arrange
-        Stmt ast = ParseFile("PrecedenceASTTest3.matilda");
+        Program ast = ParseFile("PrecedenceASTTest3.matilda");
 
         // Act
-        Print print = (Print)ast;
+        Print print = (Print)ast.Stmt;
         BinaryOp subRight = (BinaryOp)print.Value;            // ((5 - 4) - 3) - 2
         BinaryOp subMid = (BinaryOp)subRight.ExprLeft;        // (5 - 4) - 3
         BinaryOp subLeft = (BinaryOp)subMid.ExprLeft;         // 5 - 4

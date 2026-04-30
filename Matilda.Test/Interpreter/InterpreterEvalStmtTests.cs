@@ -16,7 +16,7 @@ public class InterpreterEvalStmtTests
         EnvS envS = new EnvS();
 
         Stmt stmt = new Comp(
-            new Declaration(new StringT(), "x", new IntV(1, -1), -1),
+            new LocalDeclaration(new StringT(), "x", new IntV(1, -1), -1),
             new Assign("x", new IntV(5, -1), -1)
         );
 
@@ -61,8 +61,8 @@ public class InterpreterEvalStmtTests
         EnvS envS = new EnvS();
         Stmt stmt = new Print(new IntV(42, -1), -1);
 
-        var sw = new StringWriter();
-        var originalOut = Console.Out;
+        StringWriter sw = new StringWriter();
+        TextWriter originalOut = Console.Out;
         Console.SetOut(sw);
 
         try
@@ -89,7 +89,7 @@ public class InterpreterEvalStmtTests
         EnvV envV = new EnvV();
         EnvP envP = new EnvP();
         EnvS envS = new EnvS();
-        Stmt stmt = new Declaration(new StringT(), "x", new StringV("Test", -1), -1);
+        Stmt stmt = new LocalDeclaration(new StringT(), "x", new StringV("Test", -1), -1);
 
         // Act
         Interpreter.EvalStmt(stmt, envV, envP, envS);
@@ -117,31 +117,6 @@ public class InterpreterEvalStmtTests
 
         // Assert
         Assert.AreEqual(67, envV.TryGet("x")!.AsInt());
-    }
-
-    // Stmt function declaration binds function in procedure environment
-
-    [TestMethod]
-    public void EvalStmtFunctionDeclarationBindsFunctionInProcedureEnvironment()
-    {
-        // Arrange
-        EnvV envV = new EnvV();
-        EnvP envP = new EnvP();
-        EnvS envS = new EnvS();
-
-        var function = new FunctionDeclaration(
-            new IntT(),
-            "foo",
-            new List<Parameter>(),
-            new List<Stmt> { new Return(new IntV(1, -1), -1) },
-            -1
-        );
-
-        // Act
-        Interpreter.EvalStmt(function, envV, envP, envS);
-
-        // Assert
-        Assert.IsNotNull(envP.TryGet("foo"));
     }
 
     // Stmt return binds return value in variable environment

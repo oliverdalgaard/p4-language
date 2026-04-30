@@ -10,4 +10,15 @@ public class Program
         TopLevelDeclarations = topLevelDeclarations;
         Stmt = stmt;
     }
+    public Program(Stmt stmt)
+    {
+        TopLevelDeclarations = new List<TopLevelDeclaration>();
+        Stmt = stmt;
+    }
+
+    public Program(List<TopLevelDeclaration> topLevelDeclarations)
+    {
+        TopLevelDeclarations = topLevelDeclarations;
+        Stmt = Skip.Instance;
+    }
 }
