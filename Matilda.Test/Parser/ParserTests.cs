@@ -5,10 +5,21 @@ namespace MatildaTests;
 [TestClass]
 public class ParserTests
 {
+    // Helper function locate the correct directory
+    private static readonly string ScriptFolder =
+            Path.GetFullPath(Path.Combine(
+                AppContext.BaseDirectory,
+                "../../../TestMatildaScripts/ParserTestsScripts"));
+
+
     // Helper method for all the test methods
-    private Program Parse(string source)
+    private Program ParseFile(string fileName)
     {
-        Scanner scanner = new Scanner(source);
+        string path = Path.Combine(ScriptFolder, fileName);
+
+        Assert.IsTrue(File.Exists(path), $"Test script file was not found: {path}");
+        
+        Scanner scanner = new Scanner(path);
         Parser parser = new Parser(scanner);
 
         parser.Parse();
@@ -17,21 +28,6 @@ public class ParserTests
 
         return parser.mainNode;
     }
-
-    // Helper function locate the correct directory
-    private static readonly string ScriptFolder =
-            Path.GetFullPath(Path.Combine(
-                AppContext.BaseDirectory,
-                "../../../Parser/TestMatildaScripts"));
-
-    // Helper method to parse a file from the TestMatildaScripts directory
-    private Program ParseFile(string fileName)
-    {
-        string path = Path.Combine(ScriptFolder, fileName);
-        return Parse(path);
-    }
-
-    //
 
     [TestMethod]
     public void ParsePrintLiteralReturnsPrintNode()
@@ -45,7 +41,7 @@ public class ParserTests
         Print print = (Print)ast.Stmt;
         Assert.IsInstanceOfType<IntV>(print.Value);
 
-        var value = (IntV)print.Value; // Er dette rigtigt sat ind?
+        var value = (IntV)print.Value;
         Assert.AreEqual(5, value.Value);
     }
 
@@ -57,7 +53,7 @@ public class ParserTests
         Program ast = ParseFile("DeclarationASTTest.matilda");
 
         // Arange
-        Assert.IsInstanceOfType(ast.Stmt, typeof(LocalDeclaration));
+        Assert.IsInstanceOfType<LocalDeclaration>(ast.Stmt);
         LocalDeclaration declaration = (LocalDeclaration)ast.Stmt;
 
         // Check identifier name
@@ -254,7 +250,9 @@ public class ParserTests
     public void ParseInvalidSyntaxHasErrors()
     {
         // Arrange
-        Scanner scanner = new Scanner("../../../Parser/TestMatildaScripts/InvalidSyntaxHasErrors.matilda");
+        string path = Path.Combine(ScriptFolder, "InvalidSyntaxHasErrors.matilda");
+
+        Scanner scanner = new Scanner(path);
         Parser parser = new Parser(scanner);
 
         // Act
