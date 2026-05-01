@@ -1,7 +1,4 @@
-using System.Data;
-using System.Net.Mail;
 using Matilda;
-using Mono.Cecil.Cil;
 
 namespace MatildaTests;
 

@@ -1,7 +1,5 @@
-// test for topleveldecla
-
-//function 
 using Matilda;
+
 namespace MatildaTests;
 
 [TestClass]
@@ -48,9 +46,101 @@ public class FunctionTestsTypeChecker : RunTypeChecker
         // assert
         Assert.IsFalse(checker.HasErrors());
     }
-}
 
-//schema decla test
+    [TestMethod]
+    public void FunctionDeclarationInvalidTest()
+    {
+        // Arrange
+        TopLevelDeclaration topLevelDeclaration = new FunctionDeclaration(null, "func1",
+        new List<Parameter>(),
+        Skip.Instance,
+        -1);
+        TopLevelDeclaration topLevelDeclaration2 = new FunctionDeclaration(IntT.Instance, null,
+        new List<Parameter>(),
+        Skip.Instance,
+        -1);
+        TopLevelDeclaration topLevelDeclaration3 = new FunctionDeclaration(null, null,
+        new List<Parameter>(),
+        Skip.Instance,
+        -1);
+
+        List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> { topLevelDeclaration, topLevelDeclaration2, topLevelDeclaration3 };
+
+        // Act
+        var checker = Run(new Program(topLevelDeclarations));
+
+        // Assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.HasCount(3, checker.errors);
+        Assert.AreEqual("Line -1: Invalid declaration.", checker.errors[0]);
+        Assert.AreEqual("Line -1: Invalid declaration.", checker.errors[1]);
+        Assert.AreEqual("Line -1: Invalid declaration.", checker.errors[2]);
+    }
+
+    [TestMethod]
+    public void FunctionDeclarationFunctionAlreadyDeclaredTest()
+    {
+        // Arrange
+        TopLevelDeclaration topLevelDeclaration = new FunctionDeclaration(IntT.Instance, "func1",
+        new List<Parameter>(),
+        new Return(new IntV(1, -1), -1),
+        -1);
+        TopLevelDeclaration topLevelDeclaration2 = new FunctionDeclaration(IntT.Instance, "func1",
+        new List<Parameter>(),
+        new Return(new IntV(1, -1), -1),
+        -1);
+
+        List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> { topLevelDeclaration, topLevelDeclaration2 };
+
+        // Act
+        var checker = Run(new Program(topLevelDeclarations));
+
+        // Assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.HasCount(1, checker.errors);
+        Assert.AreEqual("Line -1: Function 'func1' already declared.", checker.errors[0]);
+    }
+
+    [TestMethod]
+    public void FunctionDeclarationDuplicateParametersTest()
+    {
+        // Arrange
+        TopLevelDeclaration topLevelDeclaration = new FunctionDeclaration(IntT.Instance, "func1",
+        new List<Parameter> { new Parameter(IntT.Instance, "Test", -1), new Parameter(IntT.Instance, "Test", -1) },
+        new Return(new IntV(1, -1), -1),
+        -1);
+
+        List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> { topLevelDeclaration };
+
+        // Act
+        var checker = Run(new Program(topLevelDeclarations));
+
+        // Assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.HasCount(1, checker.errors);
+        Assert.AreEqual("Line -1: Duplicate parameter 'Test'.", checker.errors[0]);
+    }
+
+    [TestMethod]
+    public void FunctionDeclarationHasNoReturnTest()
+    {
+        // Arrange
+        TopLevelDeclaration topLevelDeclaration = new FunctionDeclaration(IntT.Instance, "func1",
+        new List<Parameter>(),
+        Skip.Instance,
+        -1);
+
+        List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> { topLevelDeclaration };
+
+        // Act
+        var checker = Run(new Program(topLevelDeclarations));
+
+        // Assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.HasCount(1, checker.errors);
+        Assert.AreEqual("Line -1: Missing return in function 'func1'.", checker.errors[0]);
+    }
+}
 
 [TestClass]
 public class SchemaTestsTypechecker : RunTypeChecker

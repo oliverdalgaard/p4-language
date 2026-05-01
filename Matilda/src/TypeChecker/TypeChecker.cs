@@ -91,7 +91,7 @@ public class TypeChecker
 
                     if (localScope.TryGet("hasReturn") == null)
                     {
-                        errors.Add($"Line {f.LineNumber}: Missing return in function {f.Identifier}.");
+                        errors.Add($"Line {f.LineNumber}: Missing return in function '{f.Identifier}'.");
                     }
                     break;
             }

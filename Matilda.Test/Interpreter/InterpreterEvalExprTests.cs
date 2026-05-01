@@ -1,4 +1,5 @@
 using Matilda;
+
 namespace MatildaTests;
 
 [TestClass]
