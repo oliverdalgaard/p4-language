@@ -174,4 +174,28 @@ public class InterpreterEvalExprTests
         Assert.IsInstanceOfType<IntVal>(result);
         Assert.AreEqual(5, result.AsInt());
     }
+
+    [TestMethod]
+    public void FunctionRefParamaterMisCountTest()
+    {
+        // Arrange
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
+
+        // Act
+        envP.Bind(new FunctionDeclaration(IntT.Instance, "TestFunc", new List<Parameter>(), Skip.Instance, -1));
+
+
+        // Assert
+        try
+        {
+            Interpreter.EvalExpr(new FunctionRef("TestFunc", new List<Expr> { new IntV(1, -1) }, -1), envV, envP, envS);
+            Assert.Fail();
+        }
+        catch (Exception exception)
+        {
+            Assert.AreEqual("Number of arguments do not match the amount of parameters.", exception.Message);
+        }
+    }
 }
