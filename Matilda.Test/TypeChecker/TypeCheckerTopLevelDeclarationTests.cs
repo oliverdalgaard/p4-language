@@ -80,6 +80,6 @@ public class SchemaTestsTypechecker : RunTypeChecker
     };
         CollectionAssert.AreEqual(expected, checker.errors);
     }
+
+
 }
-
-
