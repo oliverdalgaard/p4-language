@@ -163,8 +163,10 @@ public static class Interpreter
                     {
                         localScope.Bind(parameterName, new TableVal(tVal.AsTable().Clone()));
                     }
-
-                    localScope.Bind(parameterName, value);
+                    else
+                    {
+                        localScope.Bind(parameterName, value);
+                    }
                 }
 
                 EvalStmt(function.Body, localScope, envP, envS);
