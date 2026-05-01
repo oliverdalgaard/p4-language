@@ -5,6 +5,55 @@ namespace MatildaTests;
 public class InterpreterEvalStmtTests
 {
 
+    [TestMethod]
+    public void EvalStmtParameterTest()
+    {
+        // Arrange
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
+
+        Stmt stmt = new Parameter(IntT.Instance, "TestId", -1);
+
+        // Act
+        Interpreter.EvalStmt(stmt, envV, envP, envS);
+
+        // Assert
+        Assert.IsNull(envV.TryGet("testId"));
+    }
+
+    [TestMethod]
+    public void EvalStmtTableDeclarationTest()
+    {
+        // Arrange
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
+
+        envS.Bind("testSchemaId", new List<Column> { new Column("hej", IntT.Instance), new Column("dig", IntT.Instance) });
+
+        Stmt stmt = new TableDeclaration(new TableT("testSchemaId"), "TestId", "../../../Interpreter/MatildaCSVFiles/TableDeclarationTest.csv", -1);
+
+        // Act
+        Interpreter.EvalStmt(stmt, envV, envP, envS);
+
+        Val tableVal = envV.TryGet("TestId");
+        Table table = tableVal.AsTable();
+        List<TableHeader> headers = table.Headers;
+        List<TableRecord> records = table.Records;
+
+        // Assert
+        Assert.AreEqual("hej", headers[0].Identifier);
+        Assert.AreEqual(IntT.Instance, headers[0].Type);
+        Assert.AreEqual("dig", headers[1].Identifier);
+        Assert.AreEqual(IntT.Instance, headers[1].Type);
+
+        Assert.AreEqual(1, records[0].Values[0].AsInt());
+        Assert.AreEqual(2, records[0].Values[1].AsInt());
+        Assert.AreEqual(3, records[1].Values[0].AsInt());
+        Assert.AreEqual(4, records[1].Values[1].AsInt());
+    }
+
     // Stmt comp executes both statements when no return exists
 
     [TestMethod]
@@ -188,6 +237,42 @@ public class InterpreterEvalStmtTests
 
         // Assert
         Assert.AreEqual(2, envV.TryGet("x")!.AsInt());
+    }
+
+    [TestMethod]
+    public void EvalStmtElseIfBranchesRunWhenConditionTrue()
+    {
+        // Arrange
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
+        envV.Bind("x", new IntVal(0));
+        envV.Bind("y", new IntVal(0));
+
+        If if1 = new If(
+            new BoolV(false, -1),
+            new Assign("x", new IntV(1, -1), -1),
+            new List<If> { new If(new BoolV(true, -1), new Assign("x", new IntV(3, -1), -1), new List<If>(), Skip.Instance, -1) },
+            new Assign("x", new IntV(2, -1), -1),
+            -1
+        );
+
+        If if2 = new If(
+            new BoolV(false, -1),
+            new Assign("y", new IntV(1, -1), -1),
+            new List<If> { new If(new BoolV(false, -1), new Assign("y", new IntV(3, -1), -1), new List<If>(), Skip.Instance, -1) },
+            new Assign("y", new IntV(2, -1), -1),
+            -1
+        );
+
+        Stmt stmt = new Comp(if1, if2);
+
+        // Act
+        Interpreter.EvalStmt(stmt, envV, envP, envS);
+
+        // Assert
+        Assert.AreEqual(3, envV.TryGet("x")!.AsInt());
+        Assert.AreEqual(2, envV.TryGet("y")!.AsInt());
     }
 
     // Stmt if propagates return to outer scope => Muligvis ændres på baggrund af side effekter i at den ændre globale variabler
