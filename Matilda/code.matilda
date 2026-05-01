@@ -18,3 +18,5 @@ table<Customers> CustomersTable = read("test.csv");
 table<Customers> filteredCustomersTable = filterCustomers(CustomersTable);
 
 print filteredCustomersTable;
+
+

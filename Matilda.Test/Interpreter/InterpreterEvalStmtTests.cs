@@ -32,7 +32,7 @@ public class InterpreterEvalStmtTests
 
         envS.Bind("testSchemaId", new List<Column> { new Column("hej", IntT.Instance), new Column("dig", IntT.Instance) });
 
-        Stmt stmt = new TableDeclaration(new TableT("testSchemaId"), "TestId", "../../../Interpreter/MatildaCSVFiles/TableDeclarationTest.csv", -1);
+        Stmt stmt = new TableDeclaration(new TableT("testSchemaId"), "TestId", "../../../MatildaCSVFiles/TableDeclarationTest.csv", -1);
 
         // Act
         Interpreter.EvalStmt(stmt, envV, envP, envS);

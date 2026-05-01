@@ -24,7 +24,7 @@ public class IntegrationTests
 
         return parser.mainNode;
     }
-    private void AssertNoTypeErros(Program program)
+    private void AssertNoTypeErrors(Program program)
     {
         EnvVT envVT = new EnvVT();
         EnvPT envPT = new EnvPT();
@@ -35,29 +35,33 @@ public class IntegrationTests
         Assert.IsFalse(typeChecker.HasErrors(), $"Type checker has erros: {string.Join("\n", typeChecker.errors)}");
     }
 
+    private static readonly object ConsoleLock = new object();
+
     private string RunProgram(Program program)
     {
-        EnvV envV = new EnvV();
-        EnvP envP = new EnvP();
-        EnvS envS = new EnvS();
-
-        Interpreter.EvalTopLevelDeclarations(program.TopLevelDeclarations, envP, envS);
-
-        TextWriter originalOutput = Console.Out;
-
-        StringWriter output = new StringWriter();
-
-        try
+        lock (ConsoleLock)
         {
-            Console.SetOut(output);  
-            Interpreter.EvalStmt(program.Stmt, envV, envP, envS);
-        }
-        finally
-        {
-            Console.SetOut(originalOutput);
-        }
+            EnvV envV = new EnvV();
+            EnvP envP = new EnvP();
+            EnvS envS = new EnvS();
 
-        return output.ToString().Trim();
+            TextWriter originalOutput = Console.Out;
+            StringWriter output = new StringWriter();
+
+            try
+            {
+                Console.SetOut(output);
+
+                Interpreter.EvalTopLevelDeclarations(program.TopLevelDeclarations, envP, envS);
+                Interpreter.EvalStmt(program.Stmt, envV, envP, envS);
+            }
+            finally
+            {
+                Console.SetOut(originalOutput);
+            }
+
+            return output.ToString().Trim();
+        }
     }
 
     [TestMethod]
@@ -67,10 +71,67 @@ public class IntegrationTests
         Program program = ParseFile("FunctionCallTest.matilda");
 
         // Act
-        AssertNoTypeErros(program);
+        AssertNoTypeErrors(program);
         string output = RunProgram(program);
 
         // Assert
         Assert.AreEqual("171", output);
+
+    }
+
+    [TestMethod]
+    public void WhileLoopPrintsExpectedSequence()
+    {
+        // Arrange
+        Program program = ParseFile("WhileLoopTest.matilda");
+
+        // Act
+        AssertNoTypeErrors(program);
+        string output = RunProgram(program);
+
+        string expected = string.Join(Environment.NewLine, new[]
+        {
+            "0",
+            "1",
+            "2"
+        });
+
+        // Assert
+        Assert.AreEqual(expected, output);
+    }
+
+    [TestMethod]
+    public void IfStatementPrintsCorrectBranch()
+    {
+        // Arrange
+        Program program = ParseFile("IfStatementTest.matilda");
+
+        // Act
+        AssertNoTypeErrors(program);
+
+        string output = RunProgram(program);
+
+        // Assert
+        Assert.AreEqual("100", output);
+    }
+
+    [TestMethod]
+    public void PeopleSchemaFunctionChecksAge()
+    {
+        // Arrange
+        Program program = ParseFile("PeopleSchemaFunctionTest.matilda");
+
+        // Act
+        AssertNoTypeErrors(program);
+        string output = RunProgram(program);
+
+        string expected = string.Join("\n", new[]
+        {
+            "| name  | age   | ",
+            "| Alice | 22    |"
+        });
+
+        // Assert
+        Assert.AreEqual(expected, output);
     }
 }
