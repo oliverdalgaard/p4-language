@@ -159,7 +159,14 @@ public static class Interpreter
                     string parameterName = function.Parameters[i].Identifier;
                     Val value = EvalExpr(functionRef.Arguments[i], envV, envP, envS);
 
-                    localScope.Bind(parameterName, value);
+                    if (value is TableVal tVal)
+                    {
+                        localScope.Bind(parameterName, new TableVal(tVal.AsTable().Clone()));
+                    }
+                    else
+                    {
+                        localScope.Bind(parameterName, value);
+                    }
                 }
 
                 EvalStmt(function.Body, localScope, envP, envS);

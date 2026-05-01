@@ -25,16 +25,9 @@ public class TypeChecker
             switch (topLevelDeclaration)
             {
                 case SchemaDeclaration schemaDeclaration:
-
-                    if (envVT.TryGet("return") != null)
-                    {
-                        errors.Add($"Line {schemaDeclaration.LineNumber}: Schemas can only be declared in the global scope.");
-                        break;
-                    }
-
                     if (envST.TryGet(schemaDeclaration.Identifier) != null)
                     {
-                        errors.Add($"Line {schemaDeclaration.LineNumber}: Variable '{schemaDeclaration.Identifier}' is already declared.");
+                        errors.Add($"Line {schemaDeclaration.LineNumber}: Schema '{schemaDeclaration.Identifier}' is already declared.");
                         break;
                     }
 
@@ -62,12 +55,6 @@ public class TypeChecker
                     break;
 
                 case FunctionDeclaration f:
-
-                    if (envVT.TryGet("return") != null)
-                    {
-                        errors.Add($"Line {f.LineNumber}: Functions can only be declared in the global scope.");
-                    }
-
                     if (f.Identifier == null || f.Type == null)
                     {
                         errors.Add($"Line {f.LineNumber}: Invalid declaration.");
