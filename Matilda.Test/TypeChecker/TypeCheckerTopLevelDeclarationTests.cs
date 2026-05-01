@@ -67,19 +67,25 @@ public class SchemaTestsTypechecker : RunTypeChecker
     }
 
     [TestMethod]
-    public void SchemaDeclarationCheckDuplicateId()
+    public void SchemaDeclarationContainsDuplicates()
     {
-        //arrange
         TopLevelDeclaration topLevelDeclaration = new SchemaDeclaration("schema1", new List<Column> { new Column("1", IntT.Instance), new Column("1", IntT.Instance) }, -1);
         //act
         var checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }));
-        //assert
-        var expected = new List<string>
-    {
-        "Line -1: Schema 'schema1' may not contain duplicate identifiers.",
-    };
-        CollectionAssert.AreEqual(expected, checker.errors);
+        // assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.AreEqual("Line -1: Schema 'schema1' may not contain duplicate identifiers.", checker.errors[0]);
     }
 
+    [TestMethod]
+    public void SchemaDeclarationWrongTypeTest()
+    {
+        TopLevelDeclaration topLevelDeclaration = new SchemaDeclaration("schema1", new List<Column> { new Column("1", RowValT.Instance) }, -1);
+        //act
+        var checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }));
+        // assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.AreEqual("Line -1: Schema declaration requires type of either 'int', 'string', 'bool', or 'float' but got 'Matilda.RowValT'", checker.errors[0]);
+    }
 
 }
