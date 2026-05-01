@@ -67,7 +67,7 @@ public class SchemaTestsTypechecker : RunTypeChecker
     }
 
     [TestMethod]
-    public void SchemaDeclarationContainsDuplicates()
+    public void SchemaDeclarationContainsDuplicatesTest()
     {
         TopLevelDeclaration topLevelDeclaration = new SchemaDeclaration("schema1", new List<Column> { new Column("1", IntT.Instance), new Column("1", IntT.Instance) }, -1);
         //act
@@ -75,6 +75,18 @@ public class SchemaTestsTypechecker : RunTypeChecker
         // assert
         Assert.IsTrue(checker.HasErrors());
         Assert.AreEqual("Line -1: Schema 'schema1' may not contain duplicate identifiers.", checker.errors[0]);
+    }
+
+    [TestMethod]
+    public void SchemaAlreadyDeclaredTest()
+    {
+        TopLevelDeclaration topLevelDeclaration = new SchemaDeclaration("schema1", new List<Column> { new Column("1", IntT.Instance), new Column("2", IntT.Instance) }, -1);
+        TopLevelDeclaration topLevelDeclaration2 = new SchemaDeclaration("schema1", new List<Column> { new Column("1", IntT.Instance), new Column("2", IntT.Instance) }, -1);
+        //act
+        var checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration, topLevelDeclaration2 }));
+        // assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.AreEqual("Line -1: Schema 'schema1' is already declared.", checker.errors[0]);
     }
 
     [TestMethod]

@@ -27,7 +27,7 @@ public class TypeChecker
                 case SchemaDeclaration schemaDeclaration:
                     if (envST.TryGet(schemaDeclaration.Identifier) != null)
                     {
-                        errors.Add($"Line {schemaDeclaration.LineNumber}: Variable '{schemaDeclaration.Identifier}' is already declared.");
+                        errors.Add($"Line {schemaDeclaration.LineNumber}: Schema '{schemaDeclaration.Identifier}' is already declared.");
                         break;
                     }
 
