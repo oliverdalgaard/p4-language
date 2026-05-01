@@ -59,6 +59,7 @@ public class IfTestsTypeChecker : RunTypeChecker
         // assert
         Assert.IsFalse(checker.HasErrors());
     }
+
     [TestMethod]
     public void IfCheckBody()
     {
@@ -74,6 +75,40 @@ public class IfTestsTypeChecker : RunTypeChecker
         "Line -1: Variable x is not declared.",
     };
         CollectionAssert.AreEqual(expected, checker.errors);
+    }
+
+    [TestMethod]
+    public void IfConditionTest()
+    {
+        // Arrange
+
+        Stmt stmt = new If(new StringV("Hej", -1),
+            Skip.Instance,
+            null, null, -1);
+
+        // Act
+        var checker = Run(new Program(stmt));
+
+        // Assert
+        Assert.HasCount(1, checker.errors);
+        Assert.AreEqual("Line -1: If statement requires a condition with type 'bool', but got 'Matilda.StringT'.", checker.errors[0]);
+    }
+
+    [TestMethod]
+    public void IfConditionNullTest()
+    {
+        // Arrange
+
+        Stmt stmt = new If(null,
+            Skip.Instance,
+            null, null, -1);
+
+        // Act
+        var checker = Run(new Program(stmt));
+
+        // Assert
+        Assert.HasCount(1, checker.errors);
+        Assert.AreEqual("Line -1: If statement requires a condition.", checker.errors[0]);
     }
 }
 
