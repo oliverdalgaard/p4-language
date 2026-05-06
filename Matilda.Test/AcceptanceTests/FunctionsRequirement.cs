@@ -1,5 +1,4 @@
 using Matilda;
-using VerifyMSTest;
 
 namespace MatildaTests.AcceptanceTests;
 
