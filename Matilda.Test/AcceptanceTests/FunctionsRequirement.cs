@@ -2,6 +2,7 @@ using Matilda;
 
 namespace MatildaTests.AcceptanceTests.FunctionsRequirementTests;
 
+[UsesVerify]
 [TestClass]
 public class FunctionRequiements : VerifyBase
 {
