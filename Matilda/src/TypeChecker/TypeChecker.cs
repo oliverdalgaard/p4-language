@@ -178,13 +178,6 @@ public class TypeChecker
                     break;
                 }
 
-                if (envVT.TryGetLocal(assign.Identifier) == null)
-                {
-                    errors.Add($"Line {assign.LineNumber}: Cannot reassign global variable '{assign.Identifier}'.");
-                    break;
-                }
-
-
                 Type expectedType = envVT.TryGet(assign.Identifier);
                 Type actualType = ExprT(assign.Value, envVT, envPT, envST);
 

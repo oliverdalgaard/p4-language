@@ -72,6 +72,7 @@ public class IntegrationTests
         // Arrange
         Program program = ParseFile("FunctionCallTest.matilda");
 
+        // Act
         AssertNoTypeErrors(program);
 
         EnvV envV = new EnvV();
@@ -79,8 +80,6 @@ public class IntegrationTests
         EnvS envS = new EnvS();
 
         Interpreter.EvalTopLevelDeclarations(program.TopLevelDeclarations, envP, envS);
-
-        // Act
         Interpreter.EvalStmt(program.Stmt, envV, envP, envS);
 
         // Assert
@@ -100,17 +99,24 @@ public class IntegrationTests
 
         // Act
         AssertNoTypeErrors(program);
-        string output = RunProgram(program);
 
-        string expected = string.Join(Environment.NewLine, new[]
-        {
-            "0",
-            "1",
-            "2"
-        });
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
+
+        Interpreter.EvalTopLevelDeclarations(program.TopLevelDeclarations, envP, envS);
+        Interpreter.EvalStmt(program.Stmt, envV, envP, envS);
+
+        string expected = "3";
 
         // Assert
-        Assert.AreEqual(expected, output);
+
+        Val? result = envV.TryGet("i");
+
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOfType<IntVal>(result);
+
+        Assert.AreEqual(expected, result.ToString());
     }
 
     [TestMethod]
@@ -122,10 +128,22 @@ public class IntegrationTests
         // Act
         AssertNoTypeErrors(program);
 
-        string output = RunProgram(program);
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
+
+        Interpreter.EvalTopLevelDeclarations(program.TopLevelDeclarations, envP, envS);
+        Interpreter.EvalStmt(program.Stmt, envV, envP, envS);
+
+        string expected = "100";
 
         // Assert
-        Assert.AreEqual("100", output);
+        Val? result = envV.TryGet("x");
+
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOfType<IntVal>(result);
+
+        Assert.AreEqual(expected, result.ToString());
     }
 
     [TestMethod]
@@ -136,15 +154,22 @@ public class IntegrationTests
 
         // Act
         AssertNoTypeErrors(program);
-        string output = RunProgram(program);
 
-        string expected = string.Join("\n", new[]
-        {
-            "| name  | age   | ",
-            "| Alice | 22    |"
-        });
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
+
+        Interpreter.EvalTopLevelDeclarations(program.TopLevelDeclarations, envP, envS);
+        Interpreter.EvalStmt(program.Stmt, envV, envP, envS);
+
+        string expected = "| name  | age   | \n| Alice | 22    | \n";
 
         // Assert
-        Assert.AreEqual(expected, output);
+        Val? result = envV.TryGet("isAdultVar");
+
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOfType<TableVal>(result);
+
+        Assert.AreEqual(expected, result.ToString());
     }
 }
