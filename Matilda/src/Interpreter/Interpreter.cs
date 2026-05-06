@@ -33,7 +33,7 @@ public static class Interpreter
 
             case Comp comp:
                 EvalStmt(comp.Stmt1, envV, envP, envS);
-                if (envV.TryGet("return") == null)
+                if (envV.FunctionReturnValue == null)
                 {
                     EvalStmt(comp.Stmt2, envV, envP, envS);
                 }
@@ -78,20 +78,31 @@ public static class Interpreter
                 break;
 
             case Return returnVal:
-                envV.Bind("return", EvalExpr(returnVal.Value, envV, envP, envS));
+                envV.FunctionReturnValue = EvalExpr(returnVal.Value, envV, envP, envS);
                 break;
 
             case If ifStmt:
+                EnvV thenScope = envV.NewScope(envV.IsFunctionScope);
+                EnvV elseScope = envV.NewScope(envV.IsFunctionScope);
 
                 Val condition = EvalExpr(ifStmt.Condition, envV, envP, envS);
                 if (condition.AsBool())
                 {
-                    EvalStmt(ifStmt.ThenBody, envV, envP, envS);
+                    EvalStmt(ifStmt.ThenBody, thenScope, envP, envS);
+                    if (envV.IsFunctionScope)
+                    {
+                        envV.FunctionReturnValue = thenScope.FunctionReturnValue;
+                    }
                 }
                 else
                 {
-                    EvalStmt(ifStmt.ElseBody, envV, envP, envS);
+                    EvalStmt(ifStmt.ElseBody, elseScope, envP, envS);
+                    if (envV.IsFunctionScope)
+                    {
+                        envV.FunctionReturnValue = elseScope.FunctionReturnValue;
+                    }
                 }
+
                 break;
 
             case While whileStmt:
@@ -136,7 +147,7 @@ public static class Interpreter
                     throw new Exception("Number of arguments do not match the amount of parameters.");
                 }
 
-                EnvV localScope = envV.NewScope();
+                EnvV localScope = envV.NewScope(true);
 
                 for (int i = 0; i < functionRef.Arguments.Count; i++)
                 {
@@ -155,7 +166,7 @@ public static class Interpreter
 
                 EvalStmt(function.Body, localScope, envP, envS);
 
-                return localScope.TryGet("return");
+                return localScope.FunctionReturnValue;
 
             case FilterExpr filterExpr:
                 {

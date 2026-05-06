@@ -138,7 +138,7 @@ public class FunctionTestsTypeChecker : RunTypeChecker
         // Assert
         Assert.IsTrue(checker.HasErrors());
         Assert.HasCount(1, checker.errors);
-        Assert.AreEqual("Line -1: Missing return in function 'func1'.", checker.errors[0]);
+        Assert.AreEqual("Line -1: Not all paths return a value in function 'func1'.", checker.errors[0]);
     }
 }
 

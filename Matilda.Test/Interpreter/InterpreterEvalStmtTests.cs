@@ -97,7 +97,7 @@ public class InterpreterEvalStmtTests
         Interpreter.EvalStmt(stmt, envV, envP, envS);
 
         // Assert
-        Assert.AreEqual(5, envV.TryGet("return")!.AsInt());
+        Assert.AreEqual(5, envV.FunctionReturnValue!.AsInt());
     }
 
     //  Stmt print
@@ -184,8 +184,8 @@ public class InterpreterEvalStmtTests
         Interpreter.EvalStmt(stmt, envV, envP, envS);
 
         // Assert
-        Assert.IsNotNull(envV.TryGet("return"));
-        Assert.AreEqual(67, envV.TryGet("return")!.AsInt());
+        Assert.IsNotNull(envV.FunctionReturnValue);
+        Assert.AreEqual(67, envV.FunctionReturnValue!.AsInt());
     }
 
     // Stmt if then branch runs when condition true
@@ -236,31 +236,6 @@ public class InterpreterEvalStmtTests
 
         // Assert
         Assert.AreEqual(2, envV.TryGet("x")!.AsInt());
-    }
-
-    // Stmt if propagates return to outer scope => Muligvis ændres på baggrund af side effekter i at den ændre globale variabler
-
-    [TestMethod]
-    public void EvalStmtIfPropagatesReturnToOuterScope()
-    {
-        // Arrange
-        EnvV envV = new EnvV();
-        EnvP envP = new EnvP();
-        EnvS envS = new EnvS();
-
-        Stmt stmt = new If(
-            new BoolV(true, -1),
-            new Return(new IntV(67, -1), -1),
-            new Skip(),
-            -1
-        );
-
-        // Act
-        Interpreter.EvalStmt(stmt, envV, envP, envS);
-
-        // Assert
-        Assert.IsNotNull(envV.TryGet("return"));
-        Assert.AreEqual(67, envV.TryGet("return")!.AsInt());
     }
 
     // Stmt while repeats until condition false

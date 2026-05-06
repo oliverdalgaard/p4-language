@@ -1,3 +1,5 @@
+using System.Reflection.Metadata;
+
 namespace Matilda;
 
 public class EnvV
@@ -5,15 +7,20 @@ public class EnvV
     private readonly EnvV? parentScope;
     private Dictionary<string, Val?> bindings;
 
-    public EnvV(EnvV? parentScope = null, Dictionary<string, Val?>? bindings = null)
+    public Val? FunctionReturnValue { get; set; }
+    public bool IsFunctionScope { get; }
+
+    public EnvV(EnvV? parentScope = null, Dictionary<string, Val?>? bindings = null, bool isFunctionScope = false)
     {
         this.parentScope = parentScope;
         this.bindings = bindings ?? new Dictionary<string, Val?>();
+
+        IsFunctionScope = isFunctionScope;
     }
 
-    public EnvV NewScope()
+    public EnvV NewScope(bool isFunctionScope = false)
     {
-        return new EnvV(this);
+        return new EnvV(this, null, isFunctionScope);
     }
 
     public void Bind(string variable, Val? value)

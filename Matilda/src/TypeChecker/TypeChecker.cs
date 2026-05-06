@@ -13,7 +13,6 @@ public class TypeChecker
     {
         errors = new List<string>();
 
-        envVT.Bind("return", null);
         TopLevelDeclarationT(program.TopLevelDeclarations, envVT, envPT, envST);
         StmtT(program.Stmt, envVT, envPT, envST);
     }
@@ -71,8 +70,7 @@ public class TypeChecker
                     envPT.Bind(f.Identifier, new FunctionType(f));
 
                     // New local scope
-                    EnvVT localScope = envVT.NewScope();
-                    localScope.Bind("return", f.Type);
+                    EnvVT localScope = envVT.NewFunctionScope(f.Type);
 
                     // Param 
                     foreach (Parameter param in f.Parameters)
@@ -89,9 +87,9 @@ public class TypeChecker
 
                     StmtT(f.Body, localScope, envPT, envST);
 
-                    if (localScope.TryGet("hasReturn") == null)
+                    if (!localScope.HasReturn)
                     {
-                        errors.Add($"Line {f.LineNumber}: Missing return in function '{f.Identifier}'.");
+                        errors.Add($"Line {f.LineNumber}: Not all paths return a value in function '{f.Identifier}'.");
                     }
                     break;
             }
@@ -115,6 +113,21 @@ public class TypeChecker
                 break;
 
             case If ifStmt:
+
+                EnvVT thenScope;
+                EnvVT elseScope;
+
+                if (envVT.FunctionReturnType != null)
+                {
+                    thenScope = envVT.NewFunctionScope(envVT.FunctionReturnType);
+                    elseScope = envVT.NewFunctionScope(envVT.FunctionReturnType);
+                }
+                else
+                {
+                    thenScope = envVT.NewScope();
+                    elseScope = envVT.NewScope();
+                }
+
                 if (ifStmt.Condition != null)
                 {
                     Type condT = ExprT(ifStmt.Condition, envVT, envPT, envST);
@@ -129,15 +142,27 @@ public class TypeChecker
                     errors.Add($"Line {ifStmt.LineNumber}: If statement requires a condition.");
                 }
 
-                // then, elseif, else branch
+                // then & else branch
                 if (ifStmt.ThenBody != null)
                 {
-                    StmtT(ifStmt.ThenBody, envVT, envPT, envST);
+                    StmtT(ifStmt.ThenBody, thenScope, envPT, envST);
                 }
 
                 if (ifStmt.ElseBody != null)
                 {
-                    StmtT(ifStmt.ElseBody, envVT, envPT, envST);
+                    StmtT(ifStmt.ElseBody, elseScope, envPT, envST);
+                }
+
+                if (envVT.FunctionReturnType != null)
+                {
+                    if (ifStmt.ElseBody == Skip.Instance && thenScope.HasReturn)
+                    {
+                        envVT.HasReturn = true;
+                    }
+                    else if (thenScope.HasReturn && elseScope.HasReturn)
+                    {
+                        envVT.HasReturn = true;
+                    }
                 }
 
                 break;
@@ -275,7 +300,7 @@ public class TypeChecker
                     break;
                 }
                 Type currentType = ExprT(r.Value, envVT, envPT, envST);
-                Type functionReturnType = envVT.TryGet("return");
+                Type? functionReturnType = envVT.FunctionReturnType;
 
                 if (functionReturnType != null)
                 {
@@ -292,10 +317,7 @@ public class TypeChecker
                         errors.Add($"Line {r.LineNumber}: Return type '{currentType}' does not match function return type '{functionReturnType}'.");
                     }
 
-                    if (envVT.TryGet("hasReturn") == null)
-                    {
-                        envVT.Bind("hasReturn", BoolT.Instance);
-                    }
+                    envVT.HasReturn = true;
                 }
                 else
                 {
