@@ -5,3 +5,7 @@ function int test(int x, bool y) {
         return 2;
     }
 }
+
+int x = test(5, true);
+
+int y = test(3, false);

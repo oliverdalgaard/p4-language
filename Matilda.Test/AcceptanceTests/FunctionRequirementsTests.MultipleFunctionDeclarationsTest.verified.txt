@@ -38,6 +38,37 @@
           LineNumber: 2
         },
         LineNumber: 1
+      },
+      test2: {
+        Type: {},
+        Identifier: test2,
+        Parameters: [
+          {
+            Type: {},
+            Identifier: z,
+            LineNumber: 9
+          }
+        ],
+        Body: {
+          Value: {
+            Value: 5,
+            LineNumber: 10
+          },
+          LineNumber: 10
+        },
+        LineNumber: 9
+      },
+      test3: {
+        Type: {},
+        Identifier: test3,
+        Body: {
+          Value: {
+            Value: 10,
+            LineNumber: 14
+          },
+          LineNumber: 14
+        },
+        LineNumber: 13
       }
     }
   },
@@ -79,6 +110,37 @@
         LineNumber: 2
       },
       LineNumber: 1
+    },
+    {
+      Type: {},
+      Identifier: test2,
+      Parameters: [
+        {
+          Type: {},
+          Identifier: z,
+          LineNumber: 9
+        }
+      ],
+      Body: {
+        Value: {
+          Value: 5,
+          LineNumber: 10
+        },
+        LineNumber: 10
+      },
+      LineNumber: 9
+    },
+    {
+      Type: {},
+      Identifier: test3,
+      Body: {
+        Value: {
+          Value: 10,
+          LineNumber: 14
+        },
+        LineNumber: 14
+      },
+      LineNumber: 13
     }
   ]
 }

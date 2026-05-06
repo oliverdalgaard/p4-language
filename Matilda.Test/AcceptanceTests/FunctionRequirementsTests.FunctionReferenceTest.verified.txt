@@ -1,4 +1,15 @@
 ﻿{
+  envV: {
+    Bindings: {
+      x: {
+        N: 5
+      },
+      y: {
+        N: 2
+      }
+    },
+    IsFunctionScope: false
+  },
   envP: {
     Bindings: {
       test: {
@@ -80,5 +91,46 @@
       },
       LineNumber: 1
     }
-  ]
+  ],
+  Stmt: {
+    Stmt1: {
+      Type: {},
+      Identifier: x,
+      Expression: {
+        Name: test,
+        Arguments: [
+          {
+            Value: 5,
+            LineNumber: 9
+          },
+          {
+            Value: true,
+            LineNumber: 9
+          }
+        ],
+        LineNumber: 9
+      },
+      LineNumber: 9
+    },
+    Stmt2: {
+      Type: {},
+      Identifier: y,
+      Expression: {
+        Name: test,
+        Arguments: [
+          {
+            Value: 3,
+            LineNumber: 11
+          },
+          {
+            Value: false,
+            LineNumber: 11
+          }
+        ],
+        LineNumber: 11
+      },
+      LineNumber: 11
+    },
+    LineNumber: 9
+  }
 }
