@@ -10,4 +10,9 @@ public class AcceptanceTestHelper : TestHelper
             AppContext.BaseDirectory,
             "../../../TestMatildaScripts/AcceptanceTestsScripts"));
     }
+
+    public TypeChecker RunTypeChecker(Program program, EnvVT envVT, EnvPT envPT, EnvST envST)
+    {
+        return new TypeChecker(program, envVT, envPT, envST);
+    }
 }
