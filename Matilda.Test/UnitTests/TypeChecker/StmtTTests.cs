@@ -1,3 +1,4 @@
+using System.Runtime;
 using Matilda;
 
 namespace MatildaTests.UnitTests.TypeCheckerTests.StmtTTests;
@@ -14,9 +15,9 @@ public class CompTestsTypeChecker : RunTypeChecker
             new Assign("y", new IntV(10, 2), -1) // error
         );
         // act 
-        var checker = Run(new Program(stmt));
+        TypeChecker checker = Run(new Program(stmt));
         // assert
-        var expected = new List<string>
+        List<string> expected = new List<string>
     {
         "Line -1: Variable x is not declared.",
         "Line -1: Variable y is not declared."
@@ -29,7 +30,7 @@ public class CompTestsTypeChecker : RunTypeChecker
         // arrange
         Stmt stmt = new Comp(new LocalDeclaration(IntT.Instance, "x", new IntV(5, 1), -1), new Assign("x", new IntV(10, 2), -1));
         // act
-        var checker = Run(new Program(stmt));
+        TypeChecker checker = Run(new Program(stmt));
         // assert
         Assert.IsFalse(checker.HasErrors());
     }
@@ -57,9 +58,9 @@ public class IfTestsTypeChecker : RunTypeChecker
             new Assign("x", new IntV(5, 1), -1),    //error
             Skip.Instance, -1);
         //act
-        var checker = Run(new Program(stmt));
+        TypeChecker checker = Run(new Program(stmt));
         // assert
-        var expected = new List<string>
+        List<string> expected = new List<string>
     {
         "Line -1: Variable x is not declared.",
     };
@@ -76,7 +77,7 @@ public class IfTestsTypeChecker : RunTypeChecker
             Skip.Instance, -1);
 
         // Act
-        var checker = Run(new Program(stmt));
+        TypeChecker checker = Run(new Program(stmt));
 
         // Assert
         Assert.HasCount(1, checker.errors);
@@ -93,7 +94,7 @@ public class IfTestsTypeChecker : RunTypeChecker
             Skip.Instance, -1);
 
         // Act
-        var checker = Run(new Program(stmt));
+        TypeChecker checker = Run(new Program(stmt));
 
         // Assert
         Assert.HasCount(1, checker.errors);
@@ -110,7 +111,7 @@ public class WhileTestsTypeChecker : RunTypeChecker
         //arrange
         Stmt stmt = new While(new BoolV(true, -1), new LocalDeclaration(IntT.Instance, "x", new IntV(5, 1), -1), -1);
         //act
-        var checker = Run(new Program(stmt));
+        TypeChecker checker = Run(new Program(stmt));
         // assert
         Assert.IsFalse(checker.HasErrors());
     }
@@ -121,9 +122,9 @@ public class WhileTestsTypeChecker : RunTypeChecker
         Stmt stmt = new While(new BoolV(true, -1),
             new Assign("x", new IntV(5, 1), -1), -1);    //error
         //act
-        var checker = Run(new Program(stmt));
+        TypeChecker checker = Run(new Program(stmt));
         // assert
-        var expected = new List<string>
+        List<string> expected = new List<string>
     {
         "Line -1: Variable x is not declared.",
     };
@@ -140,9 +141,9 @@ public class AssignTestsTypeChecker : RunTypeChecker
         //arrange
         Stmt stmt = new Assign("x", new IntV(5, 1), -1);
         //act
-        var checker = Run(new Program(stmt));
+        TypeChecker checker = Run(new Program(stmt));
         //assert
-        var expected = new List<string>
+        List<string> expected = new List<string>
     {
         "Line -1: Variable x is not declared.",
     };
@@ -155,9 +156,9 @@ public class AssignTestsTypeChecker : RunTypeChecker
         Stmt stmt = new Comp(new LocalDeclaration(IntT.Instance, "x", new IntV(5, 1), -1),
         new Assign("x", new BoolV(true, 2), -1));
         //act
-        var checker = Run(new Program(stmt));
+        TypeChecker checker = Run(new Program(stmt));
         //assert
-        var expected = new List<string>
+        List<string> expected = new List<string>
     {
         "Line -1: Cannot assign 'Matilda.BoolT' to variable 'x' of type 'Matilda.IntT'.",
     };
@@ -170,7 +171,7 @@ public class AssignTestsTypeChecker : RunTypeChecker
         Stmt stmt = new Comp(new LocalDeclaration(IntT.Instance, "x", new IntV(5, 1), -1),
         new Assign("x", new IntV(10, 2), -1));
         //act
-        var checker = Run(new Program(stmt));
+        TypeChecker checker = Run(new Program(stmt));
         // assert
         Assert.IsFalse(checker.HasErrors());
     }
@@ -185,9 +186,9 @@ public class LocalDeclarationTestsTypeChecker : RunTypeChecker
         //arrange
         Stmt stmt = new LocalDeclaration(IntT.Instance, "x", new BoolV(true, 1), -1);
         //act
-        var checker = Run(new Program(stmt));
+        TypeChecker checker = Run(new Program(stmt));
         //assert
-        var expected = new List<string>
+        List<string> expected = new List<string>
     {
         "Line -1: Declaration type does not match the type of the expression.",
     };
@@ -200,7 +201,7 @@ public class LocalDeclarationTestsTypeChecker : RunTypeChecker
         //arrange
         Stmt stmt = new LocalDeclaration(IntT.Instance, "x", new IntV(5, 1), -1);
         //act
-        var checker = Run(new Program(stmt));
+        TypeChecker checker = Run(new Program(stmt));
         // assert
         Assert.IsFalse(checker.HasErrors());
     }
@@ -216,9 +217,9 @@ public class ReturnTestsTypeChecker : RunTypeChecker
         //arrange
         Stmt stmt = new Return(new IntV(5, 1), -1);
         //act
-        var checker = Run(new Program(stmt));
+        TypeChecker checker = Run(new Program(stmt));
         // assert
-        var expected = new List<string>
+        List<string> expected = new List<string>
     {
         "Line -1: Return outside of a function is not allowed.",
     };
@@ -237,7 +238,7 @@ public class ReturnTestsTypeChecker : RunTypeChecker
         ),
         -1);
         //act
-        var checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }));
+        TypeChecker checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }));
         // assert
         Assert.IsFalse(checker.HasErrors());
     }
@@ -245,10 +246,10 @@ public class ReturnTestsTypeChecker : RunTypeChecker
 
 //table declaration test
 [TestClass]
-public class tableDeclarationtestsTypeChecker : RunTypeChecker
+public class TableDeclarationtestsTypeChecker : RunTypeChecker
 {
     [TestMethod]
-    public void tableDeclarationTestWrongType()
+    public void TableDeclarationTestWrongType()
     {
         //arrange
         Stmt stmt = new TableDeclaration(
@@ -258,9 +259,9 @@ public class tableDeclarationtestsTypeChecker : RunTypeChecker
             -1
         );
         //act
-        var checker = Run(new Program(stmt));
+        TypeChecker checker = Run(new Program(stmt));
         //assert
-        var expected = new List<string>
+        List<string> expected = new List<string>
     {
         "Line -1: Schema with identifier 'schema1' is not declared."
     };
@@ -268,7 +269,7 @@ public class tableDeclarationtestsTypeChecker : RunTypeChecker
     }
 
     [TestMethod]
-    public void tableDeclarationcheck()
+    public void TableDeclarationcheck()
     {
         //arrange
         TopLevelDeclaration topLevelDeclaration = new SchemaDeclaration(
@@ -288,8 +289,48 @@ public class tableDeclarationtestsTypeChecker : RunTypeChecker
             -1
         );
         //act
-        var checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }, stmt));
+        TypeChecker checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }, stmt));
         // assert
+        Assert.IsFalse(checker.HasErrors());
+    }
+
+    [TestMethod]
+    public void FunctionWithIfStmtSeesReturnStmt()
+    {
+        // Arrange
+        Expr condition = new BoolV(true, -1);
+        Stmt thenBody = new Return(new IntV(10, -1), -1);
+        Stmt elseBody = new Return(new IntV(10, -1), -1);
+
+        Stmt ifStmt = new If(condition, thenBody, elseBody, -1);
+
+        TopLevelDeclaration topLevelDeclaration = new FunctionDeclaration(IntT.Instance, "testFunction", new List<Parameter>(), ifStmt, -1);
+
+        // Act
+        TypeChecker checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }));
+
+        // Assert
+        Assert.IsFalse(checker.HasErrors());
+    }
+
+    [TestMethod]
+    public void FunctionWithIfStmtContainingNoReturn()
+    {
+        // Arrange
+        Expr condition = new BoolV(true, -1);
+        Stmt thenBody = Skip.Instance;
+        Stmt elseBody = Skip.Instance;
+
+        Stmt ifStmt = new If(condition, thenBody, elseBody, -1);
+        Stmt returnStmt = new Return(new IntV(10, -1), -1);
+        Stmt functionBody = new Comp(ifStmt, returnStmt);
+
+        TopLevelDeclaration topLevelDeclaration = new FunctionDeclaration(IntT.Instance, "testFunction", new List<Parameter>(), functionBody, -1);
+
+        // Act
+        TypeChecker checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }));
+
+        // Assert
         Assert.IsFalse(checker.HasErrors());
     }
 }

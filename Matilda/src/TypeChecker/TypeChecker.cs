@@ -151,11 +151,7 @@ public class TypeChecker
 
                 if (envVT.FunctionReturnType != null)
                 {
-                    if (ifStmt.ElseBody == Skip.Instance && thenScope.HasReturn)
-                    {
-                        envVT.HasReturn = true;
-                    }
-                    else if (thenScope.HasReturn && elseScope.HasReturn)
+                    if (thenScope.HasReturn && elseScope.HasReturn)
                     {
                         envVT.HasReturn = true;
                     }
