@@ -1,0 +1,52 @@
+﻿{
+  Bindings: {
+    test: {
+      Type: {},
+      Identifier: test,
+      Parameters: [
+        {
+          Type: {},
+          Identifier: x,
+          LineNumber: 1
+        },
+        {
+          Type: {},
+          Identifier: y,
+          LineNumber: 1
+        }
+      ],
+      Body: {
+        Stmt1: {
+          Condition: {
+            Name: y,
+            LineNumber: 2
+          },
+          ThenBody: {
+            Value: {
+              Name: x,
+              LineNumber: 3
+            },
+            LineNumber: 3
+          },
+          ElseBody: {
+            Value: {
+              Value: 2,
+              LineNumber: 5
+            },
+            LineNumber: 5
+          },
+          LineNumber: 2
+        },
+        Stmt2: {
+          Value: {
+            Value: 1,
+            LineNumber: 8
+          },
+          LineNumber: 8
+        },
+        LineNumber: 2
+      },
+      LineNumber: 1
+    }
+  }
+}

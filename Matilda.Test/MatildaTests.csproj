@@ -16,8 +16,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="MSTest" Version="4.0.2" />
-    <PackageReference Include="Verify.MSTest" Version="28.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.4.0" />
+    <PackageReference Include="MSTest" Version="4.2.2" />
+    <PackageReference Include="Verify.MSTest" Version="31.16.2" />
   </ItemGroup>
 
   <ItemGroup>

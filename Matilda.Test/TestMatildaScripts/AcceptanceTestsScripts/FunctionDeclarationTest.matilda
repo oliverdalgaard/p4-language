@@ -1,0 +1,9 @@
+function int test(int x, bool y) {
+    if (y) {
+        return x;
+    } else {
+        return 2;
+    }
+
+    return 1;
+}

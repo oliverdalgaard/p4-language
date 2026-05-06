@@ -1,11 +1,23 @@
 using Matilda;
+using VerifyMSTest;
 
-namespace MatildaTests.AcceptanceTests.FunctionsRequirementTests;
+namespace MatildaTests.AcceptanceTests;
 
 [UsesVerify]
 [TestClass]
-public class FunctionRequiements : VerifyBase
+public partial class FunctionRequirementsTests : AcceptanceTestHelper
 {
     [TestMethod]
-    public Task FunctionDeclarationTest() => Verify("The content");
+    public Task FunctionDeclarationTest()
+    {
+        Program ast = ParseFile("FunctionDeclarationTest.matilda");
+
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
+
+        Interpreter.EvalTopLevelDeclarations(ast.TopLevelDeclarations, envP, envS);
+
+        return Verify(envP);
+    }
 }
