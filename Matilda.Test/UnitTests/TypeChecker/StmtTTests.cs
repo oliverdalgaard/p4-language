@@ -1,18 +1,7 @@
 using Matilda;
 
-namespace MatildaTests;
+namespace MatildaTests.UnitTests.TypeCheckerTests.StmtTTests;
 
-public abstract class RunTypeChecker
-{
-    public TypeChecker Run(Program program)
-    {
-        var envVT = new EnvVT();
-        var envPT = new EnvPT();
-        var envST = new EnvST();
-
-        return new TypeChecker(program, envVT, envPT, envST);
-    }
-}
 [TestClass]
 public class CompTestsTypeChecker : RunTypeChecker
 {

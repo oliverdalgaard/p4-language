@@ -1,6 +1,6 @@
 using Matilda;
 
-namespace MatildaTests;
+namespace MatildaTests.UnitTests.LibTests.AbstractSyntaxTests.TableTests;
 
 [TestClass]
 public class TableTests

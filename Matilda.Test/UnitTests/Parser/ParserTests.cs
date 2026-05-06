@@ -1,34 +1,10 @@
 using Matilda;
 
-namespace MatildaTests;
+namespace MatildaTests.UnitTests.ParserTests.ParserTests;
 
 [TestClass]
-public class ParserTests
+public class ParserTests : UnitTestHelper
 {
-    // Helper function locate the correct directory
-    private static readonly string ScriptFolder =
-            Path.GetFullPath(Path.Combine(
-                AppContext.BaseDirectory,
-                "../../../TestMatildaScripts/ParserTestsScripts"));
-
-
-    // Helper method for all the test methods
-    private Program ParseFile(string fileName)
-    {
-        string path = Path.Combine(ScriptFolder, fileName);
-
-        Assert.IsTrue(File.Exists(path), $"Test script file was not found: {path}");
-
-        Scanner scanner = new Scanner(path);
-        Parser parser = new Parser(scanner);
-
-        parser.Parse();
-
-        Assert.IsFalse(parser.hasErrors());
-
-        return parser.mainNode;
-    }
-
     [TestMethod]
     public void ParseDeclarationProgram()
     {

@@ -1,6 +1,6 @@
 using Matilda;
 
-namespace MatildaTests;
+namespace MatildaTests.UnitTests.TypeCheckerTests.TopLevelDeclarationTests;
 
 [TestClass]
 public class FunctionTestsTypeChecker : RunTypeChecker

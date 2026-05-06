@@ -1,6 +1,6 @@
 using Matilda;
 
-namespace MatildaTests;
+namespace MatildaTests.UnitTests.InterpreterTests.EvalExprTests;
 
 [TestClass]
 public class InterpreterEvalExprTests

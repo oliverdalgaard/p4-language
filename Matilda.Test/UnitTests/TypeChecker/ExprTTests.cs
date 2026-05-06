@@ -1,6 +1,6 @@
 using Matilda;
 
-namespace MatildaTests;
+namespace MatildaTests.UnitTests.TypeCheckerTests.ExprTTests;
 
 
 [TestClass]
@@ -198,7 +198,7 @@ public class FilterExprTestsTypechecker : RunTypeChecker
         Stmt stmt = new Comp(new TableDeclaration(
             new TableT("schema1"),
             "tab1",
-            "../../../TypeChecker/TestMatildaScriptTypeChecker/TableDeclaration.csv",
+            "TableDeclaration.csv",
             -1),
             new LocalDeclaration(new TableT("schema1"), "x", new FilterExpr(new Ref("tab1", -1), new BoolV(true, 1), -1), -1)
             );

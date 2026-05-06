@@ -1,6 +1,6 @@
 using Matilda;
 
-namespace MatildaTests;
+namespace MatildaTests.UnitTests.AbstractSyntaxTests.ExprTests;
 
 [TestClass]
 public class UnaryOpTests

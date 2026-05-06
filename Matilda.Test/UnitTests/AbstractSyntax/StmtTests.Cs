@@ -1,6 +1,6 @@
 using Matilda;
 
-namespace MatildaTests;
+namespace MatildaTests.UnitTests.AbstractSyntaxTests.StmtTests;
 
 [TestClass]
 public class CompTests

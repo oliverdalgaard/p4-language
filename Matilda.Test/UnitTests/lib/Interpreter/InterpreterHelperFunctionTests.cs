@@ -1,6 +1,6 @@
 using Matilda;
 
-namespace MatildaTests;
+namespace MatildaTests.UnitTests.LibTests.InterpreterTests.InterpreterHelperFunctionTests;
 
 [TestClass]
 public class IsEqualTests

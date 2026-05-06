@@ -1,6 +1,6 @@
 using Matilda;
 
-namespace MatildaTests;
+namespace MatildaTests.UnitTests.LibTests.TypeCheckerTests.CompareSchemaTests;
 
 [TestClass]
 public class CompareSchemaTests
