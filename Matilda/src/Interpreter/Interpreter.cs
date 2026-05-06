@@ -82,29 +82,13 @@ public static class Interpreter
                 break;
 
             case If ifStmt:
-                bool runElse = true;
 
                 Val condition = EvalExpr(ifStmt.Condition, envV, envP, envS);
                 if (condition.AsBool())
                 {
-                    runElse = false;
                     EvalStmt(ifStmt.ThenBody, envV, envP, envS);
                 }
-                else if (ifStmt.ElseIfStmts.Any())
-                {
-                    foreach (If elseIfStmt in ifStmt.ElseIfStmts)
-                    {
-                        Val elseIfStmtCondition = EvalExpr(elseIfStmt.Condition, envV, envP, envS);
-                        if (elseIfStmtCondition.AsBool())
-                        {
-                            EvalStmt(elseIfStmt.ThenBody, envV, envP, envS);
-                            runElse = false;
-                            break;
-                        }
-                    }
-                }
-
-                if (runElse)
+                else
                 {
                     EvalStmt(ifStmt.ElseBody, envV, envP, envS);
                 }

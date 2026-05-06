@@ -53,7 +53,7 @@ public class IfTestsTypeChecker : RunTypeChecker
     public void IfCheckCondition()
     {
         //arrange
-        Stmt stmt = new If(new BoolV(true, -1), new LocalDeclaration(IntT.Instance, "x", new IntV(5, 1), -1), null, null, -1);
+        Stmt stmt = new If(new BoolV(true, -1), new LocalDeclaration(IntT.Instance, "x", new IntV(5, 1), -1), Skip.Instance, -1);
         //act
         var checker = Run(new Program(stmt));
         // assert
@@ -66,7 +66,7 @@ public class IfTestsTypeChecker : RunTypeChecker
         //arrange
         Stmt stmt = new If(new BoolV(true, -1),
             new Assign("x", new IntV(5, 1), -1),    //error
-            null, null, -1);
+            Skip.Instance, -1);
         //act
         var checker = Run(new Program(stmt));
         // assert
@@ -84,7 +84,7 @@ public class IfTestsTypeChecker : RunTypeChecker
 
         Stmt stmt = new If(new StringV("Hej", -1),
             Skip.Instance,
-            null, null, -1);
+            Skip.Instance, -1);
 
         // Act
         var checker = Run(new Program(stmt));
@@ -101,7 +101,7 @@ public class IfTestsTypeChecker : RunTypeChecker
 
         Stmt stmt = new If(null,
             Skip.Instance,
-            null, null, -1);
+            Skip.Instance, -1);
 
         // Act
         var checker = Run(new Program(stmt));

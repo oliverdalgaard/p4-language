@@ -178,18 +178,14 @@ Return<out Stmt stmt> =
   ';'
 .
 
-If<out Stmt stmt>                                     (. Stmt elseStmt = Skip.Instance; List<If> elseIfStmts = new List<If>(); int lineNumber = -1; .) =
+If<out Stmt stmt>                                     (. Stmt elseStmt = Skip.Instance; int lineNumber = -1; .) =
   "if"                                                (. lineNumber = t.line; .)
   '(' Expr<out Expr condition> ')'
   '{' Stmts<out Stmt thenStmt> '}'
-  {
-  "elseif" '(' Expr<out Expr elseIfCondition> ')'
-  '{' Stmts<out Stmt elseIfStmt> '}'                   (. elseIfStmts.Add(new If(elseIfCondition, elseIfStmt, null, Skip.Instance, lineNumber)); .)
-  }
   [
     "else"
     '{' Stmts<out elseStmt> '}'
-  ]                                                   (. stmt = new If(condition, thenStmt, elseIfStmts, elseStmt, lineNumber); .)
+  ]                                                   (. stmt = new If(condition, thenStmt, elseStmt, lineNumber); .)
 .
 
 While<out Stmt stmt> =

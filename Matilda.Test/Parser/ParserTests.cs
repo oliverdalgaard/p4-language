@@ -18,7 +18,7 @@ public class ParserTests
         string path = Path.Combine(ScriptFolder, fileName);
 
         Assert.IsTrue(File.Exists(path), $"Test script file was not found: {path}");
-        
+
         Scanner scanner = new Scanner(path);
         Parser parser = new Parser(scanner);
 
@@ -151,8 +151,7 @@ public class ParserTests
         Assert.IsInstanceOfType<If>(ifStatement);
         Assert.IsInstanceOfType<Print>(ifStatement.ThenBody);
 
-        // Check stms inside ifelse and else body
-        Assert.IsInstanceOfType<Print>(ifStatement.ElseIfStmts![0].ThenBody);
+        // Check stms inside else body
         Assert.IsInstanceOfType<Print>(ifStatement.ElseBody);
     }
 

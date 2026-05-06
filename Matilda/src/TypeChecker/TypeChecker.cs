@@ -135,14 +135,6 @@ public class TypeChecker
                     StmtT(ifStmt.ThenBody, envVT, envPT, envST);
                 }
 
-                if (ifStmt.ElseIfStmts != null)
-                {
-                    foreach (If elseif in ifStmt.ElseIfStmts)
-                    {
-                        StmtT(elseif, envVT, envPT, envST);
-                    }
-                }
-
                 if (ifStmt.ElseBody != null)
                 {
                     StmtT(ifStmt.ElseBody, envVT, envPT, envST);

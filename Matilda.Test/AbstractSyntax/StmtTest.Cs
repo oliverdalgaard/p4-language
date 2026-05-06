@@ -183,16 +183,14 @@ public class IfTests
         // Arrange
         Expr condition = new BoolV(true, -1);
         Stmt thenBody = new Print(new StringV("then", -1), -1);
-        var elseIfs = new List<If>();
         Stmt elseBody = new Print(new StringV("else", -1), -1);
 
         // Act
-        If ifStmt = new If(condition, thenBody, elseIfs, elseBody, -1);
+        If ifStmt = new If(condition, thenBody, elseBody, -1);
 
         // Assert
         Assert.AreSame(condition, ifStmt.Condition);
         Assert.AreSame(thenBody, ifStmt.ThenBody);
-        Assert.AreSame(elseIfs, ifStmt.ElseIfStmts);
         Assert.AreSame(elseBody, ifStmt.ElseBody);
         Assert.AreEqual(-1, ifStmt.LineNumber);
     }

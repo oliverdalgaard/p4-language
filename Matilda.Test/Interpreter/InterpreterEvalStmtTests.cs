@@ -1,4 +1,5 @@
 using Matilda;
+
 namespace MatildaTests;
 
 [TestClass]
@@ -201,7 +202,6 @@ public class InterpreterEvalStmtTests
         Stmt stmt = new If(
             new BoolV(true, -1),
             new Assign("x", new IntV(1, -1), -1),
-            new List<If>(),
             new Assign("x", new IntV(2, -1), -1),
             -1
         );
@@ -227,7 +227,6 @@ public class InterpreterEvalStmtTests
         Stmt stmt = new If(
             new BoolV(false, -1),
             new Assign("x", new IntV(1, -1), -1),
-            new List<If>(),
             new Assign("x", new IntV(2, -1), -1),
             -1
         );
@@ -237,42 +236,6 @@ public class InterpreterEvalStmtTests
 
         // Assert
         Assert.AreEqual(2, envV.TryGet("x")!.AsInt());
-    }
-
-    [TestMethod]
-    public void EvalStmtElseIfBranchesRunWhenConditionTrue()
-    {
-        // Arrange
-        EnvV envV = new EnvV();
-        EnvP envP = new EnvP();
-        EnvS envS = new EnvS();
-        envV.Bind("x", new IntVal(0));
-        envV.Bind("y", new IntVal(0));
-
-        If if1 = new If(
-            new BoolV(false, -1),
-            new Assign("x", new IntV(1, -1), -1),
-            new List<If> { new If(new BoolV(true, -1), new Assign("x", new IntV(3, -1), -1), new List<If>(), Skip.Instance, -1) },
-            new Assign("x", new IntV(2, -1), -1),
-            -1
-        );
-
-        If if2 = new If(
-            new BoolV(false, -1),
-            new Assign("y", new IntV(1, -1), -1),
-            new List<If> { new If(new BoolV(false, -1), new Assign("y", new IntV(3, -1), -1), new List<If>(), Skip.Instance, -1) },
-            new Assign("y", new IntV(2, -1), -1),
-            -1
-        );
-
-        Stmt stmt = new Comp(if1, if2);
-
-        // Act
-        Interpreter.EvalStmt(stmt, envV, envP, envS);
-
-        // Assert
-        Assert.AreEqual(3, envV.TryGet("x")!.AsInt());
-        Assert.AreEqual(2, envV.TryGet("y")!.AsInt());
     }
 
     // Stmt if propagates return to outer scope => Muligvis ændres på baggrund af side effekter i at den ændre globale variabler
@@ -288,7 +251,6 @@ public class InterpreterEvalStmtTests
         Stmt stmt = new If(
             new BoolV(true, -1),
             new Return(new IntV(67, -1), -1),
-            new List<If>(),
             new Skip(),
             -1
         );

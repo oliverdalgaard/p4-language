@@ -147,16 +147,14 @@ public class If : Stmt
 {
     public Expr Condition { get; }
     public Stmt ThenBody { get; }
-    public List<If>? ElseIfStmts { get; }
     public Stmt ElseBody { get; }
 
     public override int LineNumber { get; }
 
-    public If(Expr condition, Stmt thenBody, List<If> elseIfStmts, Stmt elseBody, int lineNumber)
+    public If(Expr condition, Stmt thenBody, Stmt elseBody, int lineNumber)
     {
         Condition = condition;
         ThenBody = thenBody;
-        ElseIfStmts = elseIfStmts;
         ElseBody = elseBody;
 
         LineNumber = lineNumber;
