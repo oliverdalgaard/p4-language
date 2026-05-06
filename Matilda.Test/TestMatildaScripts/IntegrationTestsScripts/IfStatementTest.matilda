@@ -1,7 +1,7 @@
 int x = 7;
 
 if (x < 10) {
-    print 100;
+    x = 100;
 } else {
-    print 200;
+    x = 200;
 }

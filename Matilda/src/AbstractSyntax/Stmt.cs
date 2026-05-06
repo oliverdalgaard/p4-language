@@ -126,21 +126,6 @@ public class Return : Stmt
 
         LineNumber = lineNumber;
     }
-
-}
-
-public class Print : Stmt
-{
-    public Expr Value { get; }
-
-    public override int LineNumber { get; }
-
-    public Print(Expr value, int lineNumber)
-    {
-        Value = value;
-
-        LineNumber = lineNumber;
-    }
 }
 
 public class If : Stmt

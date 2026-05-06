@@ -9,4 +9,4 @@ function table<Person> isAdult(table<Person> persons) {
 
 table<Person> persons = read("../../../MatildaCSVFiles/persons.csv");
 
-print isAdult(persons);
+table<Person> isAdultVar = isAdult(persons);

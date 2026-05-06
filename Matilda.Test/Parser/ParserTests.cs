@@ -30,23 +30,6 @@ public class ParserTests
     }
 
     [TestMethod]
-    public void ParsePrintLiteralReturnsPrintNode()
-    {
-        // Arrange & act
-        Program ast = ParseFile("PrintASTTest.matilda");
-
-        // Assert
-        Assert.IsInstanceOfType<Print>(ast.Stmt);
-
-        Print print = (Print)ast.Stmt;
-        Assert.IsInstanceOfType<IntV>(print.Value);
-
-        var value = (IntV)print.Value;
-        Assert.AreEqual(5, value.Value);
-    }
-
-
-    [TestMethod]
     public void ParseDeclarationProgram()
     {
         // Arrange + Act
@@ -131,7 +114,7 @@ public class ParserTests
         Assert.AreEqual(BinaryOperators.LT, condition.Op);
 
         // Body
-        Assert.IsInstanceOfType<Comp>(whileStmt.Body);
+        Assert.IsInstanceOfType<Assign>(whileStmt.Body);
     }
 
 
@@ -143,16 +126,20 @@ public class ParserTests
 
         Comp comp = (Comp)ast.Stmt;
         LocalDeclaration declarationStatement = (LocalDeclaration)comp.Stmt1!;
-        If ifStatement = (If)comp.Stmt2!;
+        Comp comp2 = (Comp)comp.Stmt2!;
+        LocalDeclaration declarationStatement2 = (LocalDeclaration)comp2.Stmt1!;
+        If ifStatement = (If)comp2.Stmt2!;
 
         // Assert
-        Assert.IsInstanceOfType<Comp>(ast.Stmt);
+        Assert.IsInstanceOfType<Comp>(comp);
+        Assert.IsInstanceOfType<Comp>(comp2);
         Assert.IsInstanceOfType<LocalDeclaration>(declarationStatement);
+        Assert.IsInstanceOfType<LocalDeclaration>(declarationStatement2);
         Assert.IsInstanceOfType<If>(ifStatement);
-        Assert.IsInstanceOfType<Print>(ifStatement.ThenBody);
+        Assert.IsInstanceOfType<Assign>(ifStatement.ThenBody);
 
         // Check stms inside else body
-        Assert.IsInstanceOfType<Print>(ifStatement.ElseBody);
+        Assert.IsInstanceOfType<Assign>(ifStatement.ElseBody);
     }
 
     [TestMethod]
@@ -164,8 +151,8 @@ public class ParserTests
 
 
         // Act
-        Print print = (Print)ast.Stmt;
-        BinaryOp addRight = (BinaryOp)print.Value;               // (1 + (2 * 3)) + 1
+        LocalDeclaration declaration = (LocalDeclaration)ast.Stmt;
+        BinaryOp addRight = (BinaryOp)declaration.Expression;          // (1 + (2 * 3)) + 1
         BinaryOp addLeft = (BinaryOp)addRight.ExprLeft;          // 1 + (2 * 3)
         BinaryOp mul = (BinaryOp)addLeft.ExprRight;              // 2 * 3
 
@@ -192,8 +179,8 @@ public class ParserTests
         Program ast = ParseFile("PrecedenceASTTest2.matilda");
 
         // Act
-        Print print = (Print)ast.Stmt;
-        BinaryOp subRight = (BinaryOp)print.Value;               // (1 - ((2 / 3) / 2)) - 1
+        LocalDeclaration declaration = (LocalDeclaration)ast.Stmt;
+        BinaryOp subRight = (BinaryOp)declaration.Expression;               // (1 - ((2 / 3) / 2)) - 1
         BinaryOp subLeft = (BinaryOp)subRight.ExprLeft;          // 1 - ((2 / 3) / 2)
         BinaryOp divRight = (BinaryOp)subLeft.ExprRight;         // (2 / 3) / 2
         BinaryOp divLeft = (BinaryOp)divRight.ExprLeft;          // 2 / 3
@@ -224,8 +211,8 @@ public class ParserTests
         Program ast = ParseFile("PrecedenceASTTest3.matilda");
 
         // Act
-        Print print = (Print)ast.Stmt;
-        BinaryOp subRight = (BinaryOp)print.Value;            // ((5 - 4) - 3) - 2
+        LocalDeclaration declaration = (LocalDeclaration)ast.Stmt;
+        BinaryOp subRight = (BinaryOp)declaration.Expression;            // ((5 - 4) - 3) - 2
         BinaryOp subMid = (BinaryOp)subRight.ExprLeft;        // (5 - 4) - 3
         BinaryOp subLeft = (BinaryOp)subMid.ExprLeft;         // 5 - 4
 

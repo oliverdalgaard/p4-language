@@ -100,36 +100,6 @@ public class InterpreterEvalStmtTests
         Assert.AreEqual(5, envV.FunctionReturnValue!.AsInt());
     }
 
-    //  Stmt print
-
-    [TestMethod]
-    public void EvalStmtPrintPrintsExpressionValue()
-    {
-        // Arrange
-        EnvV envV = new EnvV();
-        EnvP envP = new EnvP();
-        EnvS envS = new EnvS();
-        Stmt stmt = new Print(new IntV(42, -1), -1);
-
-        StringWriter sw = new StringWriter();
-        TextWriter originalOut = Console.Out;
-        Console.SetOut(sw);
-
-        try
-        {
-            // Act
-            Interpreter.EvalStmt(stmt, envV, envP, envS);
-
-            // Assert
-            Assert.AreEqual("42" + Environment.NewLine, sw.ToString());
-        }
-        finally
-        {
-            // Restore original console output => In this case is it for console.write is working again after the test is done, så det ikke påvirker andre tests eller output i konsollen
-            Console.SetOut(originalOut);
-        }
-    }
-
     // Stmt declaration with expression binds evaluated value => string x = "Test";
 
     [TestMethod]

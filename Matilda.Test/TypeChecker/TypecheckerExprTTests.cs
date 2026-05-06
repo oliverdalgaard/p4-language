@@ -1,6 +1,3 @@
-using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
-using System.Windows.Markup;
 using Matilda;
 
 namespace MatildaTests;
@@ -65,7 +62,7 @@ public class BinaryOpTestsTypeChecker : RunTypeChecker
     public void AddTestTypeCheckerFails()
     {
         //arrange
-        Stmt stmt = new Print(new BinaryOp(BinaryOperators.ADD,
+        Stmt stmt = new LocalDeclaration(IntT.Instance, "x", new BinaryOp(BinaryOperators.ADD,
                         new IntV(5, 1),
                         new BoolV(true, 1), -1), -1);
         //act
@@ -73,8 +70,10 @@ public class BinaryOpTestsTypeChecker : RunTypeChecker
         //assert
         var expected = new List<string>
         {
-            "Line 1: Operator '+' expected a right operand of type 'int' or 'float', but got 'Matilda.BoolT'."
+            "Line 1: Operator '+' expected a right operand of type 'int' or 'float', but got 'Matilda.BoolT'.",
+            "Line -1: Declaration type does not match the type of the expression."
         };
+
         CollectionAssert.AreEqual(expected, checker.errors);
     }
 }
@@ -86,13 +85,14 @@ public class RefTestsTypeChecker : RunTypeChecker
     public void RefTestTypeCheckerDeclaredFails()
     {
         //arrange
-        Stmt stmt = new Print(new Ref("x", -1), -1);
+        Stmt stmt = new LocalDeclaration(IntT.Instance, "f", new Ref("x", -1), -1);
         //act
         var checker = Run(new Program(stmt));
         //assert
         var expected = new List<string>
     {
-        "Line -1: Variable x is not declared."
+        "Line -1: Variable x is not declared.",
+        "Line -1: Declaration type does not match the type of the expression."
     };
         CollectionAssert.AreEqual(expected, checker.errors);
     }
@@ -102,7 +102,7 @@ public class RefTestsTypeChecker : RunTypeChecker
         //arrange
         Stmt stmt = new Comp(
           new LocalDeclaration(IntT.Instance, "x", new IntV(5, 1), -1),
-          new Print(new Ref("x", -1), -1)
+          new LocalDeclaration(IntT.Instance, "y", new Ref("x", -1), -1)
       );
         //act
         var checker = Run(new Program(stmt));
@@ -118,14 +118,15 @@ public class FunctionRefTestsTypeChecker : RunTypeChecker
     public void FunctionRefTestTypeCheckerFails()
     {
         //arrange
-        Stmt stmt = new Print(new FunctionRef("func1", new List<Expr>(), -1), -1);
+        Stmt stmt = new LocalDeclaration(IntT.Instance, "x", new FunctionRef("func1", new List<Expr>(), -1), -1);
 
         //act
         var checker = Run(new Program(stmt));
         //assert
         var expected = new List<string>
     {
-        "Line -1: Function func1 is not declared."
+        "Line -1: Function func1 is not declared.",
+        "Line -1: Declaration type does not match the type of the expression."
     };
         CollectionAssert.AreEqual(expected, checker.errors);
     }
@@ -142,14 +143,15 @@ public class FunctionRefTestsTypeChecker : RunTypeChecker
             new Return(new IntV(5, 1), -1)
         ),
         -1);
-        Stmt stmt = new Print(new FunctionRef("func1", new List<Expr> { new IntV(5, 1) }, -1), -1);
+        Stmt stmt = new LocalDeclaration(IntT.Instance, "y", new FunctionRef("func1", new List<Expr> { new IntV(5, 1) }, -1), -1);
 
         //act
         var checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }, stmt));
         //assert
         var expected = new List<string>
     {
-        "Line -1: Function func1 argument count mismatch."
+        "Line -1: Function func1 argument count mismatch.",
+        "Line -1: Declaration type does not match the type of the expression."
     };
         CollectionAssert.AreEqual(expected, checker.errors);
     }
@@ -166,7 +168,7 @@ public class FunctionRefTestsTypeChecker : RunTypeChecker
         ),
         -1);
 
-        Stmt stmt = new Print(new FunctionRef("func1", new List<Expr>(), -1), -1);
+        Stmt stmt = new LocalDeclaration(IntT.Instance, "y", new FunctionRef("func1", new List<Expr>(), -1), -1);
 
         //act
         var checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }, stmt));
@@ -198,7 +200,7 @@ public class FilterExprTestsTypechecker : RunTypeChecker
             "tab1",
             "../../../TypeChecker/TestMatildaScriptTypeChecker/TableDeclaration.csv",
             -1),
-            new Print(new FilterExpr(new Ref("tab1", -1), new BoolV(true, 1), -1), -1)
+            new LocalDeclaration(new TableT("schema1"), "x", new FilterExpr(new Ref("tab1", -1), new BoolV(true, 1), -1), -1)
             );
         //act
         var checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }, stmt));
@@ -210,13 +212,14 @@ public class FilterExprTestsTypechecker : RunTypeChecker
     public void FilterExprTestTypeFailsArg1()
     {
         //arrange
-        Stmt stmt = new Print(new FilterExpr(new IntV(2, 1), new IntV(5, 1), -1), -1);
+        Stmt stmt = new LocalDeclaration(new TableT("test"), "x", new FilterExpr(new IntV(2, 1), new IntV(5, 1), -1), -1);
         //act
         var checker = Run(new Program(stmt));
         //assert
         var expected = new List<string>
         {
-            "Line -1: Argument 1 must be of type 'TableT'."
+            "Line -1: Argument 1 must be of type 'TableT'.",
+            "Line -1: Declaration type does not match the type of the expression."
         };
         CollectionAssert.AreEqual(expected, checker.errors);
     }
@@ -239,14 +242,15 @@ public class FilterExprTestsTypechecker : RunTypeChecker
             "tab1",
             "../../../TypeChecker/TestMatildaScriptTypeChecker/TableDeclaration.csv",
             -1),
-            new Print(new FilterExpr(new Ref("tab1", -1), new IntV(5, 1), -1), -1)
+            new LocalDeclaration(new TableT("schema1"), "x", new FilterExpr(new Ref("tab1", -1), new IntV(5, 1), -1), -1)
             );
         //act
         var checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }, stmt));
         //assert
         var expected = new List<string>
         {
-            "Line -1: Argument 2 must be of type 'BoolT'."
+            "Line -1: Argument 2 must be of type 'BoolT'.",
+            "Line -1: Declaration type does not match the type of the expression."
         };
         CollectionAssert.AreEqual(expected, checker.errors);
     }

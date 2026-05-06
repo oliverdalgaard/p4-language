@@ -1,8 +1,9 @@
 int condition = 21;
+string result = "";
 
 if(condition < 18) {
-    print "Not allowed to vote";
+    result = "Not allowed to vote";
 } else {
-    print "Ready to vote";
+    result = "Ready to vote";
 }
 

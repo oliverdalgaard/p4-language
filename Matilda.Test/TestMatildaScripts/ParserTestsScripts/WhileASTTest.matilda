@@ -1,6 +1,5 @@
 int number = 0;
 
 while (number < 10) {
-    print "Hello World";
     number = number + 1;
 }
