@@ -1,4 +1,6 @@
-namespace Matilda;
+using Matilda;
+
+namespace MatildaTests;
 
 [TestClass]
 public class IntegrationTests
