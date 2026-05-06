@@ -39,11 +39,6 @@ public static class Interpreter
                 }
                 break;
 
-            case Print print:
-                Val value = EvalExpr(print.Value, envV, envP, envS);
-                Console.WriteLine(value.ToString());
-                break;
-
             case Parameter parameter:
                 envV.Bind(parameter.Identifier, null);
                 break;

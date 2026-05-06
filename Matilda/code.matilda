@@ -1,4 +1,3 @@
-/*
 schema Customers = {
     customer_id : int,
     name : string,
@@ -17,20 +16,3 @@ function table<Customers> filterCustomers(table<Customers> customers_table) {
 table<Customers> CustomersTable = read("test.csv");
 
 table<Customers> filteredCustomersTable = filterCustomers(CustomersTable);
-
-print filteredCustomersTable;
-*/
-
-function int test(bool boolean) {
-    int hasReturn = 5;
-    if (boolean) {
-        return 2;
-    } else {
-        print "HEJ";
-        return 1;
-    }
-    
-}
-
-print test(true);
-print test(false);

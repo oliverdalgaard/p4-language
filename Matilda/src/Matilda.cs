@@ -40,6 +40,14 @@ class Matilda
 					Interpreter.EvalTopLevelDeclarations(program.TopLevelDeclarations, envP, envS);
 					Interpreter.EvalStmt(program.Stmt, envV, envP, envS);
 
+					foreach (KeyValuePair<string, Val?> keyValuePair in envV.Bindings)
+					{
+						if (keyValuePair.Value != null)
+						{
+							Console.WriteLine($"{keyValuePair.Key}:\n{keyValuePair.Value}\n");
+						}
+					}
+
 					Console.WriteLine("Program stopped!");
 				}
 			}

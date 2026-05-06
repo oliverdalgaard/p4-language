@@ -132,17 +132,10 @@ Stmt<out Stmt stmt> =       (. stmt = Skip.Instance; .)
   (
     LocalDeclaration<out stmt>
     | Assignment<out stmt>
-    | Print<out stmt>
     | If<out stmt>
     | While <out stmt>
     | Return<out stmt>
   )
-.
-
-Print<out Stmt stmt> = 
-  "print"               (. int lineNumber = t.line; .)
-  Expr<out Expr expr>   (. stmt = new Print(expr, lineNumber); .)
-  ';'
 .
 
 LocalDeclaration<out Stmt stmt> (. stmt = Skip.Instance; .) = 

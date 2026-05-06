@@ -103,10 +103,6 @@ public class TypeChecker
             case Skip:
                 break;
 
-            case Print print:
-                ExprT(print.Value, envVT, envPT, envST);
-                break;
-
             case Comp comp:
                 StmtT(comp.Stmt1, envVT, envPT, envST);
                 StmtT(comp.Stmt2, envVT, envPT, envST);

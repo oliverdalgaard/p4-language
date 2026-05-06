@@ -5,7 +5,7 @@ namespace Matilda;
 public class EnvV
 {
     private readonly EnvV? parentScope;
-    private Dictionary<string, Val?> bindings;
+    public Dictionary<string, Val?> Bindings { get; }
 
     public Val? FunctionReturnValue { get; set; }
     public bool IsFunctionScope { get; }
@@ -13,7 +13,7 @@ public class EnvV
     public EnvV(EnvV? parentScope = null, Dictionary<string, Val?>? bindings = null, bool isFunctionScope = false)
     {
         this.parentScope = parentScope;
-        this.bindings = bindings ?? new Dictionary<string, Val?>();
+        Bindings = bindings ?? new Dictionary<string, Val?>();
 
         IsFunctionScope = isFunctionScope;
     }
@@ -30,14 +30,14 @@ public class EnvV
             throw new Exception($"The identifer {variable} has already been bound in the local scope.");
         }
 
-        bindings[variable] = value;
+        Bindings[variable] = value;
     }
 
     public void Set(string variable, Val? value)
     {
-        if (bindings.ContainsKey(variable))
+        if (Bindings.ContainsKey(variable))
         {
-            bindings[variable] = value;
+            Bindings[variable] = value;
         }
         else if (parentScope != null)
         {
@@ -53,7 +53,7 @@ public class EnvV
     {
         if (IsLocal(variable))
         {
-            return bindings[variable];
+            return Bindings[variable];
         }
         else
         {
@@ -63,7 +63,7 @@ public class EnvV
 
     private bool IsLocal(string variable)
     {
-        return bindings.ContainsKey(variable);
+        return Bindings.ContainsKey(variable);
     }
 
 }
