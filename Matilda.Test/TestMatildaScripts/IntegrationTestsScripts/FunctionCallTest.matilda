@@ -3,4 +3,3 @@ function int add(int a, int b) {
 }
 
 int number = add(93, 78);
-print number;

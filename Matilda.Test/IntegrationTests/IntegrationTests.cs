@@ -67,18 +67,29 @@ public class IntegrationTests
     }
 
     [TestMethod]
-    public void FullFunctionPrintsExpectedResult()
+    public void FunctionCallProgramBindsExpectedValueInEnvironment()
     {
         // Arrange
         Program program = ParseFile("FunctionCallTest.matilda");
 
-        // Act
         AssertNoTypeErrors(program);
-        string output = RunProgram(program);
+
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
+
+        Interpreter.EvalTopLevelDeclarations(program.TopLevelDeclarations, envP, envS);
+
+        // Act
+        Interpreter.EvalStmt(program.Stmt, envV, envP, envS);
 
         // Assert
-        Assert.AreEqual("171", output);
+        Val? result = envV.TryGet("number");
 
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOfType<IntVal>(result);
+
+        Assert.AreEqual(171, result.AsInt());
     }
 
     [TestMethod]
