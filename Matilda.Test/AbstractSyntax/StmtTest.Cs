@@ -11,7 +11,7 @@ public class CompTests
     {
         // Arrange
         Stmt stmt1 = new Assign("x", new IntV(5, -1), -1);
-        Stmt stmt2 = new Print(new Ref("x", -1), -1);
+        Stmt stmt2 = new LocalDeclaration(IntT.Instance, "x", new Ref("x", -1), -1);
 
         // Act
         Comp comp = new Comp(stmt1, stmt2);
@@ -27,7 +27,7 @@ public class CompTests
     {
         // Arrange
         Stmt stmt1 = new Assign("x", new IntV(5, -1), -1);
-        Stmt stmt2 = new Print(new Ref("x", -1), -2);
+        Stmt stmt2 = new LocalDeclaration(IntT.Instance, "y", new Ref("x", -1), -2);
 
         Comp comp = new Comp(stmt1, stmt2);
 
@@ -38,7 +38,7 @@ public class CompTests
     [TestMethod]
     public void CompLineNumberThrowsWhenStmt1IsNull()
     {
-        Comp comp = new Comp(null, new Print(new IntV(1, -1), -1));
+        Comp comp = new Comp(null, new LocalDeclaration(IntT.Instance, "x", new IntV(1, -1), -1));
 
         try
         {
@@ -166,11 +166,11 @@ public class PrintTests
         int expectedLineNumber = -1;
 
         // Act
-        Print print = new Print(expectedValue, expectedLineNumber);
+        LocalDeclaration declaration = new LocalDeclaration(IntT.Instance, "x", expectedValue, expectedLineNumber);
 
         // Assert
-        Assert.AreSame(expectedValue, print.Value);
-        Assert.AreEqual(expectedLineNumber, print.LineNumber);
+        Assert.AreSame(expectedValue, declaration.Expression);
+        Assert.AreEqual(expectedLineNumber, declaration.LineNumber);
     }
 }
 
@@ -182,17 +182,15 @@ public class IfTests
     {
         // Arrange
         Expr condition = new BoolV(true, -1);
-        Stmt thenBody = new Print(new StringV("then", -1), -1);
-        var elseIfs = new List<If>();
-        Stmt elseBody = new Print(new StringV("else", -1), -1);
+        Stmt thenBody = new LocalDeclaration(StringT.Instance, "string1", new StringV("then", -1), -1);
+        Stmt elseBody = new LocalDeclaration(StringT.Instance, "string2", new StringV("else", -1), -1);
 
         // Act
-        If ifStmt = new If(condition, thenBody, elseIfs, elseBody, -1);
+        If ifStmt = new If(condition, thenBody, elseBody, -1);
 
         // Assert
         Assert.AreSame(condition, ifStmt.Condition);
         Assert.AreSame(thenBody, ifStmt.ThenBody);
-        Assert.AreSame(elseIfs, ifStmt.ElseIfStmts);
         Assert.AreSame(elseBody, ifStmt.ElseBody);
         Assert.AreEqual(-1, ifStmt.LineNumber);
     }
@@ -206,7 +204,7 @@ public class WhileTests
     {
         // Arrange
         Expr condition = new BoolV(true, -1);
-        Stmt body = new Print(new StringV("loop", -1), -1);
+        Stmt body = new LocalDeclaration(StringT.Instance, "string1", new StringV("loop", -1), -1);
 
         // Act
         While whileStmt = new While(condition, body, -1);

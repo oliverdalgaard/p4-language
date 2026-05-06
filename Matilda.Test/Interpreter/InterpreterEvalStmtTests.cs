@@ -1,9 +1,59 @@
 using Matilda;
+
 namespace MatildaTests;
 
 [TestClass]
 public class InterpreterEvalStmtTests
 {
+
+    [TestMethod]
+    public void EvalStmtParameterTest()
+    {
+        // Arrange
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
+
+        Stmt stmt = new Parameter(IntT.Instance, "TestId", -1);
+
+        // Act
+        Interpreter.EvalStmt(stmt, envV, envP, envS);
+
+        // Assert
+        Assert.IsNull(envV.TryGet("testId"));
+    }
+
+    [TestMethod]
+    public void EvalStmtTableDeclarationTest()
+    {
+        // Arrange
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
+
+        envS.Bind("testSchemaId", new List<Column> { new Column("hej", IntT.Instance), new Column("dig", IntT.Instance) });
+
+        Stmt stmt = new TableDeclaration(new TableT("testSchemaId"), "TestId", "../../../MatildaCSVFiles/TableDeclarationTest.csv", -1);
+
+        // Act
+        Interpreter.EvalStmt(stmt, envV, envP, envS);
+
+        Val tableVal = envV.TryGet("TestId");
+        Table table = tableVal.AsTable();
+        List<TableHeader> headers = table.Headers;
+        List<TableRecord> records = table.Records;
+
+        // Assert
+        Assert.AreEqual("hej", headers[0].Identifier);
+        Assert.AreEqual(IntT.Instance, headers[0].Type);
+        Assert.AreEqual("dig", headers[1].Identifier);
+        Assert.AreEqual(IntT.Instance, headers[1].Type);
+
+        Assert.AreEqual(1, records[0].Values[0].AsInt());
+        Assert.AreEqual(2, records[0].Values[1].AsInt());
+        Assert.AreEqual(3, records[1].Values[0].AsInt());
+        Assert.AreEqual(4, records[1].Values[1].AsInt());
+    }
 
     // Stmt comp executes both statements when no return exists
 
@@ -47,37 +97,7 @@ public class InterpreterEvalStmtTests
         Interpreter.EvalStmt(stmt, envV, envP, envS);
 
         // Assert
-        Assert.AreEqual(5, envV.TryGet("return")!.AsInt());
-    }
-
-    //  Stmt print
-
-    [TestMethod]
-    public void EvalStmtPrintPrintsExpressionValue()
-    {
-        // Arrange
-        EnvV envV = new EnvV();
-        EnvP envP = new EnvP();
-        EnvS envS = new EnvS();
-        Stmt stmt = new Print(new IntV(42, -1), -1);
-
-        StringWriter sw = new StringWriter();
-        TextWriter originalOut = Console.Out;
-        Console.SetOut(sw);
-
-        try
-        {
-            // Act
-            Interpreter.EvalStmt(stmt, envV, envP, envS);
-
-            // Assert
-            Assert.AreEqual("42" + Environment.NewLine, sw.ToString());
-        }
-        finally
-        {
-            // Restore original console output => In this case is it for console.write is working again after the test is done, så det ikke påvirker andre tests eller output i konsollen
-            Console.SetOut(originalOut);
-        }
+        Assert.AreEqual(5, envV.FunctionReturnValue!.AsInt());
     }
 
     // Stmt declaration with expression binds evaluated value => string x = "Test";
@@ -134,8 +154,8 @@ public class InterpreterEvalStmtTests
         Interpreter.EvalStmt(stmt, envV, envP, envS);
 
         // Assert
-        Assert.IsNotNull(envV.TryGet("return"));
-        Assert.AreEqual(67, envV.TryGet("return")!.AsInt());
+        Assert.IsNotNull(envV.FunctionReturnValue);
+        Assert.AreEqual(67, envV.FunctionReturnValue!.AsInt());
     }
 
     // Stmt if then branch runs when condition true
@@ -152,7 +172,6 @@ public class InterpreterEvalStmtTests
         Stmt stmt = new If(
             new BoolV(true, -1),
             new Assign("x", new IntV(1, -1), -1),
-            new List<If>(),
             new Assign("x", new IntV(2, -1), -1),
             -1
         );
@@ -178,7 +197,6 @@ public class InterpreterEvalStmtTests
         Stmt stmt = new If(
             new BoolV(false, -1),
             new Assign("x", new IntV(1, -1), -1),
-            new List<If>(),
             new Assign("x", new IntV(2, -1), -1),
             -1
         );
@@ -188,32 +206,6 @@ public class InterpreterEvalStmtTests
 
         // Assert
         Assert.AreEqual(2, envV.TryGet("x")!.AsInt());
-    }
-
-    // Stmt if propagates return to outer scope => Muligvis ændres på baggrund af side effekter i at den ændre globale variabler
-
-    [TestMethod]
-    public void EvalStmtIfPropagatesReturnToOuterScope()
-    {
-        // Arrange
-        EnvV envV = new EnvV();
-        EnvP envP = new EnvP();
-        EnvS envS = new EnvS();
-
-        Stmt stmt = new If(
-            new BoolV(true, -1),
-            new Return(new IntV(67, -1), -1),
-            new List<If>(),
-            new Skip(),
-            -1
-        );
-
-        // Act
-        Interpreter.EvalStmt(stmt, envV, envP, envS);
-
-        // Assert
-        Assert.IsNotNull(envV.TryGet("return"));
-        Assert.AreEqual(67, envV.TryGet("return")!.AsInt());
     }
 
     // Stmt while repeats until condition false

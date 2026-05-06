@@ -1,0 +1,4 @@
+string result = "";
+if {
+    result = "Hello World";
+}

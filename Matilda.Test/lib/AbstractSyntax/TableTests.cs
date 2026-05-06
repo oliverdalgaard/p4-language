@@ -1,5 +1,7 @@
 using Matilda;
 
+namespace MatildaTests;
+
 [TestClass]
 public class TableTests
 {

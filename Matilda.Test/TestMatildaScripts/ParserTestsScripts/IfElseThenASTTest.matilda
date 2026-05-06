@@ -1,0 +1,9 @@
+int condition = 21;
+string result = "";
+
+if(condition < 18) {
+    result = "Not allowed to vote";
+} else {
+    result = "Ready to vote";
+}
+

@@ -1,7 +1,4 @@
-using System.Data;
-using System.Net.Mail;
 using Matilda;
-using Mono.Cecil.Cil;
 
 namespace MatildaTests;
 
@@ -56,19 +53,20 @@ public class IfTestsTypeChecker : RunTypeChecker
     public void IfCheckCondition()
     {
         //arrange
-        Stmt stmt = new If(new BoolV(true, -1), new LocalDeclaration(IntT.Instance, "x", new IntV(5, 1), -1), null, null, -1);
+        Stmt stmt = new If(new BoolV(true, -1), new LocalDeclaration(IntT.Instance, "x", new IntV(5, 1), -1), Skip.Instance, -1);
         //act
         var checker = Run(new Program(stmt));
         // assert
         Assert.IsFalse(checker.HasErrors());
     }
+
     [TestMethod]
     public void IfCheckBody()
     {
         //arrange
         Stmt stmt = new If(new BoolV(true, -1),
             new Assign("x", new IntV(5, 1), -1),    //error
-            null, null, -1);
+            Skip.Instance, -1);
         //act
         var checker = Run(new Program(stmt));
         // assert
@@ -77,6 +75,40 @@ public class IfTestsTypeChecker : RunTypeChecker
         "Line -1: Variable x is not declared.",
     };
         CollectionAssert.AreEqual(expected, checker.errors);
+    }
+
+    [TestMethod]
+    public void IfConditionTest()
+    {
+        // Arrange
+
+        Stmt stmt = new If(new StringV("Hej", -1),
+            Skip.Instance,
+            Skip.Instance, -1);
+
+        // Act
+        var checker = Run(new Program(stmt));
+
+        // Assert
+        Assert.HasCount(1, checker.errors);
+        Assert.AreEqual("Line -1: If statement requires a condition with type 'bool', but got 'Matilda.StringT'.", checker.errors[0]);
+    }
+
+    [TestMethod]
+    public void IfConditionNullTest()
+    {
+        // Arrange
+
+        Stmt stmt = new If(null,
+            Skip.Instance,
+            Skip.Instance, -1);
+
+        // Act
+        var checker = Run(new Program(stmt));
+
+        // Assert
+        Assert.HasCount(1, checker.errors);
+        Assert.AreEqual("Line -1: If statement requires a condition.", checker.errors[0]);
     }
 }
 
