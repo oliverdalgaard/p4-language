@@ -9,7 +9,7 @@ public class Skip : Stmt
 {
     public override int LineNumber
     {
-        get { throw new Exception("Skip does not have a line number!"); }
+        get => -1;
     }
 
     public static readonly Skip Instance = new Skip();

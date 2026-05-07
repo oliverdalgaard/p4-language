@@ -1,0 +1,157 @@
+﻿{
+  envV: {
+    Bindings: {
+      x: {
+        N: 5
+      },
+      y: {
+        N: 2
+      }
+    },
+    IsFunctionScope: false
+  },
+  envP: {
+    Bindings: {
+      test: {
+        Type: {},
+        Identifier: test,
+        Parameters: [
+          {
+            Type: {},
+            Identifier: x,
+            LineNumber: 1
+          },
+          {
+            Type: {},
+            Identifier: y,
+            LineNumber: 1
+          }
+        ],
+        Body: {
+          Condition: {
+            Name: y,
+            LineNumber: 2
+          },
+          ThenBody: {
+            Value: {
+              Name: x,
+              LineNumber: 3
+            },
+            LineNumber: 3
+          },
+          ElseBody: {
+            Value: {
+              Value: 2,
+              LineNumber: 5
+            },
+            LineNumber: 5
+          },
+          LineNumber: 2
+        },
+        LineNumber: 1
+      }
+    }
+  },
+  envS: {},
+  envVT: {
+    Bindings: {
+      x: {},
+      y: {}
+    },
+    HasReturn: false
+  },
+  envPT: {
+    Bindings: {
+      test: {
+        Parameters: [
+          {},
+          {}
+        ],
+        ReturnType: {}
+      }
+    }
+  },
+  envST: {},
+  typeChecker: {},
+  TopLevelDeclarations: [
+    {
+      Type: {},
+      Identifier: test,
+      Parameters: [
+        {
+          Type: {},
+          Identifier: x,
+          LineNumber: 1
+        },
+        {
+          Type: {},
+          Identifier: y,
+          LineNumber: 1
+        }
+      ],
+      Body: {
+        Condition: {
+          Name: y,
+          LineNumber: 2
+        },
+        ThenBody: {
+          Value: {
+            Name: x,
+            LineNumber: 3
+          },
+          LineNumber: 3
+        },
+        ElseBody: {
+          Value: {
+            Value: 2,
+            LineNumber: 5
+          },
+          LineNumber: 5
+        },
+        LineNumber: 2
+      },
+      LineNumber: 1
+    }
+  ],
+  Stmt: {
+    Stmt1: {
+      Type: {},
+      Identifier: x,
+      Expression: {
+        Name: test,
+        Arguments: [
+          {
+            Value: 5,
+            LineNumber: 9
+          },
+          {
+            Value: true,
+            LineNumber: 9
+          }
+        ],
+        LineNumber: 9
+      },
+      LineNumber: 9
+    },
+    Stmt2: {
+      Type: {},
+      Identifier: y,
+      Expression: {
+        Name: test,
+        Arguments: [
+          {
+            Value: 3,
+            LineNumber: 11
+          },
+          {
+            Value: false,
+            LineNumber: 11
+          }
+        ],
+        LineNumber: 11
+      },
+      LineNumber: 11
+    },
+    LineNumber: 9
+  }
+}

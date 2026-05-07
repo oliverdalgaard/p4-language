@@ -1,0 +1,10 @@
+function int absolute(int x) {
+    if (x < 0) {
+        return 0 - x;
+    } else {
+        return x;
+    }
+}
+
+int result = absolute(5);
+int result2 = absolute(0 - 3);

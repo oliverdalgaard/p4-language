@@ -1,0 +1,69 @@
+﻿{
+  envV: {
+    Bindings: {
+      a: {
+        N: 10
+      },
+      b: {
+        F: 2.5
+      },
+      result: {
+        F: 12.5
+      }
+    },
+    IsFunctionScope: false
+  },
+  envP: {},
+  envS: {},
+  envVT: {
+    Bindings: {
+      a: {},
+      b: {},
+      result: {}
+    },
+    HasReturn: false
+  },
+  envPT: {},
+  envST: {},
+  typeChecker: {},
+  Stmt: {
+    Stmt1: {
+      Type: {},
+      Identifier: a,
+      Expression: {
+        Value: 10,
+        LineNumber: 1
+      },
+      LineNumber: 1
+    },
+    Stmt2: {
+      Stmt1: {
+        Type: {},
+        Identifier: b,
+        Expression: {
+          Value: 2.5,
+          LineNumber: 2
+        },
+        LineNumber: 2
+      },
+      Stmt2: {
+        Type: {},
+        Identifier: result,
+        Expression: {
+          ExprLeft: {
+            Name: a,
+            LineNumber: 3
+          },
+          ExprRight: {
+            Name: b,
+            LineNumber: 3
+          },
+          LineNumber: 3
+        },
+        LineNumber: 3
+      },
+      LineNumber: 2
+    },
+    LineNumber: 1
+  }
+}
