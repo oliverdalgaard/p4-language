@@ -1,4 +1,4 @@
-/* using Matilda;
+using Matilda;
 
 namespace MatildaTests.AcceptanceTests;
 
@@ -86,4 +86,4 @@ public partial class CustomTypeRequirementsTests : AcceptanceTestHelper
         // Assert
         return Verify(new { envV, envP, envS, envVT, envPT, envST, typeChecker, ast.TopLevelDeclarations, ast.Stmt });
     }
-} */
+}
