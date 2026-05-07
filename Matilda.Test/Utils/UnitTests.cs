@@ -6,8 +6,12 @@ public class UnitTestHelper : TestHelper
 {
     public override string ScriptFolder
     {
-        get => Path.GetFullPath(Path.Combine(
-                AppContext.BaseDirectory,
-                "../../../TestMatildaScripts/ParserTestsScripts"));
+        get
+        {
+            var testProjectPath = Path.GetDirectoryName(typeof(UnitTestHelper).Assembly.Location)!;
+            return Path.GetFullPath(Path.Combine(
+                testProjectPath,
+                "../../../../Matilda.Test/TestMatildaScripts/ParserTestsScripts"));
+        }
     }
 }

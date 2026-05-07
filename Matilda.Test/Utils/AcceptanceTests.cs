@@ -6,9 +6,13 @@ public class AcceptanceTestHelper : TestHelper
 {
     public override string ScriptFolder
     {
-        get => Path.GetFullPath(Path.Combine(
-            AppContext.BaseDirectory,
-            "../../../TestMatildaScripts/AcceptanceTestsScripts"));
+        get
+        {
+            var testProjectPath = Path.GetDirectoryName(typeof(AcceptanceTestHelper).Assembly.Location)!;
+            return Path.GetFullPath(Path.Combine(
+                testProjectPath,
+                "../../../../Matilda.Test/TestMatildaScripts/AcceptanceTestsScripts"));
+        }
     }
 
     public TypeChecker RunTypeChecker(Program program, EnvVT envVT, EnvPT envPT, EnvST envST)
