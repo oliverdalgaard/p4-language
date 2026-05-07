@@ -54,7 +54,16 @@ public static class Interpreter
             case TableDeclaration tableDeclaration:
                 List<string[]> rows = new List<string[]>();
                 // Open file with filename "" removed
-                using (TextFieldParser textFieldParser = new TextFieldParser(tableDeclaration.FilePath))
+                string tableDeclarationFileName = tableDeclaration.FilePath;
+
+                if (!Path.IsPathRooted(tableDeclarationFileName))
+                {
+                    // Get the test project's output directory
+                    string tableDeclarationBaseDir = AppContext.BaseDirectory;
+                    tableDeclarationFileName = Path.GetFullPath(Path.Combine(tableDeclarationBaseDir, tableDeclarationFileName));
+                }
+
+                using (TextFieldParser textFieldParser = new TextFieldParser(tableDeclarationFileName))
                 {
                     textFieldParser.TextFieldType = FieldType.Delimited;
                     textFieldParser.SetDelimiters(",");
@@ -236,8 +245,9 @@ public static class Interpreter
 
                         if (groupByDict.ContainsKey(groupByIdentifier))
                         {
-                             existingSum = groupByDict[groupByIdentifier];
-                        } else
+                            existingSum = groupByDict[groupByIdentifier];
+                        }
+                        else
                         {
                             existingSum = null;
                         }
