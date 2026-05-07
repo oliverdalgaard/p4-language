@@ -24,6 +24,7 @@ jobs:
           dotnet test \
           /p:CollectCoverage=true \
           /p:CoverletOutputFormat=cobertura \
+          /p:ExcludeByFile=\"**/Parser.cs,**/Scanner.cs,**/Matilda.cs\" \
 
       - name: Upload to Codecov
         uses: codecov/codecov-action@v5
@@ -36,7 +37,7 @@ jobs:
         with:
           reports: "**/coverage.cobertura.xml"
           targetdir: "coveragereport"
-          reporttypes: "Html_Dark;Badges"
+          reporttypes: "Html_Dark"
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4

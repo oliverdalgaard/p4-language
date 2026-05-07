@@ -33,15 +33,10 @@ public static class Interpreter
 
             case Comp comp:
                 EvalStmt(comp.Stmt1, envV, envP, envS);
-                if (envV.TryGet("return") == null)
+                if (envV.FunctionReturnValue == null)
                 {
                     EvalStmt(comp.Stmt2, envV, envP, envS);
                 }
-                break;
-
-            case Print print:
-                Val value = EvalExpr(print.Value, envV, envP, envS);
-                Console.WriteLine(value.ToString());
                 break;
 
             case Parameter parameter:
@@ -78,46 +73,32 @@ public static class Interpreter
                 break;
 
             case Return returnVal:
-                envV.Bind("return", EvalExpr(returnVal.Value, envV, envP, envS));
+                envV.FunctionReturnValue = EvalExpr(returnVal.Value, envV, envP, envS);
                 break;
 
             case If ifStmt:
-                bool runElse = true;
+                EnvV thenScope = envV.NewScope(envV.IsFunctionScope);
+                EnvV elseScope = envV.NewScope(envV.IsFunctionScope);
 
                 Val condition = EvalExpr(ifStmt.Condition, envV, envP, envS);
                 if (condition.AsBool())
                 {
-                    runElse = false;
-                    EvalStmt(ifStmt.ThenBody, envV, envP, envS);
-                }
-                else if (ifStmt.ElseIfStmts.Any())
-                {
-                    foreach (If elseIfStmt in ifStmt.ElseIfStmts)
+                    EvalStmt(ifStmt.ThenBody, thenScope, envP, envS);
+                    if (envV.IsFunctionScope)
                     {
-                        Val elseIfStmtCondition = EvalExpr(elseIfStmt.Condition, envV, envP, envS);
-                        if (elseIfStmtCondition.AsBool())
-                        {
-                            EvalStmt(elseIfStmt.ThenBody, envV, envP, envS);
-                            runElse = false;
-                            break;
-                        }
+                        envV.FunctionReturnValue = thenScope.FunctionReturnValue;
+                    }
+                }
+                else
+                {
+                    EvalStmt(ifStmt.ElseBody, elseScope, envP, envS);
+                    if (envV.IsFunctionScope)
+                    {
+                        envV.FunctionReturnValue = elseScope.FunctionReturnValue;
                     }
                 }
 
-                if (runElse)
-                {
-                    EvalStmt(ifStmt.ElseBody, envV, envP, envS);
-                }
                 break;
-
-            case While whileStmt:
-                {
-                    while (EvalExpr(whileStmt.Condition, envV, envP, envS).AsBool())
-                    {
-                        EvalStmt(whileStmt.Body, envV, envP, envS);
-                    }
-                    break;
-                }
 
             default:
                 throw new Exception("Not valid statement");
@@ -152,19 +133,26 @@ public static class Interpreter
                     throw new Exception("Number of arguments do not match the amount of parameters.");
                 }
 
-                EnvV localScope = envV.NewScope();
+                EnvV localScope = envV.NewScope(true);
 
                 for (int i = 0; i < functionRef.Arguments.Count; i++)
                 {
                     string parameterName = function.Parameters[i].Identifier;
                     Val value = EvalExpr(functionRef.Arguments[i], envV, envP, envS);
 
-                    localScope.Bind(parameterName, value);
+                    if (value is TableVal tVal)
+                    {
+                        localScope.Bind(parameterName, new TableVal(tVal.AsTable().Clone()));
+                    }
+                    else
+                    {
+                        localScope.Bind(parameterName, value);
+                    }
                 }
 
                 EvalStmt(function.Body, localScope, envP, envS);
 
-                return localScope.TryGet("return");
+                return localScope.FunctionReturnValue;
 
             case FilterExpr filterExpr:
                 {

@@ -1,0 +1,12 @@
+schema Person = {
+    name: string,
+    age: int
+}
+
+function table<Person> isAdult(table<Person> persons) {
+    return FILTER(persons, 18 < age);
+}
+
+table<Person> persons = read("../../../MatildaCSVFiles/persons.csv");
+
+table<Person> isAdultVar = isAdult(persons);

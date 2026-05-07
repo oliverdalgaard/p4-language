@@ -126,56 +126,22 @@ public class Return : Stmt
 
         LineNumber = lineNumber;
     }
-
-}
-
-public class Print : Stmt
-{
-    public Expr Value { get; }
-
-    public override int LineNumber { get; }
-
-    public Print(Expr value, int lineNumber)
-    {
-        Value = value;
-
-        LineNumber = lineNumber;
-    }
 }
 
 public class If : Stmt
 {
     public Expr Condition { get; }
     public Stmt ThenBody { get; }
-    public List<If>? ElseIfStmts { get; }
     public Stmt ElseBody { get; }
 
     public override int LineNumber { get; }
 
-    public If(Expr condition, Stmt thenBody, List<If> elseIfStmts, Stmt elseBody, int lineNumber)
+    public If(Expr condition, Stmt thenBody, Stmt elseBody, int lineNumber)
     {
         Condition = condition;
         ThenBody = thenBody;
-        ElseIfStmts = elseIfStmts;
         ElseBody = elseBody;
 
         LineNumber = lineNumber;
     }
-}
-
-public class While : Stmt
-{
-    public Expr Condition { get; }
-    public Stmt Body { get; }
-
-    public override int LineNumber { get; }
-
-    public While(Expr condition, Stmt body, int lineNumber)
-    {
-        Condition = condition;
-        Body = body;
-
-        LineNumber = lineNumber;
-    }
-
 }

@@ -97,6 +97,24 @@ public class Table
             addRecord(tableRecordVals);
         }
     }
+
+    public Table Clone()
+    {
+        List<TableRecord> tableRecords = new List<TableRecord>();
+        List<TableHeader> tableHeaders = new List<TableHeader>();
+
+        for (int i = 0; i < this.Headers.Count; i++)
+        {
+            tableHeaders.Add(new TableHeader(this.Headers[i].Identifier, this.Headers[i].Type));
+        }
+
+        for (int i = 0; i < this.Records.Count; i++)
+        {
+            tableRecords.Add(new TableRecord(this.Records[i].Values));
+        }
+
+        return new Table(this.Identifier, this.Schema, tableHeaders, tableRecords);
+    }
 }
 
 public class TableHeader
