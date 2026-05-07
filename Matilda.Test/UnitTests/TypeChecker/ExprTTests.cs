@@ -179,10 +179,10 @@ public class FunctionRefTestsTypeChecker : RunTypeChecker
 
 //filter expr test
 [TestClass]
-public class FilterExprTestsTypechecker : RunTypeChecker
+public class FilterTestsTypechecker : RunTypeChecker
 {
     [TestMethod]
-    public void FilterExprTestType()
+    public void FilterTestType()
     {
         //arrange
         TopLevelDeclaration topLevelDeclaration = new SchemaDeclaration(
@@ -200,7 +200,7 @@ public class FilterExprTestsTypechecker : RunTypeChecker
             "tab1",
             "TableDeclaration.csv",
             -1),
-            new LocalDeclaration(new TableT("schema1"), "x", new FilterExpr(new Ref("tab1", -1), new BoolV(true, 1), -1), -1)
+            new LocalDeclaration(new TableT("schema1"), "x", new Filter(new Ref("tab1", -1), new BoolV(true, 1), -1), -1)
             );
         //act
         var checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }, stmt));
@@ -209,10 +209,10 @@ public class FilterExprTestsTypechecker : RunTypeChecker
     }
     // check not tableT and not bool for agr 2
     [TestMethod]
-    public void FilterExprTestTypeFailsArg1()
+    public void FilterTestTypeFailsArg1()
     {
         //arrange
-        Stmt stmt = new LocalDeclaration(new TableT("test"), "x", new FilterExpr(new IntV(2, 1), new IntV(5, 1), -1), -1);
+        Stmt stmt = new LocalDeclaration(new TableT("test"), "x", new Filter(new IntV(2, 1), new IntV(5, 1), -1), -1);
         //act
         var checker = Run(new Program(stmt));
         //assert
@@ -224,7 +224,7 @@ public class FilterExprTestsTypechecker : RunTypeChecker
         CollectionAssert.AreEqual(expected, checker.errors);
     }
     [TestMethod]
-    public void FilterExprTestTypeFailsArg2()
+    public void FilterTestTypeFailsArg2()
     {
         //arrange
         TopLevelDeclaration topLevelDeclaration = new SchemaDeclaration(
@@ -242,7 +242,7 @@ public class FilterExprTestsTypechecker : RunTypeChecker
             "tab1",
             "../../../TypeChecker/TestMatildaScriptTypeChecker/TableDeclaration.csv",
             -1),
-            new LocalDeclaration(new TableT("schema1"), "x", new FilterExpr(new Ref("tab1", -1), new IntV(5, 1), -1), -1)
+            new LocalDeclaration(new TableT("schema1"), "x", new Filter(new Ref("tab1", -1), new IntV(5, 1), -1), -1)
             );
         //act
         var checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }, stmt));

@@ -154,9 +154,9 @@ public static class Interpreter
 
                 return localScope.FunctionReturnValue;
 
-            case FilterExpr filterExpr:
+            case Filter filter:
                 {
-                    Val tableValue = EvalExpr(filterExpr.TableExpr, envV, envP, envS);
+                    Val tableValue = EvalExpr(filter.TableExpr, envV, envP, envS);
                     Table inputTable = tableValue.AsTable();
 
                     Table filteredTable = new Table(inputTable.Identifier, inputTable.Schema, inputTable.Headers, new List<TableRecord>());
@@ -175,15 +175,104 @@ public static class Interpreter
                             rowScope.Bind(columnName, columnValue);
                         }
 
-                        Val predicateResult = EvalExpr(filterExpr.Predicate, rowScope, envP, envS);
+                        Val predicateResult = EvalExpr(filter.Predicate, rowScope, envP, envS);
 
                         if (predicateResult.AsBool())
                         {
-                            filteredTable.addRecord(record);
+                            filteredTable.AddRecord(record);
                         }
                     }
 
                     return new TableVal(filteredTable);
+                }
+
+            case Sum sum:
+                {
+                    Val tableValue = EvalExpr(sum.TableExpr, envV, envP, envS);
+                    Table inputTable = tableValue.AsTable();
+
+                    List<Column> resultSchema = envS.TryGet(sum.ResultSchemaId)!;
+
+                    TableHeader tableHeader1 = new TableHeader(resultSchema[0].Id, resultSchema[0].Type);
+                    TableHeader tableHeader2 = new TableHeader(resultSchema[1].Id, resultSchema[1].Type);
+
+                    Table summedTable = new Table(inputTable.Identifier, resultSchema, new List<TableHeader> { tableHeader1, tableHeader2 }, new List<TableRecord>());
+
+                    int groupByIndex = -1;
+                    int sumIndex = -1;
+
+                    // Find sum and groupBy column indexes
+                    for (int valIndex = 0; valIndex < inputTable.Headers.Count; valIndex++)
+                    {
+                        if (inputTable.Headers[valIndex].Identifier == sum.GroupByColumn)
+                        {
+                            if (groupByIndex == -1)
+                            {
+                                groupByIndex = valIndex;
+                            }
+                        }
+
+                        if (inputTable.Headers[valIndex].Identifier == sum.SumColumn)
+                        {
+                            if (sumIndex == -1)
+                            {
+                                sumIndex = valIndex;
+                            }
+                        }
+                    }
+
+
+                    // Sum expected column with groupBy
+                    Dictionary<Val, Val> groupByDict = new Dictionary<Val, Val>();
+
+                    for (int rowIndex = 0; rowIndex < inputTable.Records.Count; rowIndex++)
+                    {
+                        TableRecord tableRecord = inputTable.Records[rowIndex];
+
+                        Val groupByIdentifier = tableRecord.Values[groupByIndex];
+                        Val currentRowValue = tableRecord.Values[sumIndex];
+
+                        Val? existingSum;
+
+                        if (groupByDict.ContainsKey(groupByIdentifier))
+                        {
+                             existingSum = groupByDict[groupByIdentifier];
+                        } else
+                        {
+                            existingSum = null;
+                        }
+
+                        if (existingSum == null)
+                        {
+                            groupByDict[groupByIdentifier] = currentRowValue;
+                        }
+                        else
+                        {
+                            if (existingSum is IntVal)
+                            {
+                                groupByDict[groupByIdentifier] = new IntVal(existingSum.AsInt() + currentRowValue.AsInt());
+                            }
+                            else
+                            {
+                                groupByDict[groupByIdentifier] = new FloatVal(existingSum.AsFloat() + currentRowValue.AsFloat());
+                            }
+                        }
+                    }
+
+                    // Add all records to the summed table
+                    foreach (KeyValuePair<Val, Val> pair in groupByDict)
+                    {
+                        if (summedTable.Headers[0].Identifier == sum.GroupByColumn)
+                        {
+                            summedTable.AddRecord(new TableRecord(new List<Val> { pair.Key, pair.Value }));
+                        }
+                        else
+                        {
+                            summedTable.AddRecord(new TableRecord(new List<Val> { pair.Value, pair.Key }));
+                        }
+                    }
+
+                    return new TableVal(summedTable);
                 }
 
             case BinaryOp binaryOp:

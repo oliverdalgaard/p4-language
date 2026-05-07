@@ -1,6 +1,5 @@
-customer_id,name,hej
-1,Alice,true
-2,Bob,True
-3,Charlie,False
-4,Diana,false
-5,Eve,true
+ID,Transaction,Amount,test
+1,Peter,30,true
+2,Lotte,40,true
+1,Peter,50,false
+2,Lotte,60,false
