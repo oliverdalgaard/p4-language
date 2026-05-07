@@ -1,0 +1,41 @@
+﻿{
+  envV: {
+    Bindings: {
+      x: {
+        N: 10
+      }
+    },
+    IsFunctionScope: false
+  },
+  envP: {},
+  envS: {},
+  envVT: {
+    Bindings: {
+      x: {}
+    },
+    HasReturn: false
+  },
+  envPT: {},
+  envST: {},
+  typeChecker: {},
+  Stmt: {
+    Stmt1: {
+      Type: {},
+      Identifier: x,
+      Expression: {
+        Value: 5,
+        LineNumber: 1
+      },
+      LineNumber: 1
+    },
+    Stmt2: {
+      Identifier: x,
+      Value: {
+        Value: 10,
+        LineNumber: 2
+      },
+      LineNumber: 2
+    },
+    LineNumber: 1
+  }
+}

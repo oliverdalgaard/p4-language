@@ -7,5 +7,5 @@ function table<Person> filterPeople(table<Person> people) {
     return FILTER(people, 2 < id);
 }
 
-table<Person> people = read("MatildaCSVFiles/people.csv");
+table<Person> people = read("../../../MatildaCSVFiles/people.csv");
 table<Person> filtered = filterPeople(people);

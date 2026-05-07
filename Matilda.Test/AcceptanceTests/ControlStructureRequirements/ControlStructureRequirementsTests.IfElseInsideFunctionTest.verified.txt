@@ -1,0 +1,173 @@
+﻿{
+  envV: {
+    Bindings: {
+      result: {
+        N: 5
+      },
+      result2: {
+        N: 3
+      }
+    },
+    IsFunctionScope: false
+  },
+  envP: {
+    Bindings: {
+      absolute: {
+        Type: {},
+        Identifier: absolute,
+        Parameters: [
+          {
+            Type: {},
+            Identifier: x,
+            LineNumber: 1
+          }
+        ],
+        Body: {
+          Condition: {
+            Op: LT,
+            ExprLeft: {
+              Name: x,
+              LineNumber: 2
+            },
+            ExprRight: {
+              LineNumber: 2
+            },
+            LineNumber: 2
+          },
+          ThenBody: {
+            Value: {
+              Op: SUB,
+              ExprLeft: {
+                LineNumber: 3
+              },
+              ExprRight: {
+                Name: x,
+                LineNumber: 3
+              },
+              LineNumber: 3
+            },
+            LineNumber: 3
+          },
+          ElseBody: {
+            Value: {
+              Name: x,
+              LineNumber: 5
+            },
+            LineNumber: 5
+          },
+          LineNumber: 2
+        },
+        LineNumber: 1
+      }
+    }
+  },
+  envS: {},
+  envVT: {
+    Bindings: {
+      result: {},
+      result2: {}
+    },
+    HasReturn: false
+  },
+  envPT: {
+    Bindings: {
+      absolute: {
+        Parameters: [
+          {}
+        ],
+        ReturnType: {}
+      }
+    }
+  },
+  envST: {},
+  typeChecker: {},
+  TopLevelDeclarations: [
+    {
+      Type: {},
+      Identifier: absolute,
+      Parameters: [
+        {
+          Type: {},
+          Identifier: x,
+          LineNumber: 1
+        }
+      ],
+      Body: {
+        Condition: {
+          Op: LT,
+          ExprLeft: {
+            Name: x,
+            LineNumber: 2
+          },
+          ExprRight: {
+            LineNumber: 2
+          },
+          LineNumber: 2
+        },
+        ThenBody: {
+          Value: {
+            Op: SUB,
+            ExprLeft: {
+              LineNumber: 3
+            },
+            ExprRight: {
+              Name: x,
+              LineNumber: 3
+            },
+            LineNumber: 3
+          },
+          LineNumber: 3
+        },
+        ElseBody: {
+          Value: {
+            Name: x,
+            LineNumber: 5
+          },
+          LineNumber: 5
+        },
+        LineNumber: 2
+      },
+      LineNumber: 1
+    }
+  ],
+  Stmt: {
+    Stmt1: {
+      Type: {},
+      Identifier: result,
+      Expression: {
+        Name: absolute,
+        Arguments: [
+          {
+            Value: 5,
+            LineNumber: 9
+          }
+        ],
+        LineNumber: 9
+      },
+      LineNumber: 9
+    },
+    Stmt2: {
+      Type: {},
+      Identifier: result2,
+      Expression: {
+        Name: absolute,
+        Arguments: [
+          {
+            Op: SUB,
+            ExprLeft: {
+              LineNumber: 10
+            },
+            ExprRight: {
+              Value: 3,
+              LineNumber: 10
+            },
+            LineNumber: 10
+          }
+        ],
+        LineNumber: 10
+      },
+      LineNumber: 10
+    },
+    LineNumber: 9
+  }
+}

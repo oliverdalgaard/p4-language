@@ -3,14 +3,18 @@
     Bindings: {
       filtered: {
         T: {
-          Identifier: people,
+          Identifier: transaction,
           Schema: [
             {
               Id: id,
               Type: {}
             },
             {
-              Id: name,
+              Id: transaction,
+              Type: {}
+            },
+            {
+              Id: amount,
               Type: {}
             }
           ],
@@ -20,7 +24,11 @@
               Type: {}
             },
             {
-              Identifier: name,
+              Identifier: transaction,
+              Type: {}
+            },
+            {
+              Identifier: amount,
               Type: {}
             }
           ],
@@ -31,56 +39,81 @@
                   N: 3
                 },
                 {
-                  S: Charlie
+                  S: Anna
+                },
+                {
+                  N: 7500
                 }
               ]
             },
             {
               Values: [
                 {
-                  N: 4
+                  N: 2
                 },
                 {
-                  S: Diana
+                  S: Morten
+                },
+                {
+                  N: 10000
                 }
               ]
             }
           ]
         }
       },
-      people: {
+      transaction: {
         T: {
-          Identifier: people,
+          Identifier: transaction,
           Schema: [
             {
               Id: id,
               Type: {}
             },
             {
-              Id: name,
+              Id: transaction,
+              Type: {}
+            },
+            {
+              Id: amount,
               Type: {}
             }
           ],
           File: [
             [
               id,
-              name
+              transaction,
+              amount
             ],
             [
               1,
-              Alice
+              Peter,
+              2500
             ],
             [
               2,
-              Bob
+              Morten,
+              2500
             ],
             [
               3,
-              Charlie
+              Anna,
+              7500
+            ],
+            [
+              2,
+              Morten,
+              10000
+            ],
+            [
+              1,
+              Peter,
+              2500
             ],
             [
               4,
-              Diana
+              Katrine,
+              3500
             ]
           ],
           Headers: [
@@ -89,7 +122,11 @@
               Type: {}
             },
             {
-              Identifier: name,
+              Identifier: transaction,
+              Type: {}
+            },
+            {
+              Identifier: amount,
               Type: {}
             }
           ],
@@ -100,7 +137,10 @@
                   N: 1
                 },
                 {
-                  S: Alice
+                  S: Peter
+                },
+                {
+                  N: 2500
                 }
               ]
             },
@@ -110,7 +150,10 @@
                   N: 2
                 },
                 {
-                  S: Bob
+                  S: Morten
+                },
+                {
+                  N: 2500
                 }
               ]
             },
@@ -120,7 +163,36 @@
                   N: 3
                 },
                 {
-                  S: Charlie
+                  S: Anna
+                },
+                {
+                  N: 7500
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 2
+                },
+                {
+                  S: Morten
+                },
+                {
+                  N: 10000
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1
+                },
+                {
+                  S: Peter
+                },
+                {
+                  N: 2500
                 }
               ]
             },
@@ -130,7 +202,10 @@
                   N: 4
                 },
                 {
-                  S: Diana
+                  S: Katrine
+                },
+                {
+                  N: 3500
                 }
               ]
             }
@@ -142,55 +217,59 @@
   },
   envP: {
     Bindings: {
-      filterPeople: {
+      filterTransaction: {
         Type: {
-          SchemaId: Person
+          SchemaId: Transaction
         },
-        Identifier: filterPeople,
+        Identifier: filterTransaction,
         Parameters: [
           {
             Type: {
-              SchemaId: Person
+              SchemaId: Transaction
             },
-            Identifier: people,
-            LineNumber: 6
+            Identifier: transaction,
+            LineNumber: 7
           }
         ],
         Body: {
           Value: {
             TableExpr: {
-              Name: people,
-              LineNumber: 7
+              Name: transaction,
+              LineNumber: 8
             },
             Predicate: {
               Op: LT,
               ExprLeft: {
-                Value: 2,
-                LineNumber: 7
+                Value: 5000,
+                LineNumber: 8
               },
               ExprRight: {
-                Name: id,
-                LineNumber: 7
+                Name: amount,
+                LineNumber: 8
               },
-              LineNumber: 7
+              LineNumber: 8
             },
-            LineNumber: 7
+            LineNumber: 8
           },
-          LineNumber: 7
+          LineNumber: 8
         },
-        LineNumber: 6
+        LineNumber: 7
       }
     }
   },
   envS: {
     Bindings: {
-      Person: [
+      Transaction: [
         {
           Id: id,
           Type: {}
         },
         {
-          Id: name,
+          Id: transaction,
+          Type: {}
+        },
+        {
+          Id: amount,
           Type: {}
         }
       ]
@@ -199,37 +278,41 @@
   envVT: {
     Bindings: {
       filtered: {
-        SchemaId: Person
+        SchemaId: Transaction
       },
-      people: {
-        SchemaId: Person
+      transaction: {
+        SchemaId: Transaction
       }
     },
     HasReturn: false
   },
   envPT: {
     Bindings: {
-      filterPeople: {
+      filterTransaction: {
         Parameters: [
           {
-            SchemaId: Person
+            SchemaId: Transaction
           }
         ],
         ReturnType: {
-          SchemaId: Person
+          SchemaId: Transaction
         }
       }
     }
   },
   envST: {
     Bindings: {
-      Person: [
+      Transaction: [
         {
           Id: id,
           Type: {}
         },
         {
-          Id: name,
+          Id: transaction,
+          Type: {}
+        },
+        {
+          Id: amount,
           Type: {}
         }
       ]
@@ -238,83 +321,87 @@
   typeChecker: {},
   TopLevelDeclarations: [
     {
-      Identifier: Person,
+      Identifier: Transaction,
       Columns: [
         {
           Id: id,
           Type: {}
         },
         {
-          Id: name,
+          Id: transaction,
+          Type: {}
+        },
+        {
+          Id: amount,
           Type: {}
         }
       ]
     },
     {
       Type: {
-        SchemaId: Person
+        SchemaId: Transaction
       },
-      Identifier: filterPeople,
+      Identifier: filterTransaction,
       Parameters: [
         {
           Type: {
-            SchemaId: Person
+            SchemaId: Transaction
           },
-          Identifier: people,
-          LineNumber: 6
+          Identifier: transaction,
+          LineNumber: 7
         }
       ],
       Body: {
         Value: {
           TableExpr: {
-            Name: people,
-            LineNumber: 7
+            Name: transaction,
+            LineNumber: 8
           },
           Predicate: {
             Op: LT,
             ExprLeft: {
-              Value: 2,
-              LineNumber: 7
+              Value: 5000,
+              LineNumber: 8
             },
             ExprRight: {
-              Name: id,
-              LineNumber: 7
+              Name: amount,
+              LineNumber: 8
             },
-            LineNumber: 7
+            LineNumber: 8
           },
-          LineNumber: 7
+          LineNumber: 8
         },
-        LineNumber: 7
+        LineNumber: 8
       },
-      LineNumber: 6
+      LineNumber: 7
     }
   ],
   Stmt: {
     Stmt1: {
       Type: {
-        SchemaId: Person
+        SchemaId: Transaction
       },
-      Identifier: people,
-      FilePath: ../../../MatildaCSVFiles/people.csv,
-      LineNumber: 10
+      Identifier: transaction,
+      FilePath: ../../../MatildaCSVFiles/transaction.csv,
+      LineNumber: 11
     },
     Stmt2: {
       Type: {
-        SchemaId: Person
+        SchemaId: Transaction
       },
       Identifier: filtered,
       Expression: {
-        Name: filterPeople,
+        Name: filterTransaction,
         Arguments: [
           {
-            Name: people,
-            LineNumber: 11
+            Name: transaction,
+            LineNumber: 12
           }
         ],
-        LineNumber: 11
+        LineNumber: 12
       },
-      LineNumber: 11
+      LineNumber: 12
     },
-    LineNumber: 10
+    LineNumber: 11
   }
 }
