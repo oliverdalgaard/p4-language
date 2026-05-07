@@ -1,0 +1,158 @@
+﻿{
+  envV: {
+    Bindings: {
+      people: {
+        T: {
+          Identifier: people,
+          Schema: [
+            {
+              Id: id,
+              Type: {}
+            },
+            {
+              Id: name,
+              Type: {}
+            }
+          ],
+          File: [
+            [
+              id,
+              name
+            ],
+            [
+              1,
+              Alice
+            ],
+            [
+              2,
+              Bob
+            ],
+            [
+              3,
+              Charlie
+            ],
+            [
+              4,
+              Diana
+            ]
+          ],
+          Headers: [
+            {
+              Identifier: id,
+              Type: {}
+            },
+            {
+              Identifier: name,
+              Type: {}
+            }
+          ],
+          Records: [
+            {
+              Values: [
+                {
+                  N: 1
+                },
+                {
+                  S: Alice
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 2
+                },
+                {
+                  S: Bob
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 3
+                },
+                {
+                  S: Charlie
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 4
+                },
+                {
+                  S: Diana
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    IsFunctionScope: false
+  },
+  envP: {},
+  envS: {
+    Bindings: {
+      Person: [
+        {
+          Id: id,
+          Type: {}
+        },
+        {
+          Id: name,
+          Type: {}
+        }
+      ]
+    }
+  },
+  envVT: {
+    Bindings: {
+      people: {
+        SchemaId: Person
+      }
+    },
+    HasReturn: false
+  },
+  envPT: {},
+  envST: {
+    Bindings: {
+      Person: [
+        {
+          Id: id,
+          Type: {}
+        },
+        {
+          Id: name,
+          Type: {}
+        }
+      ]
+    }
+  },
+  typeChecker: {},
+  TopLevelDeclarations: [
+    {
+      Identifier: Person,
+      Columns: [
+        {
+          Id: id,
+          Type: {}
+        },
+        {
+          Id: name,
+          Type: {}
+        }
+      ]
+    }
+  ],
+  Stmt: {
+    Type: {
+      SchemaId: Person
+    },
+    Identifier: people,
+    FilePath: MatildaCSVFiles/people.csv,
+    LineNumber: 6
+  }
+}

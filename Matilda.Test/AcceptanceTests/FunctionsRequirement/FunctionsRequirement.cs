@@ -11,7 +11,8 @@ public partial class FunctionRequirementsTests : AcceptanceTestHelper
     {
         // Arrange
         Program ast = ParseFile("FunctionDeclarationTest.matilda");
-
+        
+        EnvV envV = new EnvV();
         EnvP envP = new EnvP();
         EnvS envS = new EnvS();
 
@@ -20,12 +21,16 @@ public partial class FunctionRequirementsTests : AcceptanceTestHelper
         EnvST envST = new EnvST();
 
         // Act
-        RunTypeChecker(ast, envVT, envPT, envST);
+        TypeChecker typeChecker = RunTypeChecker(ast, envVT, envPT, envST);
 
-        Interpreter.EvalTopLevelDeclarations(ast.TopLevelDeclarations, envP, envS);
+        if (!typeChecker.HasErrors())
+        {
+            Interpreter.EvalTopLevelDeclarations(ast.TopLevelDeclarations, envP, envS);
+            Interpreter.EvalStmt(ast.Stmt, envV, envP, envS);
+        }
 
         // Assert
-        return Verify(new { envP, ast.TopLevelDeclarations });
+        return Verify(new { envV, envP, envS, envVT, envPT, envST, typeChecker, ast.TopLevelDeclarations, ast.Stmt });
     }
 
     [TestMethod]
@@ -43,13 +48,16 @@ public partial class FunctionRequirementsTests : AcceptanceTestHelper
         EnvST envST = new EnvST();
 
         // Act
-        RunTypeChecker(ast, envVT, envPT, envST);
+        TypeChecker typeChecker = RunTypeChecker(ast, envVT, envPT, envST);
 
-        Interpreter.EvalTopLevelDeclarations(ast.TopLevelDeclarations, envP, envS);
-        Interpreter.EvalStmt(ast.Stmt, envV, envP, envS);
+        if (!typeChecker.HasErrors())
+        {
+            Interpreter.EvalTopLevelDeclarations(ast.TopLevelDeclarations, envP, envS);
+            Interpreter.EvalStmt(ast.Stmt, envV, envP, envS);
+        }
 
         // Assert
-        return Verify(new { envV, envP, ast.TopLevelDeclarations, ast.Stmt });
+        return Verify(new { envV, envP, envS, envVT, envPT, envST, typeChecker, ast.TopLevelDeclarations, ast.Stmt });
     }
 
     [TestMethod]
@@ -67,12 +75,15 @@ public partial class FunctionRequirementsTests : AcceptanceTestHelper
         EnvST envST = new EnvST();
 
         // Act
-        RunTypeChecker(ast, envVT, envPT, envST);
+        TypeChecker typeChecker = RunTypeChecker(ast, envVT, envPT, envST);
 
-        Interpreter.EvalTopLevelDeclarations(ast.TopLevelDeclarations, envP, envS);
-        Interpreter.EvalStmt(ast.Stmt, envV, envP, envS);
+        if (!typeChecker.HasErrors())
+        {
+            Interpreter.EvalTopLevelDeclarations(ast.TopLevelDeclarations, envP, envS);
+            Interpreter.EvalStmt(ast.Stmt, envV, envP, envS);
+        }
 
         // Assert
-        return Verify(new { envP, ast.TopLevelDeclarations });
+        return Verify(new { envV, envP, envS, envVT, envPT, envST, typeChecker, ast.TopLevelDeclarations, ast.Stmt });
     }
 }

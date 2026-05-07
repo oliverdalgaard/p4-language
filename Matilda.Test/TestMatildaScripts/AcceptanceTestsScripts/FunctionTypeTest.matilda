@@ -1,0 +1,10 @@
+function int doubleIt(int x) {
+    return x + x;
+}
+
+function bool isPositive(int n) {
+    return 0 < n;
+}
+
+int result = doubleIt(4);
+bool check = isPositive(result);

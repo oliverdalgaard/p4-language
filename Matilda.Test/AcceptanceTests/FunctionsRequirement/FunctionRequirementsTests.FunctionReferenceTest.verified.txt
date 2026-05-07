@@ -52,6 +52,27 @@
       }
     }
   },
+  envS: {},
+  envVT: {
+    Bindings: {
+      x: {},
+      y: {}
+    },
+    HasReturn: false
+  },
+  envPT: {
+    Bindings: {
+      test: {
+        Parameters: [
+          {},
+          {}
+        ],
+        ReturnType: {}
+      }
+    }
+  },
+  envST: {},
+  typeChecker: {},
   TopLevelDeclarations: [
     {
       Type: {},

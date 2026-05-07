@@ -1,0 +1,182 @@
+﻿{
+  envV: {
+    Bindings: {
+      check: {
+        B: true
+      },
+      result: {
+        N: 8
+      }
+    },
+    IsFunctionScope: false
+  },
+  envP: {
+    Bindings: {
+      doubleIt: {
+        Type: {},
+        Identifier: doubleIt,
+        Parameters: [
+          {
+            Type: {},
+            Identifier: x,
+            LineNumber: 1
+          }
+        ],
+        Body: {
+          Value: {
+            ExprLeft: {
+              Name: x,
+              LineNumber: 2
+            },
+            ExprRight: {
+              Name: x,
+              LineNumber: 2
+            },
+            LineNumber: 2
+          },
+          LineNumber: 2
+        },
+        LineNumber: 1
+      },
+      isPositive: {
+        Type: {},
+        Identifier: isPositive,
+        Parameters: [
+          {
+            Type: {},
+            Identifier: n,
+            LineNumber: 5
+          }
+        ],
+        Body: {
+          Value: {
+            Op: LT,
+            ExprLeft: {
+              LineNumber: 6
+            },
+            ExprRight: {
+              Name: n,
+              LineNumber: 6
+            },
+            LineNumber: 6
+          },
+          LineNumber: 6
+        },
+        LineNumber: 5
+      }
+    }
+  },
+  envS: {},
+  envVT: {
+    Bindings: {
+      check: {},
+      result: {}
+    },
+    HasReturn: false
+  },
+  envPT: {
+    Bindings: {
+      doubleIt: {
+        Parameters: [
+          {}
+        ],
+        ReturnType: {}
+      },
+      isPositive: {
+        Parameters: [
+          {}
+        ],
+        ReturnType: {}
+      }
+    }
+  },
+  envST: {},
+  typeChecker: {},
+  TopLevelDeclarations: [
+    {
+      Type: {},
+      Identifier: doubleIt,
+      Parameters: [
+        {
+          Type: {},
+          Identifier: x,
+          LineNumber: 1
+        }
+      ],
+      Body: {
+        Value: {
+          ExprLeft: {
+            Name: x,
+            LineNumber: 2
+          },
+          ExprRight: {
+            Name: x,
+            LineNumber: 2
+          },
+          LineNumber: 2
+        },
+        LineNumber: 2
+      },
+      LineNumber: 1
+    },
+    {
+      Type: {},
+      Identifier: isPositive,
+      Parameters: [
+        {
+          Type: {},
+          Identifier: n,
+          LineNumber: 5
+        }
+      ],
+      Body: {
+        Value: {
+          Op: LT,
+          ExprLeft: {
+            LineNumber: 6
+          },
+          ExprRight: {
+            Name: n,
+            LineNumber: 6
+          },
+          LineNumber: 6
+        },
+        LineNumber: 6
+      },
+      LineNumber: 5
+    }
+  ],
+  Stmt: {
+    Stmt1: {
+      Type: {},
+      Identifier: result,
+      Expression: {
+        Name: doubleIt,
+        Arguments: [
+          {
+            Value: 4,
+            LineNumber: 9
+          }
+        ],
+        LineNumber: 9
+      },
+      LineNumber: 9
+    },
+    Stmt2: {
+      Type: {},
+      Identifier: check,
+      Expression: {
+        Name: isPositive,
+        Arguments: [
+          {
+            Name: result,
+            LineNumber: 10
+          }
+        ],
+        LineNumber: 10
+      },
+      LineNumber: 10
+    },
+    LineNumber: 9
+  }
+}

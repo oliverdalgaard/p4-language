@@ -1,4 +1,7 @@
 ﻿{
+  envV: {
+    IsFunctionScope: false
+  },
   envP: {
     Bindings: {
       test: {
@@ -72,6 +75,32 @@
       }
     }
   },
+  envS: {},
+  envVT: {
+    HasReturn: false
+  },
+  envPT: {
+    Bindings: {
+      test: {
+        Parameters: [
+          {},
+          {}
+        ],
+        ReturnType: {}
+      },
+      test2: {
+        Parameters: [
+          {}
+        ],
+        ReturnType: {}
+      },
+      test3: {
+        ReturnType: {}
+      }
+    }
+  },
+  envST: {},
+  typeChecker: {},
   TopLevelDeclarations: [
     {
       Type: {},
@@ -142,5 +171,8 @@
       },
       LineNumber: 13
     }
-  ]
+  ],
+  Stmt: {
+    LineNumber: -1
+  }
 }

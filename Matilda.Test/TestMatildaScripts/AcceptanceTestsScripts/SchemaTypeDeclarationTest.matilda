@@ -1,0 +1,6 @@
+schema Person = {
+    id: int,
+    name: string
+}
+
+table<Person> people = read("MatildaCSVFiles/people.csv");
