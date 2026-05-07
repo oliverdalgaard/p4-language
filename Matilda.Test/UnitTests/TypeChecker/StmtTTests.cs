@@ -103,36 +103,6 @@ public class IfTestsTypeChecker : RunTypeChecker
 }
 
 [TestClass]
-public class WhileTestsTypeChecker : RunTypeChecker
-{
-    [TestMethod]
-    public void WhileCheckCondition()
-    {
-        //arrange
-        Stmt stmt = new While(new BoolV(true, -1), new LocalDeclaration(IntT.Instance, "x", new IntV(5, 1), -1), -1);
-        //act
-        TypeChecker checker = Run(new Program(stmt));
-        // assert
-        Assert.IsFalse(checker.HasErrors());
-    }
-    [TestMethod]
-    public void WhileCheckBody()
-    {
-        //arrange
-        Stmt stmt = new While(new BoolV(true, -1),
-            new Assign("x", new IntV(5, 1), -1), -1);    //error
-        //act
-        TypeChecker checker = Run(new Program(stmt));
-        // assert
-        List<string> expected = new List<string>
-    {
-        "Line -1: Variable x is not declared.",
-    };
-        CollectionAssert.AreEqual(expected, checker.errors);
-    }
-}
-
-[TestClass]
 public class AssignTestsTypeChecker : RunTypeChecker
 {
     [TestMethod]

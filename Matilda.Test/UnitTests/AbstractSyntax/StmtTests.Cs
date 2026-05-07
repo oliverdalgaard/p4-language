@@ -195,23 +195,3 @@ public class IfTests
         Assert.AreEqual(-1, ifStmt.LineNumber);
     }
 }
-
-[TestClass]
-public class WhileTests
-{
-    [TestMethod]
-    public void WhileStoresProperties()
-    {
-        // Arrange
-        Expr condition = new BoolV(true, -1);
-        Stmt body = new LocalDeclaration(StringT.Instance, "string1", new StringV("loop", -1), -1);
-
-        // Act
-        While whileStmt = new While(condition, body, -1);
-
-        // Assert
-        Assert.AreSame(condition, whileStmt.Condition);
-        Assert.AreSame(body, whileStmt.Body);
-        Assert.AreEqual(-1, whileStmt.LineNumber);
-    }
-}

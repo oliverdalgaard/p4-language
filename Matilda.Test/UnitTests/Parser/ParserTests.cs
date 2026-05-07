@@ -61,39 +61,6 @@ public class ParserTests : UnitTestHelper
         Assert.AreEqual("Niels", reassignedValue.Value);
     }
 
-
-    [TestMethod]
-    public void ParseWhileProgram()
-    {
-        // Arrange + Act
-        Program ast = ParseFile("WhileASTTest.matilda");
-
-        // Assert
-        Assert.IsInstanceOfType<Comp>(ast.Stmt);
-        Comp comp = (Comp)ast.Stmt;
-
-        // First stmt (declaration)
-        Assert.IsInstanceOfType<LocalDeclaration>(comp.Stmt1);
-        LocalDeclaration declaration = (LocalDeclaration)comp.Stmt1;
-
-        Assert.AreEqual("number", declaration.Identifier);
-        Assert.IsInstanceOfType<IntV>(declaration.Expression);
-
-        // Second stmt (while)
-        Assert.IsInstanceOfType<While>(comp.Stmt2);
-        While whileStmt = (While)comp.Stmt2;
-
-        // Condition
-        Assert.IsInstanceOfType<BinaryOp>(whileStmt.Condition);
-
-        BinaryOp condition = (BinaryOp)whileStmt.Condition;
-        Assert.AreEqual(BinaryOperators.LT, condition.Op);
-
-        // Body
-        Assert.IsInstanceOfType<Assign>(whileStmt.Body);
-    }
-
-
     [TestMethod]
     public void ParseIfElseifElseProgram()
     {
