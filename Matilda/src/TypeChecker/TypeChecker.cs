@@ -151,11 +151,7 @@ public class TypeChecker
 
                 if (envVT.FunctionReturnType != null)
                 {
-                    if (ifStmt.ElseBody == Skip.Instance && thenScope.HasReturn)
-                    {
-                        envVT.HasReturn = true;
-                    }
-                    else if (thenScope.HasReturn && elseScope.HasReturn)
+                    if (thenScope.HasReturn && elseScope.HasReturn)
                     {
                         envVT.HasReturn = true;
                     }
@@ -259,27 +255,6 @@ public class TypeChecker
                 }
 
                 envVT.Bind(tableDeclaration.Identifier, new TableT(tableDeclarationType.SchemaId));
-                break;
-
-            case While whileStmt:
-                if (whileStmt.Condition == null)
-                {
-                    errors.Add($"Line {whileStmt.LineNumber}: While statement needs a valid condition.");
-                }
-                else
-                {
-                    Type condT = ExprT(whileStmt.Condition, envVT, envPT, envST);
-
-                    if (condT != BoolT.Instance)
-                    {
-                        errors.Add($"Line {whileStmt.LineNumber}: While statement requires a condition with type 'bool', but got '{condT}'.");
-                    }
-                }
-
-                if (whileStmt.Body != null)
-                {
-                    StmtT(whileStmt.Body, envVT, envPT, envST);
-                }
                 break;
 
             case Return r:

@@ -133,7 +133,6 @@ Stmt<out Stmt stmt> =       (. stmt = Skip.Instance; .)
     LocalDeclaration<out stmt>
     | Assignment<out stmt>
     | If<out stmt>
-    | While <out stmt>
     | Return<out stmt>
   )
 .
@@ -179,12 +178,6 @@ If<out Stmt stmt>                                     (. Stmt elseStmt = Skip.In
     "else"
     '{' Stmts<out elseStmt> '}'
   ]                                                   (. stmt = new If(condition, thenStmt, elseStmt, lineNumber); .)
-.
-
-While<out Stmt stmt> =
-"while"                             (. int lineNumber = t.line; .)
-  '(' Expr<out Expr condition> ')'
-  '{' Stmts<out Stmt body> '}'      (. stmt = new While(condition, body, lineNumber); .)
 .
 
 Type<out Type type> (. type = null; .)

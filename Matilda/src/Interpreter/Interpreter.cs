@@ -100,15 +100,6 @@ public static class Interpreter
 
                 break;
 
-            case While whileStmt:
-                {
-                    while (EvalExpr(whileStmt.Condition, envV, envP, envS).AsBool())
-                    {
-                        EvalStmt(whileStmt.Body, envV, envP, envS);
-                    }
-                    break;
-                }
-
             default:
                 throw new Exception("Not valid statement");
 

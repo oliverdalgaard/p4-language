@@ -1,6 +1,6 @@
 using Matilda;
 
-namespace MatildaTests;
+namespace MatildaTests.UnitTests.InterpreterTests.EvalStmtTests;
 
 [TestClass]
 public class InterpreterEvalStmtTests
@@ -31,7 +31,7 @@ public class InterpreterEvalStmtTests
         EnvP envP = new EnvP();
         EnvS envS = new EnvS();
 
-        envS.Bind("testSchemaId", new List<Column> { new Column("hej", IntT.Instance), new Column("dig", IntT.Instance) });
+        envS.Bind("testSchemaId", new List<Column> { new Column("Id", IntT.Instance), new Column("name", StringT.Instance) });
 
         Stmt stmt = new TableDeclaration(new TableT("testSchemaId"), "TestId", "../../../MatildaCSVFiles/TableDeclarationTest.csv", -1);
 
@@ -44,15 +44,17 @@ public class InterpreterEvalStmtTests
         List<TableRecord> records = table.Records;
 
         // Assert
-        Assert.AreEqual("hej", headers[0].Identifier);
+        Assert.AreEqual("Id", headers[0].Identifier);
         Assert.AreEqual(IntT.Instance, headers[0].Type);
-        Assert.AreEqual("dig", headers[1].Identifier);
-        Assert.AreEqual(IntT.Instance, headers[1].Type);
+        Assert.AreEqual("name", headers[1].Identifier);
+        Assert.AreEqual(StringT.Instance, headers[1].Type);
 
         Assert.AreEqual(1, records[0].Values[0].AsInt());
-        Assert.AreEqual(2, records[0].Values[1].AsInt());
-        Assert.AreEqual(3, records[1].Values[0].AsInt());
-        Assert.AreEqual(4, records[1].Values[1].AsInt());
+        Assert.AreEqual("Alice", records[0].Values[1].ToString());
+        Assert.AreEqual(2, records[1].Values[0].AsInt());
+        Assert.AreEqual("Bob", records[1].Values[1].ToString());
+        Assert.AreEqual(3, records[2].Values[0].AsInt());
+        Assert.AreEqual("Steve", records[2].Values[1].ToString());
     }
 
     // Stmt comp executes both statements when no return exists
@@ -207,68 +209,4 @@ public class InterpreterEvalStmtTests
         // Assert
         Assert.AreEqual(2, envV.TryGet("x")!.AsInt());
     }
-
-    // Stmt while repeats until condition false
-
-    [TestMethod]
-    public void EvalStmtWhileRepeatsUntilConditionFalse()
-    {
-        // Arrange
-        EnvV envV = new EnvV();
-        EnvP envP = new EnvP();
-        EnvS envS = new EnvS();
-        envV.Bind("x", new IntVal(0));
-
-        Stmt body = new Assign(
-            "x",
-            new BinaryOp(
-                BinaryOperators.ADD,
-                new Ref("x", -1),
-                new IntV(1, -1),
-                -1
-            ),
-            -1
-        );
-
-        Stmt stmt = new While(
-            new BinaryOp(
-                BinaryOperators.LT,
-                new Ref("x", -1),
-                new IntV(3, -1),
-                -1
-            ),
-            body,
-            -1
-        );
-
-        // Act
-        Interpreter.EvalStmt(stmt, envV, envP, envS);
-
-        // Assert
-        Assert.AreEqual(3, envV.TryGet("x")!.AsInt());
-    }
-
-    // Stmt while propagates return to outer scope => Muligvis ændres på baggrund af side effekter i at den ændre globale variabler
-
-    // [TestMethod]
-    // public void EvalStmtWhileStopsAndPropagatesReturn()
-    // {
-    //     // Arrange
-    //     EnvV envV = new EnvV();
-    //     EnvP envP = new EnvP();
-    //     EnvS envS = new EnvS();
-
-    //     Stmt stmt = new While(
-    //         new BoolV(true, -1),
-    //         new Return(new IntV(10, -1), -1),
-    //         -1
-    //     );
-
-    //     // Act
-    //     Interpreter.EvalStmt(stmt, envV, envP, envS);
-
-    //     // Assert
-    //     Assert.IsNotNull(envV.TryGet("return"));
-    //     Assert.AreEqual(10, envV.TryGet("return")!.AsInt());
-    // }
 }

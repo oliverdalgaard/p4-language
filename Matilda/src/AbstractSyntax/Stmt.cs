@@ -145,20 +145,3 @@ public class If : Stmt
         LineNumber = lineNumber;
     }
 }
-
-public class While : Stmt
-{
-    public Expr Condition { get; }
-    public Stmt Body { get; }
-
-    public override int LineNumber { get; }
-
-    public While(Expr condition, Stmt body, int lineNumber)
-    {
-        Condition = condition;
-        Body = body;
-
-        LineNumber = lineNumber;
-    }
-
-}

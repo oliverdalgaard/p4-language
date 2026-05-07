@@ -1,6 +1,6 @@
 using Matilda;
 
-namespace MatildaTests;
+namespace MatildaTests.UnitTests.AbstractSyntaxTests.TopLevelDeclarationTests;
 
 [TestClass]
 public class SchemaDeclarationTests

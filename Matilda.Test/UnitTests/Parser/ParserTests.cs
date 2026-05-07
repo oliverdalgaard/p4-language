@@ -1,34 +1,10 @@
 using Matilda;
 
-namespace MatildaTests;
+namespace MatildaTests.UnitTests.ParserTests.ParserTests;
 
 [TestClass]
-public class ParserTests
+public class ParserTests : UnitTestHelper
 {
-    // Helper function locate the correct directory
-    private static readonly string ScriptFolder =
-            Path.GetFullPath(Path.Combine(
-                AppContext.BaseDirectory,
-                "../../../TestMatildaScripts/ParserTestsScripts"));
-
-
-    // Helper method for all the test methods
-    private Program ParseFile(string fileName)
-    {
-        string path = Path.Combine(ScriptFolder, fileName);
-
-        Assert.IsTrue(File.Exists(path), $"Test script file was not found: {path}");
-
-        Scanner scanner = new Scanner(path);
-        Parser parser = new Parser(scanner);
-
-        parser.Parse();
-
-        Assert.IsFalse(parser.hasErrors());
-
-        return parser.mainNode;
-    }
-
     [TestMethod]
     public void ParseDeclarationProgram()
     {
@@ -84,39 +60,6 @@ public class ParserTests
         var reassignedValue = (StringV)assign.Value;
         Assert.AreEqual("Niels", reassignedValue.Value);
     }
-
-
-    [TestMethod]
-    public void ParseWhileProgram()
-    {
-        // Arrange + Act
-        Program ast = ParseFile("WhileASTTest.matilda");
-
-        // Assert
-        Assert.IsInstanceOfType<Comp>(ast.Stmt);
-        Comp comp = (Comp)ast.Stmt;
-
-        // First stmt (declaration)
-        Assert.IsInstanceOfType<LocalDeclaration>(comp.Stmt1);
-        LocalDeclaration declaration = (LocalDeclaration)comp.Stmt1;
-
-        Assert.AreEqual("number", declaration.Identifier);
-        Assert.IsInstanceOfType<IntV>(declaration.Expression);
-
-        // Second stmt (while)
-        Assert.IsInstanceOfType<While>(comp.Stmt2);
-        While whileStmt = (While)comp.Stmt2;
-
-        // Condition
-        Assert.IsInstanceOfType<BinaryOp>(whileStmt.Condition);
-
-        BinaryOp condition = (BinaryOp)whileStmt.Condition;
-        Assert.AreEqual(BinaryOperators.LT, condition.Op);
-
-        // Body
-        Assert.IsInstanceOfType<Assign>(whileStmt.Body);
-    }
-
 
     [TestMethod]
     public void ParseIfElseifElseProgram()
