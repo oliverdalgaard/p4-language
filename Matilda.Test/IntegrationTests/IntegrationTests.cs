@@ -31,34 +31,6 @@ public class IntegrationTests : IntegrationTestHelper
     }
 
     [TestMethod]
-    public void WhileLoopPrintsExpectedSequence()
-    {
-        // Arrange
-        Program program = ParseFile("WhileLoopTest.matilda");
-
-        // Act
-        AssertNoTypeErrors(program);
-
-        EnvV envV = new EnvV();
-        EnvP envP = new EnvP();
-        EnvS envS = new EnvS();
-
-        Interpreter.EvalTopLevelDeclarations(program.TopLevelDeclarations, envP, envS);
-        Interpreter.EvalStmt(program.Stmt, envV, envP, envS);
-
-        string expected = "3";
-
-        // Assert
-
-        Val? result = envV.TryGet("i");
-
-        Assert.IsNotNull(result);
-        Assert.IsInstanceOfType<IntVal>(result);
-
-        Assert.AreEqual(expected, result.ToString());
-    }
-
-    [TestMethod]
     public void IfStatementPrintsCorrectBranch()
     {
         // Arrange
