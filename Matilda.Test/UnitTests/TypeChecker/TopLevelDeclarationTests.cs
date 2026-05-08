@@ -140,6 +140,46 @@ public class FunctionTestsTypeChecker : RunTypeChecker
         Assert.HasCount(1, checker.errors);
         Assert.AreEqual("Line -1: Not all paths return a value in function 'func1'.", checker.errors[0]);
     }
+
+    [TestMethod]
+    public void FunctionWithIfStmtSeesReturnStmt()
+    {
+        // Arrange
+        Expr condition = new BoolV(true, -1);
+        Stmt thenBody = new Return(new IntV(10, -1), -1);
+        Stmt elseBody = new Return(new IntV(10, -1), -1);
+
+        Stmt ifStmt = new If(condition, thenBody, elseBody, -1);
+
+        TopLevelDeclaration topLevelDeclaration = new FunctionDeclaration(IntT.Instance, "testFunction", new List<Parameter>(), ifStmt, -1);
+
+        // Act
+        TypeChecker checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }));
+
+        // Assert
+        Assert.IsFalse(checker.HasErrors());
+    }
+
+    [TestMethod]
+    public void FunctionWithIfStmtContainingNoReturn()
+    {
+        // Arrange
+        Expr condition = new BoolV(true, -1);
+        Stmt thenBody = Skip.Instance;
+        Stmt elseBody = Skip.Instance;
+
+        Stmt ifStmt = new If(condition, thenBody, elseBody, -1);
+        Stmt returnStmt = new Return(new IntV(10, -1), -1);
+        Stmt functionBody = new Comp(ifStmt, returnStmt);
+
+        TopLevelDeclaration topLevelDeclaration = new FunctionDeclaration(IntT.Instance, "testFunction", new List<Parameter>(), functionBody, -1);
+
+        // Act
+        TypeChecker checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }));
+
+        // Assert
+        Assert.IsFalse(checker.HasErrors());
+    }
 }
 
 [TestClass]
