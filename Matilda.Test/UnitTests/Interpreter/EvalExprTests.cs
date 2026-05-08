@@ -3,6 +3,79 @@ using Matilda;
 namespace MatildaTests.UnitTests.InterpreterTests.EvalExprTests;
 
 [TestClass]
+public class UnknownExprTests
+{
+    [TestMethod]
+    public void EvalExprUnknown()
+    {
+        // Arrange
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
+
+        Expr expr = null;
+
+        // Assert
+        try
+        {
+            Interpreter.EvalExpr(expr, envV, envP, envS);
+            Assert.Fail();
+
+        }
+        catch (Exception exception)
+        {
+            Assert.AreEqual("Not a valid expression", exception.Message);
+        }
+    }
+
+    [TestMethod]
+    public void EvalBinaryOpUnknown()
+    {
+        // Arrange
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
+
+        Expr expr = new BinaryOp((BinaryOperators)999, new IntV(1, 1), new IntV(1, 1), -1);
+
+        // Assert
+        try
+        {
+            Interpreter.EvalExpr(expr, envV, envP, envS);
+            Assert.Fail();
+
+        }
+        catch (Exception exception)
+        {
+            Assert.AreEqual("Not a valid binaryOp expression", exception.Message);
+        }
+    }
+
+    [TestMethod]
+    public void EvalUnaryOpUnknown()
+    {
+        // Arrange
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
+
+        Expr expr = new UnaryOp((UnaryOperators)999, new BoolV(false, -1), -1);
+
+        // Assert
+        try
+        {
+            Interpreter.EvalExpr(expr, envV, envP, envS);
+            Assert.Fail();
+
+        }
+        catch (Exception exception)
+        {
+            Assert.AreEqual("Not a valid unaryOp expression", exception.Message);
+        }
+    }
+}
+
+[TestClass]
 public class InterpreterEvalExprTests
 
 {
@@ -387,5 +460,33 @@ public class InterpreterEvalExprTests
 
         Assert.AreEqual(100, result.AsTable().Records[1].Values[0].AsFloat());
         Assert.AreEqual(2, result.AsTable().Records[1].Values[1].AsFloat());
+    }
+
+    [TestMethod]
+    [DataRow(BinaryOperators.AND, true, false, false)]
+    [DataRow(BinaryOperators.AND, false, true, false)]
+    [DataRow(BinaryOperators.AND, false, false, false)]
+    [DataRow(BinaryOperators.AND, true, true, true)]
+    [DataRow(BinaryOperators.OR, true, false, true)]
+    [DataRow(BinaryOperators.OR, false, true, true)]
+    [DataRow(BinaryOperators.OR, false, false, false)]
+    [DataRow(BinaryOperators.OR, true, true, true)]
+    public void BinaryOpLogicTest(BinaryOperators binaryOperator, bool testValLeft, bool testValRight, bool resultVal)
+    {
+        BoolV testValLeftV = new BoolV(testValLeft, -1);
+        BoolV testValRightV = new BoolV(testValRight, -1);
+
+        // Arrange
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
+
+        Expr expr = new BinaryOp(binaryOperator, testValLeftV, testValRightV, -1);
+
+        // Act
+        Val returnVal = Interpreter.EvalExpr(expr, envV, envP, envS);
+
+        // Assert
+        Assert.AreEqual(resultVal, returnVal.AsBool());
     }
 }

@@ -3,6 +3,33 @@ using Matilda;
 namespace MatildaTests.UnitTests.InterpreterTests.EvalStmtTests;
 
 [TestClass]
+public class UnknownStmtTests
+{
+    [TestMethod]
+    public void EvalStmtUnknown()
+    {
+        // Arrange
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
+
+        Stmt stmt = null;
+
+        // Assert
+        try
+        {
+            Interpreter.EvalStmt(stmt, envV, envP, envS);
+            Assert.Fail();
+
+        }
+        catch (Exception exception)
+        {
+            Assert.AreEqual("Not valid statement", exception.Message);
+        }
+    }
+}
+
+[TestClass]
 public class InterpreterEvalStmtTests
 {
 
