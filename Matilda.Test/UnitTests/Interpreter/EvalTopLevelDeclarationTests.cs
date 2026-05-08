@@ -2,6 +2,31 @@ using Matilda;
 
 namespace MatildaTests.UnitTests.InterpreterTests.EvalTopLevelDeclarationTests;
 
+[TestClass]
+public class UnknownTopLevelDeclarationTests
+{
+    [TestMethod]
+    public void EvalTopLevelDeclarationUnknown()
+    {
+        // Arrange
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
+
+        TopLevelDeclaration topLevelDeclaration = null;
+
+        // Assert
+        try
+        {
+            Interpreter.EvalTopLevelDeclarations(new List<TopLevelDeclaration> { topLevelDeclaration }, envP, envS);
+            Assert.Fail();
+
+        }
+        catch (Exception exception)
+        {
+            Assert.AreEqual("Not a valid TopLevelDeclaration", exception.Message);
+        }
+    }
+}
 
 [TestClass]
 public class InterpreterSchemaDeclarationTests
