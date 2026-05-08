@@ -3,6 +3,28 @@ using Matilda;
 namespace MatildaTests.UnitTests.TypeCheckerTests.StmtTTests;
 
 [TestClass]
+public class TestInvalidStatement : RunTypeChecker
+{
+    [TestMethod]
+    public void InvalidStatementTest()
+    {
+        // Arrange
+        Stmt stmt = null;
+
+        // Assert
+        try
+        {
+            TypeChecker checker = Run(new Program(stmt));
+            Assert.Fail();
+        }
+        catch (Exception exception)
+        {
+            Assert.AreEqual("Invalid statement", exception.Message);
+        }
+    }
+}
+
+[TestClass]
 public class CompTestsTypeChecker : RunTypeChecker
 {
     [TestMethod]
@@ -105,6 +127,36 @@ public class IfTestsTypeChecker : RunTypeChecker
 public class AssignTestsTypeChecker : RunTypeChecker
 {
     [TestMethod]
+    public void AssignCheckNullValue()
+    {
+        //arrange
+        Stmt stmt = new Assign(null, new IntV(5, 1), -1);
+        //act
+        TypeChecker checker = Run(new Program(stmt));
+        //assert
+        List<string> expected = new List<string>
+    {
+        "Line -1: Invalid assignment",
+    };
+        CollectionAssert.AreEqual(expected, checker.errors);
+    }
+
+    [TestMethod]
+    public void AssignCheckNullValue2()
+    {
+        //arrange
+        Stmt stmt = new Assign("x", null, -1);
+        //act
+        TypeChecker checker = Run(new Program(stmt));
+        //assert
+        List<string> expected = new List<string>
+    {
+        "Line -1: Invalid assignment",
+    };
+        CollectionAssert.AreEqual(expected, checker.errors);
+    }
+
+    [TestMethod]
     public void AssignCheckNotDeclared()
     {
         //arrange
@@ -181,6 +233,36 @@ public class AssignTestsTypeChecker : RunTypeChecker
 [TestClass]
 public class LocalDeclarationTestsTypeChecker : RunTypeChecker
 {
+    [TestMethod]
+    public void LocalDeclarationCheckNullValue()
+    {
+        // Arrange
+        Stmt stmt = new LocalDeclaration(IntT.Instance, null, new IntV(1, -1), -1);
+
+        // Act
+        TypeChecker checker = Run(new Program(stmt));
+
+        // Assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.HasCount(1, checker.errors);
+        Assert.AreEqual("Line -1: Invalid declaration.", checker.errors[0]);
+    }
+
+    [TestMethod]
+    public void LocalDeclarationCheckNullValue2()
+    {
+        // Arrange
+        Stmt stmt = new LocalDeclaration(null, "x", new IntV(1, -1), -1);
+
+        // Act
+        TypeChecker checker = Run(new Program(stmt));
+
+        // Assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.HasCount(1, checker.errors);
+        Assert.AreEqual("Line -1: Invalid declaration.", checker.errors[0]);
+    }
+
     [TestMethod]
     public void LocalDeclarationAlreadyDeclaredTest()
     {
@@ -323,6 +405,66 @@ public class ReturnTestsTypeChecker : RunTypeChecker
 [TestClass]
 public class TableDeclarationtestsTypeChecker : RunTypeChecker
 {
+    [TestMethod]
+    public void TableDeclarationCheckNullValue()
+    {
+        //arrange
+        Stmt stmt = new TableDeclaration(
+            IntT.Instance,
+            "tab1",
+            "../../../TypeChecker/TestMatildaScriptTypeChecker/TableDeclaration.csv",
+            -1
+        );
+        //act
+        TypeChecker checker = Run(new Program(stmt));
+        //assert
+        List<string> expected = new List<string>
+    {
+        "Line -1: Invalid table declaration."
+    };
+        CollectionAssert.AreEqual(expected, checker.errors);
+    }
+
+    [TestMethod]
+    public void TableDeclarationCheckNullValue2()
+    {
+        //arrange
+        Stmt stmt = new TableDeclaration(
+            null,
+            "tab1",
+            "../../../TypeChecker/TestMatildaScriptTypeChecker/TableDeclaration.csv",
+            -1
+        );
+        //act
+        TypeChecker checker = Run(new Program(stmt));
+        //assert
+        List<string> expected = new List<string>
+    {
+        "Line -1: Invalid table declaration."
+    };
+        CollectionAssert.AreEqual(expected, checker.errors);
+    }
+
+    [TestMethod]
+    public void TableDeclarationCheckNullValue3()
+    {
+        //arrange
+        Stmt stmt = new TableDeclaration(
+            new TableT("schema1"),
+            null,
+            "../../../TypeChecker/TestMatildaScriptTypeChecker/TableDeclaration.csv",
+            -1
+        );
+        //act
+        TypeChecker checker = Run(new Program(stmt));
+        //assert
+        List<string> expected = new List<string>
+    {
+        "Line -1: Invalid table declaration."
+    };
+        CollectionAssert.AreEqual(expected, checker.errors);
+    }
+
     [TestMethod]
     public void TableDeclarationTestWrongType()
     {
