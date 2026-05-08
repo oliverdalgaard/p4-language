@@ -20,6 +20,7 @@ public class UnaryOpTestsTypeChecker : RunTypeChecker
         //assert
         Assert.IsFalse(checker.HasErrors());
     }
+
     [TestMethod]
     public void NeqTestTypecheckFails()
     {
@@ -45,13 +46,16 @@ public class BinaryOpTestsTypeChecker : RunTypeChecker
 {
     //add,sub,mul,div,lt,eq,neq,and,or
     [TestMethod]
-    public void AddTestTypeChecker()
+    [DataRow(BinaryOperators.ADD)]
+    [DataRow(BinaryOperators.SUB)]
+    [DataRow(BinaryOperators.MUL)]
+    public void BinaryOpTypeCheckerIntReturnTest(BinaryOperators binaryOperator)
     {
         //arrange
         Stmt stmt = new LocalDeclaration(
         IntT.Instance,
         "x",
-        new BinaryOp(BinaryOperators.ADD, new IntV(5, 1), new IntV(3, 1), -1), -1);
+        new BinaryOp(binaryOperator, new IntV(5, 1), new IntV(5, 1), -1), -1);
         //act
         var checker = Run(new Program(stmt));
         //assert
@@ -59,10 +63,55 @@ public class BinaryOpTestsTypeChecker : RunTypeChecker
     }
 
     [TestMethod]
-    public void AddTestTypeCheckerFails()
+    [DataRow(BinaryOperators.ADD)]
+    [DataRow(BinaryOperators.SUB)]
+    [DataRow(BinaryOperators.MUL)]
+    [DataRow(BinaryOperators.DIV)]
+    public void BinaryOpTypeCheckerFloatReturnTest(BinaryOperators binaryOperator)
     {
         //arrange
-        Stmt stmt = new LocalDeclaration(IntT.Instance, "x", new BinaryOp(BinaryOperators.ADD,
+        Stmt stmt = new LocalDeclaration(
+        FloatT.Instance,
+        "x",
+        new BinaryOp(binaryOperator, new FloatV(5, 1), new FloatV(5, 1), -1), -1);
+        //act
+        var checker = Run(new Program(stmt));
+        //assert
+        Assert.IsFalse(checker.HasErrors());
+    }
+
+    [TestMethod]
+    [DataRow(BinaryOperators.ADD, "+")]
+    [DataRow(BinaryOperators.SUB, "-")]
+    [DataRow(BinaryOperators.MUL, "*")]
+    [DataRow(BinaryOperators.DIV, "/")]
+    public void BinaryOpTypeCheckerFailsLeftOperand(BinaryOperators binaryOperator, string symbol)
+    {
+        //arrange
+        Stmt stmt = new LocalDeclaration(IntT.Instance, "x", new BinaryOp(binaryOperator,
+                        new BoolV(true, 1),
+                        new IntV(5, 1), -1), -1);
+        //act
+        var checker = Run(new Program(stmt));
+        //assert
+        var expected = new List<string>
+        {
+            $"Line 1: Operator '{symbol}' expected a left operand of type 'int' or 'float', but got 'Matilda.BoolT'.",
+            "Line -1: Declaration type does not match the type of the expression."
+        };
+
+        CollectionAssert.AreEqual(expected, checker.errors);
+    }
+
+    [TestMethod]
+    [DataRow(BinaryOperators.ADD, "+")]
+    [DataRow(BinaryOperators.SUB, "-")]
+    [DataRow(BinaryOperators.MUL, "*")]
+    [DataRow(BinaryOperators.DIV, "/")]
+    public void BinaryOpTypeCheckerFailsRightOperand(BinaryOperators binaryOperator, string symbol)
+    {
+        //arrange
+        Stmt stmt = new LocalDeclaration(IntT.Instance, "x", new BinaryOp(binaryOperator,
                         new IntV(5, 1),
                         new BoolV(true, 1), -1), -1);
         //act
@@ -70,13 +119,115 @@ public class BinaryOpTestsTypeChecker : RunTypeChecker
         //assert
         var expected = new List<string>
         {
-            "Line 1: Operator '+' expected a right operand of type 'int' or 'float', but got 'Matilda.BoolT'.",
+            $"Line 1: Operator '{symbol}' expected a right operand of type 'int' or 'float', but got 'Matilda.BoolT'.",
             "Line -1: Declaration type does not match the type of the expression."
         };
 
         CollectionAssert.AreEqual(expected, checker.errors);
     }
+
+    [TestMethod]
+    public void LogicOpTypeCheckerFailsOperandLT()
+    {
+        //arrange
+        Stmt stmt = new LocalDeclaration(BoolT.Instance, "x", new BinaryOp(BinaryOperators.LT,
+                        new StringV("test", 1),
+                        new StringV("test", 1), -1), -1);
+        //act
+        var checker = Run(new Program(stmt));
+        //assert
+        var expected = new List<string>
+        {
+            $"Line 1: Operator '<' expected a left operand of type 'int' or 'float', but got 'Matilda.StringT'.",
+            $"Line 1: Operator '<' expected a right operand of type 'int' or 'float', but got 'Matilda.StringT'.",
+        };
+
+        CollectionAssert.AreEqual(expected, checker.errors);
+    }
+
+    [TestMethod]
+    [DataRow(BinaryOperators.EQ, "==")]
+    [DataRow(BinaryOperators.NEQ, "!=")]
+    public void LogicOpTypeCheckerFailsLeftAndRightOperand(BinaryOperators binaryOperator, string symbol)
+    {
+        //arrange
+        Stmt stmt = new LocalDeclaration(BoolT.Instance, "x", new BinaryOp(binaryOperator,
+                        new StringV("test", 1),
+                        new StringV("test", 1), -1), -1);
+        //act
+        var checker = Run(new Program(stmt));
+        //assert
+        var expected = new List<string>
+        {
+            $"Line 1: Operator '{symbol}' expected a left operand of type 'bool','int' or 'float', but got 'Matilda.StringT'.",
+            $"Line 1: Operator '{symbol}' expected a right operand of type 'bool','int' or 'float', but got 'Matilda.StringT'.",
+        };
+
+        CollectionAssert.AreEqual(expected, checker.errors);
+    }
+
+    [TestMethod]
+    [DataRow(BinaryOperators.EQ, "==")]
+    [DataRow(BinaryOperators.NEQ, "!=")]
+    public void LogicOpTypeCheckerFailsLeftAndRightOperand2(BinaryOperators binaryOperator, string symbol)
+    {
+        //arrange
+        Stmt stmt = new LocalDeclaration(BoolT.Instance, "x", new BinaryOp(binaryOperator,
+                        new IntV(1, 1),
+                        new BoolV(false, 1), -1), -1);
+        //act
+        var checker = Run(new Program(stmt));
+        //assert
+        var expected = new List<string>
+        {
+            $"Line 1: Operator '{symbol}' expected a right and left operand of type 'bool', but got 'Matilda.IntT'.",
+        };
+
+        CollectionAssert.AreEqual(expected, checker.errors);
+    }
+
+    [TestMethod]
+    [DataRow(BinaryOperators.EQ, "==")]
+    [DataRow(BinaryOperators.NEQ, "!=")]
+    public void LogicOpTypeCheckerFailsLeftAndRightOperand3(BinaryOperators binaryOperator, string symbol)
+    {
+        //arrange
+        Stmt stmt = new LocalDeclaration(BoolT.Instance, "x", new BinaryOp(binaryOperator,
+                        new BoolV(false, 1),
+                        new IntV(1, 1), -1), -1);
+        //act
+        var checker = Run(new Program(stmt));
+        //assert
+        var expected = new List<string>
+        {
+            $"Line 1: Operator '{symbol}' expected a right and left operand of type 'bool', but got 'Matilda.IntT'.",
+        };
+
+        CollectionAssert.AreEqual(expected, checker.errors);
+    }
+
+    [TestMethod]
+    [DataRow(BinaryOperators.AND, "&&")]
+    [DataRow(BinaryOperators.OR, "||")]
+    public void LogicOpTypeCheckerFailsLeftAndRightOperand4(BinaryOperators binaryOperator, string symbol)
+    {
+        //arrange
+        Stmt stmt = new LocalDeclaration(BoolT.Instance, "x", new BinaryOp(binaryOperator,
+                        new IntV(1, 1),
+                        new IntV(1, 1), -1), -1);
+        //act
+        var checker = Run(new Program(stmt));
+        //assert
+        var expected = new List<string>
+        {
+            $"Line 1: Operator '{symbol}' expected a left operand of type 'bool', but got 'Matilda.IntT'.",
+            $"Line 1: Operator '{symbol}' expected a right operand of type 'bool', but got 'Matilda.IntT'.",
+        };
+
+        CollectionAssert.AreEqual(expected, checker.errors);
+    }
 }
+
 //ref, functionRef
 [TestClass]
 public class RefTestsTypeChecker : RunTypeChecker
