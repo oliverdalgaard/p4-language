@@ -56,7 +56,7 @@ public class TableTests
 
         // Act
         Table table = new Table(identifier, schema, tableHeaders, tableRecords);
-        table.addRecord(recordValList);
+        table.AddRecord(recordValList);
 
         // Assert
         Assert.AreEqual(identifier, table.Identifier);
@@ -79,7 +79,7 @@ public class TableTests
 
         // Act
         Table table = new Table(identifier, schema, tableHeaders, tableRecords);
-        table.addRecord(newRecord);
+        table.AddRecord(newRecord);
 
         // Assert
         Assert.AreEqual(identifier, table.Identifier);

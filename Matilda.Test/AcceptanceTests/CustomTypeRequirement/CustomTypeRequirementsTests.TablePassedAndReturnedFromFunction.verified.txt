@@ -1,0 +1,407 @@
+﻿{
+  envV: {
+    Bindings: {
+      filtered: {
+        T: {
+          Identifier: transaction,
+          Schema: [
+            {
+              Id: id,
+              Type: {}
+            },
+            {
+              Id: transaction,
+              Type: {}
+            },
+            {
+              Id: amount,
+              Type: {}
+            }
+          ],
+          Headers: [
+            {
+              Identifier: id,
+              Type: {}
+            },
+            {
+              Identifier: transaction,
+              Type: {}
+            },
+            {
+              Identifier: amount,
+              Type: {}
+            }
+          ],
+          Records: [
+            {
+              Values: [
+                {
+                  N: 3
+                },
+                {
+                  S: Anna
+                },
+                {
+                  N: 7500
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 2
+                },
+                {
+                  S: Morten
+                },
+                {
+                  N: 10000
+                }
+              ]
+            }
+          ]
+        }
+      },
+      transaction: {
+        T: {
+          Identifier: transaction,
+          Schema: [
+            {
+              Id: id,
+              Type: {}
+            },
+            {
+              Id: transaction,
+              Type: {}
+            },
+            {
+              Id: amount,
+              Type: {}
+            }
+          ],
+          File: [
+            [
+              id,
+              transaction,
+              amount
+            ],
+            [
+              1,
+              Peter,
+              2500
+            ],
+            [
+              2,
+              Morten,
+              2500
+            ],
+            [
+              3,
+              Anna,
+              7500
+            ],
+            [
+              2,
+              Morten,
+              10000
+            ],
+            [
+              1,
+              Peter,
+              2500
+            ],
+            [
+              4,
+              Katrine,
+              3500
+            ]
+          ],
+          Headers: [
+            {
+              Identifier: id,
+              Type: {}
+            },
+            {
+              Identifier: transaction,
+              Type: {}
+            },
+            {
+              Identifier: amount,
+              Type: {}
+            }
+          ],
+          Records: [
+            {
+              Values: [
+                {
+                  N: 1
+                },
+                {
+                  S: Peter
+                },
+                {
+                  N: 2500
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 2
+                },
+                {
+                  S: Morten
+                },
+                {
+                  N: 2500
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 3
+                },
+                {
+                  S: Anna
+                },
+                {
+                  N: 7500
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 2
+                },
+                {
+                  S: Morten
+                },
+                {
+                  N: 10000
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1
+                },
+                {
+                  S: Peter
+                },
+                {
+                  N: 2500
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 4
+                },
+                {
+                  S: Katrine
+                },
+                {
+                  N: 3500
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    IsFunctionScope: false
+  },
+  envP: {
+    Bindings: {
+      filterTransaction: {
+        Type: {
+          SchemaId: Transaction
+        },
+        Identifier: filterTransaction,
+        Parameters: [
+          {
+            Type: {
+              SchemaId: Transaction
+            },
+            Identifier: transaction,
+            LineNumber: 7
+          }
+        ],
+        Body: {
+          Value: {
+            TableExpr: {
+              Name: transaction,
+              LineNumber: 8
+            },
+            Predicate: {
+              Op: LT,
+              ExprLeft: {
+                Value: 5000,
+                LineNumber: 8
+              },
+              ExprRight: {
+                Name: amount,
+                LineNumber: 8
+              },
+              LineNumber: 8
+            },
+            LineNumber: 8
+          },
+          LineNumber: 8
+        },
+        LineNumber: 7
+      }
+    }
+  },
+  envS: {
+    Bindings: {
+      Transaction: [
+        {
+          Id: id,
+          Type: {}
+        },
+        {
+          Id: transaction,
+          Type: {}
+        },
+        {
+          Id: amount,
+          Type: {}
+        }
+      ]
+    }
+  },
+  envVT: {
+    Bindings: {
+      filtered: {
+        SchemaId: Transaction
+      },
+      transaction: {
+        SchemaId: Transaction
+      }
+    },
+    HasReturn: false
+  },
+  envPT: {
+    Bindings: {
+      filterTransaction: {
+        Parameters: [
+          {
+            SchemaId: Transaction
+          }
+        ],
+        ReturnType: {
+          SchemaId: Transaction
+        }
+      }
+    }
+  },
+  envST: {
+    Bindings: {
+      Transaction: [
+        {
+          Id: id,
+          Type: {}
+        },
+        {
+          Id: transaction,
+          Type: {}
+        },
+        {
+          Id: amount,
+          Type: {}
+        }
+      ]
+    }
+  },
+  typeChecker: {},
+  TopLevelDeclarations: [
+    {
+      Identifier: Transaction,
+      Columns: [
+        {
+          Id: id,
+          Type: {}
+        },
+        {
+          Id: transaction,
+          Type: {}
+        },
+        {
+          Id: amount,
+          Type: {}
+        }
+      ]
+    },
+    {
+      Type: {
+        SchemaId: Transaction
+      },
+      Identifier: filterTransaction,
+      Parameters: [
+        {
+          Type: {
+            SchemaId: Transaction
+          },
+          Identifier: transaction,
+          LineNumber: 7
+        }
+      ],
+      Body: {
+        Value: {
+          TableExpr: {
+            Name: transaction,
+            LineNumber: 8
+          },
+          Predicate: {
+            Op: LT,
+            ExprLeft: {
+              Value: 5000,
+              LineNumber: 8
+            },
+            ExprRight: {
+              Name: amount,
+              LineNumber: 8
+            },
+            LineNumber: 8
+          },
+          LineNumber: 8
+        },
+        LineNumber: 8
+      },
+      LineNumber: 7
+    }
+  ],
+  Stmt: {
+    Stmt1: {
+      Type: {
+        SchemaId: Transaction
+      },
+      Identifier: transaction,
+      FilePath: ../../../MatildaCSVFiles/transaction.csv,
+      LineNumber: 11
+    },
+    Stmt2: {
+      Type: {
+        SchemaId: Transaction
+      },
+      Identifier: filtered,
+      Expression: {
+        Name: filterTransaction,
+        Arguments: [
+          {
+            Name: transaction,
+            LineNumber: 12
+          }
+        ],
+        LineNumber: 12
+      },
+      LineNumber: 12
+    },
+    LineNumber: 11
+  }
+}

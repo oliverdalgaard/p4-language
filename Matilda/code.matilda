@@ -1,18 +1,21 @@
-schema Customers = {
-    customer_id : int,
-    name : string,
-    hej : bool
+schema Transactions = {
+    ID : int,
+    Transaction : string,
+    Amount : int,
+    test: bool
 }
 
-schema Customers2 = {
-    customer_id : int,
-    name : string
+schema SummedTransactionsByTransaction = {
+    Transaction : string
+    Amount : int,
 }
 
-function table<Customers> filterCustomers(table<Customers> customers_table) {
-    return FILTER(customers_table, customer_id < 5 && 1 < customer_id);
+schema SummedTransactionsById = {
+    ID : int,
+    Amount : int
 }
 
-table<Customers> CustomersTable = read("test.csv");
+table<Transactions> transactions = read("test.csv");
 
-table<Customers> filteredCustomersTable = filterCustomers(CustomersTable);
+table<SummedTransactionsByTransaction> summedTransactions = SUM(transactions, Transaction, Amount, SummedTransactionsByTransaction);
+table<SummedTransactionsById> summedTransactions2 = SUM(transactions, ID, Amount, SummedTransactionsById);

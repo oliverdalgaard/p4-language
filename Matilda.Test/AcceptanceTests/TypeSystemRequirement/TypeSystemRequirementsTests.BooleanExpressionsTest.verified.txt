@@ -1,0 +1,118 @@
+﻿{
+  envV: {
+    Bindings: {
+      isEqual: {
+        B: true
+      },
+      isGreater: {
+        B: true
+      },
+      isNotEqual: {
+        B: true
+      },
+      x: {
+        N: 10
+      },
+      y: {
+        N: 5
+      }
+    },
+    IsFunctionScope: false
+  },
+  envP: {},
+  envS: {},
+  envVT: {
+    Bindings: {
+      isEqual: {},
+      isGreater: {},
+      isNotEqual: {},
+      x: {},
+      y: {}
+    },
+    HasReturn: false
+  },
+  envPT: {},
+  envST: {},
+  typeChecker: {},
+  Stmt: {
+    Stmt1: {
+      Type: {},
+      Identifier: x,
+      Expression: {
+        Value: 10,
+        LineNumber: 1
+      },
+      LineNumber: 1
+    },
+    Stmt2: {
+      Stmt1: {
+        Type: {},
+        Identifier: y,
+        Expression: {
+          Value: 5,
+          LineNumber: 2
+        },
+        LineNumber: 2
+      },
+      Stmt2: {
+        Stmt1: {
+          Type: {},
+          Identifier: isGreater,
+          Expression: {
+            Op: LT,
+            ExprLeft: {
+              Value: 5,
+              LineNumber: 3
+            },
+            ExprRight: {
+              Name: x,
+              LineNumber: 3
+            },
+            LineNumber: 3
+          },
+          LineNumber: 3
+        },
+        Stmt2: {
+          Stmt1: {
+            Type: {},
+            Identifier: isEqual,
+            Expression: {
+              Op: EQ,
+              ExprLeft: {
+                Name: x,
+                LineNumber: 4
+              },
+              ExprRight: {
+                Name: x,
+                LineNumber: 4
+              },
+              LineNumber: 4
+            },
+            LineNumber: 4
+          },
+          Stmt2: {
+            Type: {},
+            Identifier: isNotEqual,
+            Expression: {
+              Op: NEQ,
+              ExprLeft: {
+                Name: x,
+                LineNumber: 5
+              },
+              ExprRight: {
+                Name: y,
+                LineNumber: 5
+              },
+              LineNumber: 5
+            },
+            LineNumber: 5
+          },
+          LineNumber: 4
+        },
+        LineNumber: 3
+      },
+      LineNumber: 2
+    },
+    LineNumber: 1
+  }
+}

@@ -156,25 +156,6 @@ public class ReturnTests
 }
 
 [TestClass]
-public class PrintTests
-{
-    [TestMethod]
-    public void PrintStoresProperties()
-    {
-        // Arrange
-        Expr expectedValue = new IntV(5, -1);
-        int expectedLineNumber = -1;
-
-        // Act
-        LocalDeclaration declaration = new LocalDeclaration(IntT.Instance, "x", expectedValue, expectedLineNumber);
-
-        // Assert
-        Assert.AreSame(expectedValue, declaration.Expression);
-        Assert.AreEqual(expectedLineNumber, declaration.LineNumber);
-    }
-}
-
-[TestClass]
 public class IfTests
 {
     [TestMethod]

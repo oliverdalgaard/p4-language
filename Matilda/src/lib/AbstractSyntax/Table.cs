@@ -33,12 +33,12 @@ public class Table
         Records = records;
     }
 
-    public void addRecord(List<Val> values)
+    public void AddRecord(List<Val> values)
     {
         Records.Add(new TableRecord(values));
     }
 
-    public void addRecord(TableRecord record)
+    public void AddRecord(TableRecord record)
     {
         Records.Add(record);
     }
@@ -94,7 +94,7 @@ public class Table
                 }
             }
 
-            addRecord(tableRecordVals);
+            AddRecord(tableRecordVals);
         }
     }
 

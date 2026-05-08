@@ -1,0 +1,11 @@
+schema Person = {
+    id: int,
+    name: string
+}
+
+function table<Person> filterPeople(table<Person> people) {
+    return FILTER(people, 2 < id);
+}
+
+table<Person> people = read("../../../MatildaCSVFiles/people.csv");
+table<Person> filtered = filterPeople(people);

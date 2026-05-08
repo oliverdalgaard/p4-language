@@ -1,0 +1,12 @@
+schema Transaction = {
+    id: int,
+    transaction: string,
+    amount: int
+}
+
+function table<Transaction> filterTransactions(table<Transaction> transactions) {
+    return FILTER(transactions, 5000 < amount);
+}
+
+table<Transaction> transactions = read("../../../MatildaCSVFiles/transaction.csv");
+table<Transaction> filtered = filterTransactions(transactions);

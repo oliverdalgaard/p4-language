@@ -1,0 +1,7 @@
+schema Transaction = {
+    id: int,
+    transaction: string,
+    amount: int
+}
+
+table<Transaction> transaction = read("../../../MatildaCSVFiles/transaction.csv");

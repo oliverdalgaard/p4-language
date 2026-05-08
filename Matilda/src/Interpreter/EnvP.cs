@@ -3,12 +3,12 @@ namespace Matilda;
 public class EnvP
 {
     private readonly EnvP? parentScope;
-    private Dictionary<string, FunctionDeclaration> bindings;
+    public Dictionary<string, FunctionDeclaration> Bindings { get; }
 
     public EnvP(EnvP? parentScope = null, Dictionary<string, FunctionDeclaration>? bindings = null)
     {
         this.parentScope = parentScope;
-        this.bindings = bindings ?? new Dictionary<string, FunctionDeclaration>();
+        Bindings = bindings ?? new Dictionary<string, FunctionDeclaration>();
     }
 
     public void Bind(FunctionDeclaration func)
@@ -18,14 +18,14 @@ public class EnvP
             throw new Exception($"The identifer {func.Identifier} has already been bound in the local scope.");
         }
 
-        bindings[func.Identifier] = func;
+        Bindings[func.Identifier] = func;
     }
 
     public FunctionDeclaration? TryGet(string function)
     {
         if (IsLocal(function))
         {
-            return bindings[function];
+            return Bindings[function];
         }
         else
         {
@@ -35,7 +35,7 @@ public class EnvP
 
     private bool IsLocal(string function)
     {
-        return bindings.ContainsKey(function);
+        return Bindings.ContainsKey(function);
     }
 
 }

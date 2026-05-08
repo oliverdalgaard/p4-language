@@ -1,7 +1,28 @@
-using System.Runtime;
 using Matilda;
 
 namespace MatildaTests.UnitTests.TypeCheckerTests.StmtTTests;
+
+[TestClass]
+public class TestInvalidStatement : RunTypeChecker
+{
+    [TestMethod]
+    public void InvalidStatementTest()
+    {
+        // Arrange
+        Stmt stmt = null;
+
+        // Assert
+        try
+        {
+            TypeChecker checker = Run(new Program(stmt));
+            Assert.Fail();
+        }
+        catch (Exception exception)
+        {
+            Assert.AreEqual("Invalid statement", exception.Message);
+        }
+    }
+}
 
 [TestClass]
 public class CompTestsTypeChecker : RunTypeChecker
@@ -106,6 +127,36 @@ public class IfTestsTypeChecker : RunTypeChecker
 public class AssignTestsTypeChecker : RunTypeChecker
 {
     [TestMethod]
+    public void AssignCheckNullValue()
+    {
+        //arrange
+        Stmt stmt = new Assign(null, new IntV(5, 1), -1);
+        //act
+        TypeChecker checker = Run(new Program(stmt));
+        //assert
+        List<string> expected = new List<string>
+    {
+        "Line -1: Invalid assignment",
+    };
+        CollectionAssert.AreEqual(expected, checker.errors);
+    }
+
+    [TestMethod]
+    public void AssignCheckNullValue2()
+    {
+        //arrange
+        Stmt stmt = new Assign("x", null, -1);
+        //act
+        TypeChecker checker = Run(new Program(stmt));
+        //assert
+        List<string> expected = new List<string>
+    {
+        "Line -1: Invalid assignment",
+    };
+        CollectionAssert.AreEqual(expected, checker.errors);
+    }
+
+    [TestMethod]
     public void AssignCheckNotDeclared()
     {
         //arrange
@@ -119,6 +170,7 @@ public class AssignTestsTypeChecker : RunTypeChecker
     };
         CollectionAssert.AreEqual(expected, checker.errors);
     }
+
     [TestMethod]
     public void AssignCheckWrongType()
     {
@@ -134,6 +186,7 @@ public class AssignTestsTypeChecker : RunTypeChecker
     };
         CollectionAssert.AreEqual(expected, checker.errors);
     }
+
     [TestMethod]
     public void AssignCheck()
     {
@@ -145,11 +198,102 @@ public class AssignTestsTypeChecker : RunTypeChecker
         // assert
         Assert.IsFalse(checker.HasErrors());
     }
+
+    [TestMethod]
+    public void AssignTableTestWrongSchema()
+    {
+        // Arrange
+        List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> { new SchemaDeclaration("test1", new List<Column>(), -1), new SchemaDeclaration("test2", new List<Column> { new Column("test", IntT.Instance) }, -1) };
+        Stmt stmt = new Comp(new TableDeclaration(new TableT("test1"), "x", "testFilePath", -1), new Comp(new TableDeclaration(new TableT("test2"), "testTable", "testFilePath", -1), new Assign("x", new Ref("testTable", -1), -1)));
+
+        // Act
+        TypeChecker checker = Run(new Program(topLevelDeclarations, stmt));
+
+        // Assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.HasCount(1, checker.errors);
+        Assert.AreEqual("Line -1: Cannot assign table with schema 'test2' to table 'x' with schema 'test1'.", checker.errors[0]);
+    }
+
+    [TestMethod]
+    public void AssignTableTestSuccess()
+    {
+        // Arrange
+        List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> { new SchemaDeclaration("test1", new List<Column>(), -1) };
+        Stmt stmt = new Comp(new TableDeclaration(new TableT("test1"), "x", "testFilePath", -1), new Comp(new TableDeclaration(new TableT("test1"), "testTable", "testFilePath", -1), new Assign("x", new Ref("testTable", -1), -1)));
+
+        // Act
+        TypeChecker checker = Run(new Program(topLevelDeclarations, stmt));
+
+        // Assert
+        Assert.IsFalse(checker.HasErrors());
+    }
 }
 
 [TestClass]
 public class LocalDeclarationTestsTypeChecker : RunTypeChecker
 {
+    [TestMethod]
+    public void LocalDeclarationCheckNullValue()
+    {
+        // Arrange
+        Stmt stmt = new LocalDeclaration(IntT.Instance, null, new IntV(1, -1), -1);
+
+        // Act
+        TypeChecker checker = Run(new Program(stmt));
+
+        // Assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.HasCount(1, checker.errors);
+        Assert.AreEqual("Line -1: Invalid declaration.", checker.errors[0]);
+    }
+
+    [TestMethod]
+    public void LocalDeclarationCheckNullValue2()
+    {
+        // Arrange
+        Stmt stmt = new LocalDeclaration(null, "x", new IntV(1, -1), -1);
+
+        // Act
+        TypeChecker checker = Run(new Program(stmt));
+
+        // Assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.HasCount(1, checker.errors);
+        Assert.AreEqual("Line -1: Invalid declaration.", checker.errors[0]);
+    }
+
+    [TestMethod]
+    public void LocalDeclarationAlreadyDeclaredTest()
+    {
+        // Arrange
+        Stmt stmt = new Comp(new LocalDeclaration(IntT.Instance, "x", new IntV(1, -1), -1), new LocalDeclaration(IntT.Instance, "x", new IntV(2, -1), -1));
+
+        // Act
+        TypeChecker checker = Run(new Program(stmt));
+
+        // Assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.HasCount(1, checker.errors);
+        Assert.AreEqual("Line -1: Variable 'x' is already declared.", checker.errors[0]);
+    }
+
+    [TestMethod]
+    public void LocalDeclarationSchemaDoesNotMatch()
+    {
+        // Arrange
+        List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> { new SchemaDeclaration("test1", new List<Column>(), -1), new SchemaDeclaration("test2", new List<Column> { new Column("Test", IntT.Instance) }, -1) };
+        Stmt stmt = new Comp(new TableDeclaration(new TableT("test1"), "testTable", "testFilePath", -1), new LocalDeclaration(new TableT("test2"), "x", new Ref("testTable", -1), -1));
+
+        // Act
+        TypeChecker checker = Run(new Program(topLevelDeclarations, stmt));
+
+        // Assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.HasCount(1, checker.errors);
+        Assert.AreEqual("Line -1: Declaration schema does not match the schema of the expression.", checker.errors[0]);
+    }
+
     [TestMethod]
     public void LocalDeclarationCheckWrongType()
     {
@@ -195,6 +339,22 @@ public class ReturnTestsTypeChecker : RunTypeChecker
     };
         CollectionAssert.AreEqual(expected, checker.errors);
     }
+
+    [TestMethod]
+    public void ReturnNeedsAValue()
+    {
+        //arrange
+        Stmt stmt = new Return(null, -1);
+        //act
+        TypeChecker checker = Run(new Program(stmt));
+        // assert
+        List<string> expected = new List<string>
+    {
+        "Line -1: 'return' needs a value.",
+    };
+        CollectionAssert.AreEqual(expected, checker.errors);
+    }
+
     [TestMethod]
     public void ReturnCheckInsideFunction()
     {
@@ -212,12 +372,99 @@ public class ReturnTestsTypeChecker : RunTypeChecker
         // assert
         Assert.IsFalse(checker.HasErrors());
     }
+
+    [TestMethod]
+    public void ReturnDoesNotReturnCorrectSchemaType()
+    {
+        // Arrange
+        List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> {
+            new SchemaDeclaration("test1", new List<Column>(), -1),
+            new SchemaDeclaration("test2", new List<Column> {new Column("test", IntT.Instance)}, -1),
+
+            new FunctionDeclaration(new TableT("test1"), "func1",
+                new List<Parameter>(),
+                new Comp
+                    (
+                        new TableDeclaration(new TableT("test2"), "testTable", "testFilePath", -1),
+                        new Return(new Ref("testTable", -1), -1)
+                    ),
+                -1)
+                };
+
+        // Act
+        TypeChecker checker = Run(new Program(topLevelDeclarations));
+
+        // Assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.HasCount(1, checker.errors);
+        Assert.AreEqual("Line -1: Return type schema 'test2' does not match function return type schema 'test1'.", checker.errors[0]);
+    }
 }
 
 //table declaration test
 [TestClass]
 public class TableDeclarationtestsTypeChecker : RunTypeChecker
 {
+    [TestMethod]
+    public void TableDeclarationCheckNullValue()
+    {
+        //arrange
+        Stmt stmt = new TableDeclaration(
+            IntT.Instance,
+            "tab1",
+            "../../../TypeChecker/TestMatildaScriptTypeChecker/TableDeclaration.csv",
+            -1
+        );
+        //act
+        TypeChecker checker = Run(new Program(stmt));
+        //assert
+        List<string> expected = new List<string>
+    {
+        "Line -1: Invalid table declaration."
+    };
+        CollectionAssert.AreEqual(expected, checker.errors);
+    }
+
+    [TestMethod]
+    public void TableDeclarationCheckNullValue2()
+    {
+        //arrange
+        Stmt stmt = new TableDeclaration(
+            null,
+            "tab1",
+            "../../../TypeChecker/TestMatildaScriptTypeChecker/TableDeclaration.csv",
+            -1
+        );
+        //act
+        TypeChecker checker = Run(new Program(stmt));
+        //assert
+        List<string> expected = new List<string>
+    {
+        "Line -1: Invalid table declaration."
+    };
+        CollectionAssert.AreEqual(expected, checker.errors);
+    }
+
+    [TestMethod]
+    public void TableDeclarationCheckNullValue3()
+    {
+        //arrange
+        Stmt stmt = new TableDeclaration(
+            new TableT("schema1"),
+            null,
+            "../../../TypeChecker/TestMatildaScriptTypeChecker/TableDeclaration.csv",
+            -1
+        );
+        //act
+        TypeChecker checker = Run(new Program(stmt));
+        //assert
+        List<string> expected = new List<string>
+    {
+        "Line -1: Invalid table declaration."
+    };
+        CollectionAssert.AreEqual(expected, checker.errors);
+    }
+
     [TestMethod]
     public void TableDeclarationTestWrongType()
     {
@@ -265,42 +512,18 @@ public class TableDeclarationtestsTypeChecker : RunTypeChecker
     }
 
     [TestMethod]
-    public void FunctionWithIfStmtSeesReturnStmt()
+    public void TableDeclarationDuplicateFails()
     {
         // Arrange
-        Expr condition = new BoolV(true, -1);
-        Stmt thenBody = new Return(new IntV(10, -1), -1);
-        Stmt elseBody = new Return(new IntV(10, -1), -1);
-
-        Stmt ifStmt = new If(condition, thenBody, elseBody, -1);
-
-        TopLevelDeclaration topLevelDeclaration = new FunctionDeclaration(IntT.Instance, "testFunction", new List<Parameter>(), ifStmt, -1);
+        List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> { new SchemaDeclaration("test1", new List<Column>(), -1) };
+        Stmt stmt = new Comp(new TableDeclaration(new TableT("test1"), "testTable", "testFilePath", -1), new TableDeclaration(new TableT("test1"), "testTable", "testFilePath", -1));
 
         // Act
-        TypeChecker checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }));
+        TypeChecker checker = Run(new Program(topLevelDeclarations, stmt));
 
         // Assert
-        Assert.IsFalse(checker.HasErrors());
-    }
-
-    [TestMethod]
-    public void FunctionWithIfStmtContainingNoReturn()
-    {
-        // Arrange
-        Expr condition = new BoolV(true, -1);
-        Stmt thenBody = Skip.Instance;
-        Stmt elseBody = Skip.Instance;
-
-        Stmt ifStmt = new If(condition, thenBody, elseBody, -1);
-        Stmt returnStmt = new Return(new IntV(10, -1), -1);
-        Stmt functionBody = new Comp(ifStmt, returnStmt);
-
-        TopLevelDeclaration topLevelDeclaration = new FunctionDeclaration(IntT.Instance, "testFunction", new List<Parameter>(), functionBody, -1);
-
-        // Act
-        TypeChecker checker = Run(new Program(new List<TopLevelDeclaration> { topLevelDeclaration }));
-
-        // Assert
-        Assert.IsFalse(checker.HasErrors());
+        Assert.IsTrue(checker.HasErrors());
+        Assert.HasCount(1, checker.errors);
+        Assert.AreEqual("Line -1: Table 'testTable' is already declared.", checker.errors[0]);
     }
 }

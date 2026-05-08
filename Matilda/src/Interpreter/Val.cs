@@ -47,7 +47,17 @@ public class IntVal : Val
         return N.ToString();
     }
 
+    public override bool Equals(object? obj)
+    {
+        return obj is IntVal intObj && intObj.AsInt() == N;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(nameof(IntVal), N);
+    }
 }
+
 public class FloatVal : Val
 {
     public float F { get; }
@@ -65,6 +75,16 @@ public class FloatVal : Val
     public override string ToString()
     {
         return F.ToString();
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is FloatVal floatObj && floatObj.AsFloat() == F;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(nameof(FloatVal), F);
     }
 }
 
@@ -86,6 +106,16 @@ public class BoolVal : Val
     {
         return B.ToString();
     }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is BoolVal boolObj && boolObj.AsBool() == B;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(nameof(BoolVal), B);
+    }
 }
 
 public class StringVal : Val
@@ -100,6 +130,16 @@ public class StringVal : Val
     public override string ToString()
     {
         return S;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is StringVal stringObj && stringObj.ToString() == S;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(nameof(StringVal), S);
     }
 }
 
