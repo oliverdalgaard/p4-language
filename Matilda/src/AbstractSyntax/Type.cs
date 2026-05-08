@@ -40,13 +40,6 @@ public sealed class RowValT : Type
     public RowValT() { }
 }
 
-public sealed class SchemaT : Type
-{
-    public static readonly SchemaT Instance = new SchemaT();
-
-    public SchemaT() { }
-}
-
 public sealed class TableT : Type
 {
     public string SchemaId { get; }
