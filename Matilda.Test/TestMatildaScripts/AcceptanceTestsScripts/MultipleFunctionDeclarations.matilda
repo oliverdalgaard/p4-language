@@ -1,0 +1,15 @@
+function int test(int x, bool y) {
+    if (y) {
+        return x;
+    } else {
+        return 2;
+    }
+}
+
+function int test2(bool z) {
+    return 5;
+}
+
+function int test3() {
+    return 10;
+}

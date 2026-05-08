@@ -1,0 +1,107 @@
+﻿{
+  envV: {
+    IsFunctionScope: false
+  },
+  envP: {
+    Bindings: {
+      test: {
+        Type: {},
+        Identifier: test,
+        Parameters: [
+          {
+            Type: {},
+            Identifier: x,
+            LineNumber: 1
+          },
+          {
+            Type: {},
+            Identifier: y,
+            LineNumber: 1
+          }
+        ],
+        Body: {
+          Condition: {
+            Name: y,
+            LineNumber: 2
+          },
+          ThenBody: {
+            Value: {
+              Name: x,
+              LineNumber: 3
+            },
+            LineNumber: 3
+          },
+          ElseBody: {
+            Value: {
+              Value: 2,
+              LineNumber: 5
+            },
+            LineNumber: 5
+          },
+          LineNumber: 2
+        },
+        LineNumber: 1
+      }
+    }
+  },
+  envS: {},
+  envVT: {
+    HasReturn: false
+  },
+  envPT: {
+    Bindings: {
+      test: {
+        Parameters: [
+          {},
+          {}
+        ],
+        ReturnType: {}
+      }
+    }
+  },
+  envST: {},
+  typeChecker: {},
+  TopLevelDeclarations: [
+    {
+      Type: {},
+      Identifier: test,
+      Parameters: [
+        {
+          Type: {},
+          Identifier: x,
+          LineNumber: 1
+        },
+        {
+          Type: {},
+          Identifier: y,
+          LineNumber: 1
+        }
+      ],
+      Body: {
+        Condition: {
+          Name: y,
+          LineNumber: 2
+        },
+        ThenBody: {
+          Value: {
+            Name: x,
+            LineNumber: 3
+          },
+          LineNumber: 3
+        },
+        ElseBody: {
+          Value: {
+            Value: 2,
+            LineNumber: 5
+          },
+          LineNumber: 5
+        },
+        LineNumber: 2
+      },
+      LineNumber: 1
+    }
+  ],
+  Stmt: {
+    LineNumber: -1
+  }
+}

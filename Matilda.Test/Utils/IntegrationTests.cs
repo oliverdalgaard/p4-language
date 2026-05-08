@@ -6,8 +6,12 @@ public class IntegrationTestHelper : TestHelper
 {
     public override string ScriptFolder
     {
-        get => Path.GetFullPath(Path.Combine(
-            AppContext.BaseDirectory,
-            "../../../TestMatildaScripts/IntegrationTestsScripts"));
+        get
+        {
+            var testProjectPath = Path.GetDirectoryName(typeof(IntegrationTestHelper).Assembly.Location)!;
+            return Path.GetFullPath(Path.Combine(
+                testProjectPath,
+                "../../../../Matilda.Test/TestMatildaScripts/IntegrationTestsScripts"));
+        }
     }
 }

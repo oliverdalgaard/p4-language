@@ -72,16 +72,36 @@ public class FunctionRef : Expr
     }
 }
 
-public class FilterExpr : Expr
+public class Filter : Expr
 {
     public Expr TableExpr { get; }
     public Expr Predicate { get; }
     public override int LineNumber { get; }
 
-    public FilterExpr(Expr tableExpr, Expr predicate, int lineNumber)
+    public Filter(Expr tableExpr, Expr predicate, int lineNumber)
     {
         TableExpr = tableExpr;
         Predicate = predicate;
+
+        LineNumber = lineNumber;
+    }
+}
+
+public class Sum : Expr
+{
+    public Expr TableExpr { get; }
+    public string GroupByColumn { get; }
+    public string SumColumn { get; }
+    public string ResultSchemaId { get; }
+
+    public override int LineNumber { get; }
+
+    public Sum(Expr tableExpr, string groupByColumn, string sumColumn, string resultSchemaId, int lineNumber)
+    {
+        TableExpr = tableExpr;
+        GroupByColumn = groupByColumn;
+        SumColumn = sumColumn;
+        ResultSchemaId = resultSchemaId;
 
         LineNumber = lineNumber;
     }

@@ -501,16 +501,16 @@ public class TypeChecker
                     }
                 }
 
-            case FilterExpr filter:
-                Type tableExprType = ExprT(filter.TableExpr, envVT, envPT, envST);
+            case Filter filter:
+                Type filterTableExprType = ExprT(filter.TableExpr, envVT, envPT, envST);
 
-                if (tableExprType is not TableT)
+                if (filterTableExprType is not TableT)
                 {
                     errors.Add($"Line {filter.LineNumber}: Argument 1 must be of type 'TableT'.");
                     return null;
                 }
 
-                TableT filterTable = (TableT)tableExprType;
+                TableT filterTable = (TableT)filterTableExprType;
                 List<Column> filterTableSchema = envST.TryGet(filterTable.SchemaId);
                 EnvVT rowEnv = envVT.NewScope();
 
@@ -525,7 +525,66 @@ public class TypeChecker
                     return null;
                 }
 
-                return (TableT)tableExprType;
+                return (TableT)filterTableExprType;
+
+            case Sum sum:
+                Type sumTableExprType = ExprT(sum.TableExpr, envVT, envPT, envST);
+
+                if (sumTableExprType is not TableT)
+                {
+                    errors.Add($"Line {sum.LineNumber}: Argument 1 must be of type 'TableT'.");
+                    return null;
+                }
+
+                TableT sumExprTable = (TableT)sumTableExprType;
+
+                List<Column>? sumResultSchema = envST.TryGet(sum.ResultSchemaId);
+
+                if (sumResultSchema == null)
+                {
+                    errors.Add($"Line {sum.LineNumber}: Result schema '{sum.ResultSchemaId}' has not been defined.");
+                    return null;
+                }
+
+                if (sumResultSchema.Count != 2)
+                {
+                    errors.Add($"Line {sum.LineNumber}: Result schema '{sum.ResultSchemaId}' may only contain two columns but has {sumResultSchema.Count} columns.");
+                    return null;
+                }
+
+                List<Column> sumTableExprSchema = envST.TryGet(sumExprTable.SchemaId)!;
+
+                if (!sumTableExprSchema.Contains(sumResultSchema[0]))
+                {
+                    errors.Add($"Line {sum.LineNumber}: The coulmn '{sumResultSchema[0].Id}' does not exist in schema '{sumExprTable.SchemaId}'.");
+                    return null;
+                }
+
+                if (!sumTableExprSchema.Contains(sumResultSchema[1]))
+                {
+                    errors.Add($"Line {sum.LineNumber}: The coulmn '{sumResultSchema[1].Id}' does not exist in schema '{sumExprTable.SchemaId}'.");
+                    return null;
+                }
+
+                Column sumColumn;
+
+                if (sumResultSchema[0].Id == sum.SumColumn)
+                {
+                    sumColumn = sumResultSchema[0];
+                }
+                else
+                {
+                    sumColumn = sumResultSchema[1];
+
+                }
+
+                if (sumColumn.Type != IntT.Instance && sumColumn.Type != FloatT.Instance)
+                {
+                    errors.Add($"Line {sum.LineNumber}: The coulmn '{sumColumn.Id}' must be of type 'IntT' or 'FloatT', but got '{sumColumn.Type}'.");
+                    return null;
+                }
+
+                return new TableT(sum.ResultSchemaId);
 
             case Ref r:
                 if (envVT.TryGet(r.Name) == null)

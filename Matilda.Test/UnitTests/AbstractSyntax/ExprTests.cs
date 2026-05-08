@@ -6,7 +6,6 @@ namespace MatildaTests.UnitTests.AbstractSyntaxTests.ExprTests;
 public class UnaryOpTests
 {
     [TestMethod]
-    // Start unit tests
     public void SetUnaryOpProperties()
     {
         // Arrange
@@ -82,5 +81,49 @@ public class FunctionTests
         Assert.HasCount(2, result.Arguments);
         Assert.AreEqual("x", ((Ref)result.Arguments[0]).Name);
         Assert.AreEqual("y", ((Ref)result.Arguments[1]).Name);
+    }
+}
+
+[TestClass]
+public class FilterTests
+{
+    [TestMethod]
+    public void SetFilterPropertiesTest()
+    {
+        // Arrangge
+        Expr filterTableExpr = new Ref("TestTable", -1);
+        Expr predicateExpr = new BoolV(true, -1);
+
+        // Act
+        Filter filter = new Filter(filterTableExpr, predicateExpr, -1);
+
+        // Assert
+        Assert.AreEqual(filterTableExpr, filter.TableExpr);
+        Assert.AreEqual(predicateExpr, filter.Predicate);
+        Assert.AreEqual(-1, filter.LineNumber);
+    }
+}
+
+[TestClass]
+public class SumTests
+{
+    [TestMethod]
+    public void SetSumPropertiesTest()
+    {
+        // Arrange
+        Expr sumTableExpr = new Ref("TestTable", -1);
+        string groupByColumn = "ID";
+        string sumColumn = "Amount";
+        string resultSchemaId = "transactionsSchema";
+
+        // Act
+        Sum sumExpr = new Sum(sumTableExpr, groupByColumn, sumColumn, resultSchemaId, -1);
+
+        // Assert
+        Assert.AreEqual(sumTableExpr, sumExpr.TableExpr);
+        Assert.AreEqual(groupByColumn, sumExpr.GroupByColumn);
+        Assert.AreEqual(sumColumn, sumExpr.SumColumn);
+        Assert.AreEqual(resultSchemaId, sumExpr.ResultSchemaId);
+        Assert.AreEqual(-1, sumExpr.LineNumber);
     }
 }

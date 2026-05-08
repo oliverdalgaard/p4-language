@@ -275,10 +275,21 @@ Term<out Expr expr>               (. expr = null; int lineNumber = -1; .) =
   | '(' Expr<out expr> ')'
   | "FILTER"                      (. lineNumber = t.line; .)
     '('
-    Expr<out Expr tableExpr> 
-    ','
-    Expr<out Expr predicate>
-    ')'                           (. expr = new FilterExpr(tableExpr, predicate, lineNumber); .)
+      Expr<out Expr tableExpr> 
+      ','
+      Expr<out Expr predicate>
+    ')'                           (. expr = new Filter(tableExpr, predicate, lineNumber); .)
+  | "SUM"                         (. lineNumber = t.line; .)
+    '('
+      Expr<out Expr tableExpr>
+      ','
+      IDENT                       (. string groupByColumnId = t.val; .)
+      ','
+      IDENT                       (. string sumColumnId = t.val; .)
+      ','
+      IDENT                       (. string resultSchemaId = t.val; .)
+    ')'                           (. expr = new Sum(tableExpr, groupByColumnId, sumColumnId, resultSchemaId, lineNumber); .)
+    
 .
 
 END Matilda.

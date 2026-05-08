@@ -1,0 +1,6 @@
+int x = 10;
+bool result = false;
+
+if (5 < x) {
+    result = true;
+}

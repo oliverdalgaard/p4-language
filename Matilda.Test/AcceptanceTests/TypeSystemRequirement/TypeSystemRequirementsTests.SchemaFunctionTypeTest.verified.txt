@@ -1,0 +1,320 @@
+﻿{
+  envV: {
+    Bindings: {
+      filtered: {
+        T: {
+          Identifier: people,
+          Schema: [
+            {
+              Id: id,
+              Type: {}
+            },
+            {
+              Id: name,
+              Type: {}
+            }
+          ],
+          Headers: [
+            {
+              Identifier: id,
+              Type: {}
+            },
+            {
+              Identifier: name,
+              Type: {}
+            }
+          ],
+          Records: [
+            {
+              Values: [
+                {
+                  N: 3
+                },
+                {
+                  S: Charlie
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 4
+                },
+                {
+                  S: Diana
+                }
+              ]
+            }
+          ]
+        }
+      },
+      people: {
+        T: {
+          Identifier: people,
+          Schema: [
+            {
+              Id: id,
+              Type: {}
+            },
+            {
+              Id: name,
+              Type: {}
+            }
+          ],
+          File: [
+            [
+              id,
+              name
+            ],
+            [
+              1,
+              Alice
+            ],
+            [
+              2,
+              Bob
+            ],
+            [
+              3,
+              Charlie
+            ],
+            [
+              4,
+              Diana
+            ]
+          ],
+          Headers: [
+            {
+              Identifier: id,
+              Type: {}
+            },
+            {
+              Identifier: name,
+              Type: {}
+            }
+          ],
+          Records: [
+            {
+              Values: [
+                {
+                  N: 1
+                },
+                {
+                  S: Alice
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 2
+                },
+                {
+                  S: Bob
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 3
+                },
+                {
+                  S: Charlie
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 4
+                },
+                {
+                  S: Diana
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    IsFunctionScope: false
+  },
+  envP: {
+    Bindings: {
+      filterPeople: {
+        Type: {
+          SchemaId: Person
+        },
+        Identifier: filterPeople,
+        Parameters: [
+          {
+            Type: {
+              SchemaId: Person
+            },
+            Identifier: people,
+            LineNumber: 6
+          }
+        ],
+        Body: {
+          Value: {
+            TableExpr: {
+              Name: people,
+              LineNumber: 7
+            },
+            Predicate: {
+              Op: LT,
+              ExprLeft: {
+                Value: 2,
+                LineNumber: 7
+              },
+              ExprRight: {
+                Name: id,
+                LineNumber: 7
+              },
+              LineNumber: 7
+            },
+            LineNumber: 7
+          },
+          LineNumber: 7
+        },
+        LineNumber: 6
+      }
+    }
+  },
+  envS: {
+    Bindings: {
+      Person: [
+        {
+          Id: id,
+          Type: {}
+        },
+        {
+          Id: name,
+          Type: {}
+        }
+      ]
+    }
+  },
+  envVT: {
+    Bindings: {
+      filtered: {
+        SchemaId: Person
+      },
+      people: {
+        SchemaId: Person
+      }
+    },
+    HasReturn: false
+  },
+  envPT: {
+    Bindings: {
+      filterPeople: {
+        Parameters: [
+          {
+            SchemaId: Person
+          }
+        ],
+        ReturnType: {
+          SchemaId: Person
+        }
+      }
+    }
+  },
+  envST: {
+    Bindings: {
+      Person: [
+        {
+          Id: id,
+          Type: {}
+        },
+        {
+          Id: name,
+          Type: {}
+        }
+      ]
+    }
+  },
+  typeChecker: {},
+  TopLevelDeclarations: [
+    {
+      Identifier: Person,
+      Columns: [
+        {
+          Id: id,
+          Type: {}
+        },
+        {
+          Id: name,
+          Type: {}
+        }
+      ]
+    },
+    {
+      Type: {
+        SchemaId: Person
+      },
+      Identifier: filterPeople,
+      Parameters: [
+        {
+          Type: {
+            SchemaId: Person
+          },
+          Identifier: people,
+          LineNumber: 6
+        }
+      ],
+      Body: {
+        Value: {
+          TableExpr: {
+            Name: people,
+            LineNumber: 7
+          },
+          Predicate: {
+            Op: LT,
+            ExprLeft: {
+              Value: 2,
+              LineNumber: 7
+            },
+            ExprRight: {
+              Name: id,
+              LineNumber: 7
+            },
+            LineNumber: 7
+          },
+          LineNumber: 7
+        },
+        LineNumber: 7
+      },
+      LineNumber: 6
+    }
+  ],
+  Stmt: {
+    Stmt1: {
+      Type: {
+        SchemaId: Person
+      },
+      Identifier: people,
+      FilePath: ../../../MatildaCSVFiles/people.csv,
+      LineNumber: 10
+    },
+    Stmt2: {
+      Type: {
+        SchemaId: Person
+      },
+      Identifier: filtered,
+      Expression: {
+        Name: filterPeople,
+        Arguments: [
+          {
+            Name: people,
+            LineNumber: 11
+          }
+        ],
+        LineNumber: 11
+      },
+      LineNumber: 11
+    },
+    LineNumber: 10
+  }
+}

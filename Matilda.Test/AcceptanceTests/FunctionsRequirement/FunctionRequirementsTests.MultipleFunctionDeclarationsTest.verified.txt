@@ -1,0 +1,178 @@
+﻿{
+  envV: {
+    IsFunctionScope: false
+  },
+  envP: {
+    Bindings: {
+      test: {
+        Type: {},
+        Identifier: test,
+        Parameters: [
+          {
+            Type: {},
+            Identifier: x,
+            LineNumber: 1
+          },
+          {
+            Type: {},
+            Identifier: y,
+            LineNumber: 1
+          }
+        ],
+        Body: {
+          Condition: {
+            Name: y,
+            LineNumber: 2
+          },
+          ThenBody: {
+            Value: {
+              Name: x,
+              LineNumber: 3
+            },
+            LineNumber: 3
+          },
+          ElseBody: {
+            Value: {
+              Value: 2,
+              LineNumber: 5
+            },
+            LineNumber: 5
+          },
+          LineNumber: 2
+        },
+        LineNumber: 1
+      },
+      test2: {
+        Type: {},
+        Identifier: test2,
+        Parameters: [
+          {
+            Type: {},
+            Identifier: z,
+            LineNumber: 9
+          }
+        ],
+        Body: {
+          Value: {
+            Value: 5,
+            LineNumber: 10
+          },
+          LineNumber: 10
+        },
+        LineNumber: 9
+      },
+      test3: {
+        Type: {},
+        Identifier: test3,
+        Body: {
+          Value: {
+            Value: 10,
+            LineNumber: 14
+          },
+          LineNumber: 14
+        },
+        LineNumber: 13
+      }
+    }
+  },
+  envS: {},
+  envVT: {
+    HasReturn: false
+  },
+  envPT: {
+    Bindings: {
+      test: {
+        Parameters: [
+          {},
+          {}
+        ],
+        ReturnType: {}
+      },
+      test2: {
+        Parameters: [
+          {}
+        ],
+        ReturnType: {}
+      },
+      test3: {
+        ReturnType: {}
+      }
+    }
+  },
+  envST: {},
+  typeChecker: {},
+  TopLevelDeclarations: [
+    {
+      Type: {},
+      Identifier: test,
+      Parameters: [
+        {
+          Type: {},
+          Identifier: x,
+          LineNumber: 1
+        },
+        {
+          Type: {},
+          Identifier: y,
+          LineNumber: 1
+        }
+      ],
+      Body: {
+        Condition: {
+          Name: y,
+          LineNumber: 2
+        },
+        ThenBody: {
+          Value: {
+            Name: x,
+            LineNumber: 3
+          },
+          LineNumber: 3
+        },
+        ElseBody: {
+          Value: {
+            Value: 2,
+            LineNumber: 5
+          },
+          LineNumber: 5
+        },
+        LineNumber: 2
+      },
+      LineNumber: 1
+    },
+    {
+      Type: {},
+      Identifier: test2,
+      Parameters: [
+        {
+          Type: {},
+          Identifier: z,
+          LineNumber: 9
+        }
+      ],
+      Body: {
+        Value: {
+          Value: 5,
+          LineNumber: 10
+        },
+        LineNumber: 10
+      },
+      LineNumber: 9
+    },
+    {
+      Type: {},
+      Identifier: test3,
+      Body: {
+        Value: {
+          Value: 10,
+          LineNumber: 14
+        },
+        LineNumber: 14
+      },
+      LineNumber: 13
+    }
+  ],
+  Stmt: {
+    LineNumber: -1
+  }
+}
