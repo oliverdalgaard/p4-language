@@ -1,0 +1,13 @@
+schema Transaction = {
+    id: int,
+    transaction: string,
+    amount: int
+}
+
+schema SummedTransaction = {
+    id: int,
+    amount: int
+}
+
+table<Transaction> transactions = read("../../../MatildaCSVFiles/transaction.csv");
+table<SummedTransaction> summed = SUM(transactions, id, amount, SummedTransaction);
