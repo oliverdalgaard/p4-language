@@ -1,0 +1,340 @@
+﻿{
+  envV: {
+    Bindings: {
+      filtered: {
+        T: {
+          Identifier: transactions,
+          Schema: [
+            {
+              Id: id,
+              Type: {}
+            },
+            {
+              Id: transaction,
+              Type: {}
+            },
+            {
+              Id: amount,
+              Type: {}
+            }
+          ],
+          Headers: [
+            {
+              Identifier: id,
+              Type: {}
+            },
+            {
+              Identifier: transaction,
+              Type: {}
+            },
+            {
+              Identifier: amount,
+              Type: {}
+            }
+          ],
+          Records: [
+            {
+              Values: [
+                {
+                  N: 1
+                },
+                {
+                  S: Peter
+                },
+                {
+                  N: 2500
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1
+                },
+                {
+                  S: Peter
+                },
+                {
+                  N: 2500
+                }
+              ]
+            }
+          ]
+        }
+      },
+      transactions: {
+        T: {
+          Identifier: transactions,
+          Schema: [
+            {
+              Id: id,
+              Type: {}
+            },
+            {
+              Id: transaction,
+              Type: {}
+            },
+            {
+              Id: amount,
+              Type: {}
+            }
+          ],
+          File: [
+            [
+              id,
+              transaction,
+              amount
+            ],
+            [
+              1,
+              Peter,
+              2500
+            ],
+            [
+              2,
+              Morten,
+              2500
+            ],
+            [
+              3,
+              Anna,
+              7500
+            ],
+            [
+              2,
+              Morten,
+              10000
+            ],
+            [
+              1,
+              Peter,
+              2500
+            ],
+            [
+              4,
+              Katrine,
+              3500
+            ]
+          ],
+          Headers: [
+            {
+              Identifier: id,
+              Type: {}
+            },
+            {
+              Identifier: transaction,
+              Type: {}
+            },
+            {
+              Identifier: amount,
+              Type: {}
+            }
+          ],
+          Records: [
+            {
+              Values: [
+                {
+                  N: 1
+                },
+                {
+                  S: Peter
+                },
+                {
+                  N: 2500
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 2
+                },
+                {
+                  S: Morten
+                },
+                {
+                  N: 2500
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 3
+                },
+                {
+                  S: Anna
+                },
+                {
+                  N: 7500
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 2
+                },
+                {
+                  S: Morten
+                },
+                {
+                  N: 10000
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1
+                },
+                {
+                  S: Peter
+                },
+                {
+                  N: 2500
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 4
+                },
+                {
+                  S: Katrine
+                },
+                {
+                  N: 3500
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    IsFunctionScope: false
+  },
+  envP: {},
+  envS: {
+    Bindings: {
+      Transaction: [
+        {
+          Id: id,
+          Type: {}
+        },
+        {
+          Id: transaction,
+          Type: {}
+        },
+        {
+          Id: amount,
+          Type: {}
+        }
+      ]
+    }
+  },
+  envVT: {
+    Bindings: {
+      filtered: {
+        SchemaId: Transaction
+      },
+      transactions: {
+        SchemaId: Transaction
+      }
+    },
+    HasReturn: false
+  },
+  envPT: {},
+  envST: {
+    Bindings: {
+      Transaction: [
+        {
+          Id: id,
+          Type: {}
+        },
+        {
+          Id: transaction,
+          Type: {}
+        },
+        {
+          Id: amount,
+          Type: {}
+        }
+      ]
+    }
+  },
+  typeChecker: {},
+  TopLevelDeclarations: [
+    {
+      Identifier: Transaction,
+      Columns: [
+        {
+          Id: id,
+          Type: {}
+        },
+        {
+          Id: transaction,
+          Type: {}
+        },
+        {
+          Id: amount,
+          Type: {}
+        }
+      ]
+    }
+  ],
+  Stmt: {
+    Stmt1: {
+      Type: {
+        SchemaId: Transaction
+      },
+      Identifier: transactions,
+      FilePath: ../../../MatildaCSVFiles/transaction.csv,
+      LineNumber: 7
+    },
+    Stmt2: {
+      Type: {
+        SchemaId: Transaction
+      },
+      Identifier: filtered,
+      Expression: {
+        TableExpr: {
+          Name: transactions,
+          LineNumber: 8
+        },
+        Predicate: {
+          Op: AND,
+          ExprLeft: {
+            Op: LT,
+            ExprLeft: {
+              Value: 2000,
+              LineNumber: 8
+            },
+            ExprRight: {
+              Name: amount,
+              LineNumber: 8
+            },
+            LineNumber: 8
+          },
+          ExprRight: {
+            Op: EQ,
+            ExprLeft: {
+              Name: id,
+              LineNumber: 8
+            },
+            ExprRight: {
+              Value: 1,
+              LineNumber: 8
+            },
+            LineNumber: 8
+          },
+          LineNumber: 8
+        },
+        LineNumber: 8
+      },
+      LineNumber: 8
+    },
+    LineNumber: 7
+  }
+}
