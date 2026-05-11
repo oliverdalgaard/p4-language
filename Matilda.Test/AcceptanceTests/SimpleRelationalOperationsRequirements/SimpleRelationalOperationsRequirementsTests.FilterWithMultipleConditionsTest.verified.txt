@@ -3,7 +3,6 @@
     Bindings: {
       filtered: {
         T: {
-          Identifier: transactions,
           Schema: [
             {
               Id: id,
@@ -64,7 +63,6 @@
       },
       transactions: {
         T: {
-          Identifier: transactions,
           Schema: [
             {
               Id: id,

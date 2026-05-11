@@ -3,7 +3,6 @@
     Bindings: {
       transaction: {
         T: {
-          Identifier: transaction,
           Schema: [
             {
               Id: id,
