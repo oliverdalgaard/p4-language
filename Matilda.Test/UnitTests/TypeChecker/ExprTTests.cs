@@ -716,7 +716,7 @@ public class SumTestsTypechecker : RunTypeChecker
         // Assert
         Assert.IsTrue(checker.HasErrors());
         Assert.HasCount(2, checker.errors);
-        Assert.AreEqual("Line -1: The coulmn 'test' does not exist in schema 'schema1'.", checker.errors[0]);
+        Assert.AreEqual("Line -1: The column 'test' does not exist in schema 'schema1'.", checker.errors[0]);
         Assert.AreEqual("Line -1: Declaration type does not match the type of the expression.", checker.errors[1]);
     }
 
@@ -759,7 +759,7 @@ public class SumTestsTypechecker : RunTypeChecker
         // Assert
         Assert.IsTrue(checker.HasErrors());
         Assert.HasCount(2, checker.errors);
-        Assert.AreEqual("Line -1: The coulmn 'name' must be of type 'IntT' or 'FloatT', but got 'Matilda.StringT'.", checker.errors[0]);
+        Assert.AreEqual("Line -1: The column 'name' must be of type 'IntT' or 'FloatT', but got 'Matilda.StringT'.", checker.errors[0]);
         Assert.AreEqual("Line -1: Declaration type does not match the type of the expression.", checker.errors[1]);
     }
 }

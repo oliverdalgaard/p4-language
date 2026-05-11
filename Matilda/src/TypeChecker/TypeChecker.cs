@@ -556,13 +556,13 @@ public class TypeChecker
 
                 if (!sumTableExprSchema.Contains(sumResultSchema[0]))
                 {
-                    errors.Add($"Line {sum.LineNumber}: The coulmn '{sumResultSchema[0].Id}' does not exist in schema '{sumExprTable.SchemaId}'.");
+                    errors.Add($"Line {sum.LineNumber}: The column '{sumResultSchema[0].Id}' does not exist in schema '{sumExprTable.SchemaId}'.");
                     return null;
                 }
 
                 if (!sumTableExprSchema.Contains(sumResultSchema[1]))
                 {
-                    errors.Add($"Line {sum.LineNumber}: The coulmn '{sumResultSchema[1].Id}' does not exist in schema '{sumExprTable.SchemaId}'.");
+                    errors.Add($"Line {sum.LineNumber}: The column '{sumResultSchema[1].Id}' does not exist in schema '{sumExprTable.SchemaId}'.");
                     return null;
                 }
 
@@ -580,11 +580,113 @@ public class TypeChecker
 
                 if (sumColumn.Type != IntT.Instance && sumColumn.Type != FloatT.Instance)
                 {
-                    errors.Add($"Line {sum.LineNumber}: The coulmn '{sumColumn.Id}' must be of type 'IntT' or 'FloatT', but got '{sumColumn.Type}'.");
+                    errors.Add($"Line {sum.LineNumber}: The column '{sumColumn.Id}' must be of type 'IntT' or 'FloatT', but got '{sumColumn.Type}'.");
                     return null;
                 }
 
                 return new TableT(sum.ResultSchemaId);
+
+            case Join join:
+                Type joinOnTableType = ExprT(join.JoinOnTableExpr, envVT, envPT, envST);
+                Type joinFromTableType = ExprT(join.JoinFromTableExpr, envVT, envPT, envST);
+
+                if (joinOnTableType is not TableT)
+                {
+                    errors.Add($"Line {join.LineNumber}: Argument 1 must be of type 'TableT'.");
+                    return null;
+                }
+
+                if (joinFromTableType is not TableT)
+                {
+                    errors.Add($"Line {join.LineNumber}: Argument 2 must be of type 'TableT'.");
+                    return null;
+                }
+
+                TableT joinOnTable = (TableT)joinOnTableType;
+                TableT joinFromTable = (TableT)joinFromTableType;
+
+                List<Column>? joinResultSchema = envST.TryGet(join.ResultSchemaId);
+                List<Column>? joinOnTableSchema = envST.TryGet(joinOnTable.SchemaId);
+                List<Column>? joinFromTableSchema = envST.TryGet(joinFromTable.SchemaId);
+
+                if (joinResultSchema == null)
+                {
+                    errors.Add($"Line {join.LineNumber}: Result schema '{join.ResultSchemaId}' has not been defined.");
+                    return null;
+                }
+
+                if (joinOnTableSchema == null)
+                {
+                    errors.Add($"Line {join.LineNumber}: Schema '{joinOnTable.SchemaId}' is not defined.");
+                    return null;
+                }
+
+                if (joinFromTableSchema == null)
+                {
+                    errors.Add($"Line {join.LineNumber}: Schema '{joinFromTable.SchemaId}' is not defined.");
+                    return null;
+                }
+
+
+                if (joinResultSchema.Count != joinOnTableSchema.Count + joinFromTableSchema.Count - 2)
+                {
+                    errors.Add($"Line {join.LineNumber}: Result schema '{join.ResultSchemaId}' may only contain {joinOnTableSchema.Count + joinFromTableSchema.Count - 2} columns but has {joinResultSchema.Count} columns.");
+                    return null;
+                }
+
+                Column? joinOnReferenceColumn = null;
+                Column? joinFromReferenceColumn = null;
+
+                foreach (Column col in joinOnTableSchema)
+                {
+                    if (col.Id == join.KeyColumn1)
+                    {
+                        joinOnReferenceColumn = col;
+                    }
+                }
+
+                foreach (Column col in joinFromTableSchema)
+                {
+                    if (col.Id == join.KeyColumn2)
+                    {
+                        joinFromReferenceColumn = col;
+                    }
+                }
+
+                if (joinOnReferenceColumn == null)
+                {
+                    errors.Add($"Line {join.LineNumber}: Join schema '{joinOnTable.SchemaId}' must contain '{join.KeyColumn1}'.");
+                    return null;
+                }
+
+                if (joinFromReferenceColumn == null)
+                {
+                    errors.Add($"Line {join.LineNumber}: Join schema '{joinFromTable.SchemaId}' must contain '{join.KeyColumn2}'.");
+                    return null;
+                }
+
+                if (joinResultSchema.Contains(joinOnReferenceColumn))
+                {
+                    errors.Add($"Line {join.LineNumber}: Result schema '{join.ResultSchemaId}' may not contain column with id '{join.KeyColumn1}'.");
+                    return null;
+                }
+
+                if (joinResultSchema.Contains(joinFromReferenceColumn))
+                {
+                    errors.Add($"Line {join.LineNumber}: Result schema '{join.ResultSchemaId}' may not contain column with id '{join.KeyColumn2}'.");
+                    return null;
+                }
+
+                foreach (Column col in joinResultSchema)
+                {
+                    if (!joinOnTableSchema.Contains(col) && !joinFromTableSchema.Contains(col))
+                    {
+                        errors.Add($"Line {join.LineNumber}: Result schema '{join.ResultSchemaId}' may not contain a column '{col.Id}' that does not exist in schema '{joinOnTable.SchemaId}' or '{joinFromTable.SchemaId}'.");
+                        return null;
+                    }
+                }
+
+                return new TableT(join.ResultSchemaId);
 
             case Ref r:
                 if (envVT.TryGet(r.Name) == null)
