@@ -1,5 +1,0 @@
-ID,Transaction,Amount,test
-1,Peter,30,true
-2,Lotte,40,true
-1,Peter,50,false
-2,Lotte,60,false

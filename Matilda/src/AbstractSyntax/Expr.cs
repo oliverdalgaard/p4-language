@@ -109,19 +109,19 @@ public class Sum : Expr
 
 public class Join : Expr  // Convention: PascalCase, not all caps
 {
-    public Expr TableExpr1 { get; }
-    public Expr TableExpr2 { get; }
-    public string PrimaryColumn { get; }
-    public string ForeignColumn { get; }  
+    public Expr JoinOnTableExpr { get; }
+    public Expr JoinFromTableExpr { get; }
+    public string KeyColumn1 { get; }
+    public string KeyColumn2 { get; }
     public string ResultSchemaId { get; }
     public override int LineNumber { get; }
 
-    public Join(Expr tableExpr1, Expr tableExpr2, string primaryColumn, string foreignColumn, string resultSchemaId, int lineNumber)
+    public Join(Expr joinOnTableExpr, Expr joinFromTableExpr, string keyColumn1, string keyColumn2, string resultSchemaId, int lineNumber)
     {
-        TableExpr1 = tableExpr1;
-        TableExpr2 = tableExpr2;
-        PrimaryColumn = primaryColumn;
-        ForeignColumn = foreignColumn;
+        JoinOnTableExpr = joinOnTableExpr;
+        JoinFromTableExpr = joinFromTableExpr;
+        KeyColumn1 = keyColumn1;
+        KeyColumn2 = keyColumn2;
         ResultSchemaId = resultSchemaId;
         LineNumber = lineNumber;
     }

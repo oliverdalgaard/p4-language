@@ -291,16 +291,16 @@ Term<out Expr expr>               (. expr = null; int lineNumber = -1; .) =
     ')'                           (. expr = new Sum(tableExpr, groupByColumnId, sumColumnId, resultSchemaId, lineNumber); .)
   | "JOIN"                        (. lineNumber = t.line; .)
     '('
-      Expr<out Expr tableExpr1>
+      Expr<out Expr joinOnTableExpr>
       ','
-      Expr<out Expr tableExpr2>
+      Expr<out Expr joinFromTableExpr>
       ','
-      IDENT                       (. string primaryColumn = t.val; .)
+      IDENT                       (. string keyColumn1 = t.val; .)
       ','
-      IDENT                       (. string foreignColumn = t.val; .)
+      IDENT                       (. string keyColumn2 = t.val; .)
       ','
       IDENT                       (. string resultSchemaId = t.val; .)
-    ')'                           (. expr = new JOIN(table1, table2, primaryColumn, foreignColumn, resultSchemaId, lineNumber); .)
+    ')'                           (. expr = new Join(joinOnTableExpr, joinFromTableExpr, keyColumn1, keyColumn2, resultSchemaId, lineNumber); .)
 
 .
 

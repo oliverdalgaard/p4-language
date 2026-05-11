@@ -15,7 +15,7 @@ public class Parser {
 	public const int _NUMBER = 2;
 	public const int _FLOAT = 3;
 	public const int _STRING = 4;
-	public const int maxT = 39;
+	public const int maxT = 40;
 
 	const bool _T = true;
 	const bool _x = false;
@@ -148,7 +148,7 @@ public Program mainNode = null;
 			FunctionDeclaration(out topLevelDeclaration);
 		} else if (la.kind == 11) {
 			SchemaDeclaration(out topLevelDeclaration);
-		} else SynErr(40);
+		} else SynErr(41);
 	}
 
 	void Stmts(out Stmt stmt) {
@@ -228,7 +228,7 @@ public Program mainNode = null;
 			Expect(1);
 			type = new TableT(t.val); 
 			Expect(25);
-		} else SynErr(41);
+		} else SynErr(42);
 	}
 
 	void Column(out Column column) {
@@ -249,7 +249,7 @@ public Program mainNode = null;
 			If(out stmt);
 		} else if (la.kind == 16) {
 			Return(out stmt);
-		} else SynErr(42);
+		} else SynErr(43);
 	}
 
 	void LocalDeclaration(out Stmt stmt) {
@@ -269,7 +269,7 @@ public Program mainNode = null;
 			string STR = t.val; 
 			Expect(8);
 			stmt = new TableDeclaration(type, var, STR.Substring(1, STR.Length - 2), lineNumber); 
-		} else SynErr(43);
+		} else SynErr(44);
 		Expect(14);
 	}
 
@@ -416,7 +416,7 @@ public Program mainNode = null;
 				expr = new FunctionRef(name, arguments, lineNumber); 
 			} else if (StartOf(4)) {
 				expr = new Ref(name, lineNumber); 
-			} else SynErr(44);
+			} else SynErr(45);
 			break;
 		}
 		case 2: {
@@ -479,7 +479,27 @@ public Program mainNode = null;
 			expr = new Sum(tableExpr, groupByColumnId, sumColumnId, resultSchemaId, lineNumber); 
 			break;
 		}
-		default: SynErr(45); break;
+		case 39: {
+			Get();
+			lineNumber = t.line; 
+			Expect(6);
+			Expr(out Expr joinOnTableExpr);
+			Expect(7);
+			Expr(out Expr joinFromTableExpr);
+			Expect(7);
+			Expect(1);
+			string keyColumn1 = t.val; 
+			Expect(7);
+			Expect(1);
+			string keyColumn2 = t.val; 
+			Expect(7);
+			Expect(1);
+			string resultSchemaId = t.val; 
+			Expect(8);
+			expr = new Join(joinOnTableExpr, joinFromTableExpr, keyColumn1, keyColumn2, resultSchemaId, lineNumber); 
+			break;
+		}
+		default: SynErr(46); break;
 		}
 	}
 
@@ -495,11 +515,11 @@ public Program mainNode = null;
 	}
 	
 	static readonly bool[,] set = {
-		{_T,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x},
-		{_x,_T,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _T,_T,_x,_T, _T,_T,_T,_T, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x},
-		{_x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_T, _T,_T,_T,_T, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x},
-		{_x,_T,_T,_T, _T,_x,_T,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_T,_T, _T,_T,_T,_x, _x},
-		{_x,_x,_x,_x, _x,_x,_x,_T, _T,_x,_x,_x, _x,_x,_T,_x, _x,_x,_x,_x, _x,_x,_x,_x, _T,_x,_T,_T, _T,_T,_T,_T, _T,_T,_x,_x, _x,_x,_x,_x, _x}
+		{_T,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x},
+		{_x,_T,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _T,_T,_x,_T, _T,_T,_T,_T, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x},
+		{_x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_T, _T,_T,_T,_T, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x},
+		{_x,_T,_T,_T, _T,_x,_T,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_T,_T, _T,_T,_T,_T, _x,_x},
+		{_x,_x,_x,_x, _x,_x,_x,_T, _T,_x,_x,_x, _x,_x,_T,_x, _x,_x,_x,_x, _x,_x,_x,_x, _T,_x,_T,_T, _T,_T,_T,_T, _T,_T,_x,_x, _x,_x,_x,_x, _x,_x}
 
 	};
 } // end Parser
@@ -552,13 +572,14 @@ public class Errors {
 			case 36: s = "\"false\" expected"; break;
 			case 37: s = "\"FILTER\" expected"; break;
 			case 38: s = "\"SUM\" expected"; break;
-			case 39: s = "??? expected"; break;
-			case 40: s = "invalid TopLevelDeclaration"; break;
-			case 41: s = "invalid Type"; break;
-			case 42: s = "invalid Stmt"; break;
-			case 43: s = "invalid LocalDeclaration"; break;
-			case 44: s = "invalid Term"; break;
+			case 39: s = "\"JOIN\" expected"; break;
+			case 40: s = "??? expected"; break;
+			case 41: s = "invalid TopLevelDeclaration"; break;
+			case 42: s = "invalid Type"; break;
+			case 43: s = "invalid Stmt"; break;
+			case 44: s = "invalid LocalDeclaration"; break;
 			case 45: s = "invalid Term"; break;
+			case 46: s = "invalid Term"; break;
 
 			default: s = "error " + n; break;
 		}

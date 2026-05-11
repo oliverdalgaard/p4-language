@@ -21,35 +21,35 @@ class Matilda
 			{
 				Program program = parser.mainNode;
 
-				TypeChecker typeChecker = new TypeChecker(program, new EnvVT(), new EnvPT(), new EnvST());
+				/* TypeChecker typeChecker = new TypeChecker(program, new EnvVT(), new EnvPT(), new EnvST()); */
 
-				if (typeChecker.HasErrors())
+				/* if (typeChecker.HasErrors())
 				{
 					typeChecker.errors.ForEach(Console.WriteLine);
 
 					Console.WriteLine("Errors during static analysis!");
 				}
 				else
+				{ */
+				Console.WriteLine("Program starting!");
+
+				EnvV envV = new EnvV();
+				EnvP envP = new EnvP();
+				EnvS envS = new EnvS();
+
+				Interpreter.EvalTopLevelDeclarations(program.TopLevelDeclarations, envP, envS);
+				Interpreter.EvalStmt(program.Stmt, envV, envP, envS);
+
+				foreach (KeyValuePair<string, Val?> keyValuePair in envV.Bindings)
 				{
-					Console.WriteLine("Program starting!");
-
-					EnvV envV = new EnvV();
-					EnvP envP = new EnvP();
-					EnvS envS = new EnvS();
-
-					Interpreter.EvalTopLevelDeclarations(program.TopLevelDeclarations, envP, envS);
-					Interpreter.EvalStmt(program.Stmt, envV, envP, envS);
-
-					foreach (KeyValuePair<string, Val?> keyValuePair in envV.Bindings)
+					if (keyValuePair.Value != null)
 					{
-						if (keyValuePair.Value != null)
-						{
-							Console.WriteLine($"{keyValuePair.Key}:\n{keyValuePair.Value}\n");
-						}
+						Console.WriteLine($"{keyValuePair.Key}:\n{keyValuePair.Value}\n");
 					}
-
-					Console.WriteLine("Program stopped!");
 				}
+
+				Console.WriteLine("Program stopped!");
+				/* } */
 			}
 
 

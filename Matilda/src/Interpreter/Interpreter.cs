@@ -1,4 +1,3 @@
-using System.Security;
 using Microsoft.VisualBasic.FileIO;
 
 namespace Matilda;
@@ -288,13 +287,12 @@ public static class Interpreter
 
             case Join join:
                 {
-                    Val tableValue1 = EvalExpr(join.TableExpr1, envV, envP, envS);
-                    Val tableValue2 = EvalExpr(join.TableExpr2, envV, envP, envS);
-                    Table inputTable1 = tableValue1.AsTable();
-                    Table inputTable2 = tableValue2.AsTable();
+                    Val tableValue1 = EvalExpr(join.JoinOnTableExpr, envV, envP, envS);
+                    Val tableValue2 = EvalExpr(join.JoinFromTableExpr, envV, envP, envS);
+                    Table joinOnTable = tableValue1.AsTable();
+                    Table joinFromTable = tableValue2.AsTable();
 
                     List<Column> resultSchema = envS.TryGet(join.ResultSchemaId)!;
-
                     List<TableHeader> resultHeaders = new List<TableHeader>();
 
                     foreach (Column column in resultSchema)
@@ -304,12 +302,76 @@ public static class Interpreter
                         );
                     }
 
-                    Table joinedTable = new Table(inputTable1.Identifier + "_join_" + inputTable2.Identifier, resultSchema, resultHeaders, new List<TableRecord>());
+                    Table joinedTable = new Table(joinOnTable.Identifier, resultSchema, resultHeaders, new List<TableRecord>());
 
-                    // find indexes of join column
+                    // Contains every reference key (ID) in the from table and their respective rows for table lookups.
+                    Dictionary<Val, int> joinFromTableRecordIndexReference = new Dictionary<Val, int>();
 
-                    //perform join 
+                    Dictionary<string, int> joinOnTableHeaderIndexReference = new Dictionary<string, int>();
+                    Dictionary<string, int> joinFromTableHeaderIndexReference = new Dictionary<string, int>();
 
+                    (string schema, int index)[] schemaMap = new (string schema, int index)[resultHeaders.Count];
+
+                    for (int i = 0; i < joinOnTable.Headers.Count; i++)
+                    {
+                        joinOnTableHeaderIndexReference[joinOnTable.Headers[i].Identifier] = i;
+                    }
+
+                    for (int i = 0; i < joinFromTable.Headers.Count; i++)
+                    {
+                        joinFromTableHeaderIndexReference[joinFromTable.Headers[i].Identifier] = i;
+                    }
+
+                    int joinOnTableReferenceColumnIndex = joinOnTableHeaderIndexReference[join.KeyColumn1];
+                    int joinFromTableReferenceColumnIndex = joinFromTableHeaderIndexReference[join.KeyColumn2];
+
+                    for (int i = 0; i < joinFromTable.Records.Count; i++)
+                    {
+                        Val key = joinFromTable.Records[i].Values[joinFromTableReferenceColumnIndex];
+
+                        if (!joinFromTableRecordIndexReference.TryAdd(key, i))
+                        {
+                            throw new Exception("Duplicate primary key in table.");
+                        }
+                    }
+
+                    for (int i = 0; i < resultSchema.Count; i++)
+                    {
+                        string columnId = resultSchema[i].Id;
+
+                        if (joinOnTableHeaderIndexReference.TryGetValue(columnId, out int idx))
+                        {
+                            schemaMap[i] = ("onTable", idx);
+                        }
+                        else
+                        {
+                            schemaMap[i] = ("fromTable", joinFromTableHeaderIndexReference[columnId]);
+                        }
+                    }
+
+                    // Joins here
+                    for (int i = 0; i < joinOnTable.Records.Count; i++)
+                    {
+                        TableRecord record = joinOnTable.Records[i];
+                        List<Val> joinedRecordVals = new List<Val>();
+
+                        Val joinKey = record.Values[joinOnTableReferenceColumnIndex];
+
+                        foreach ((string schema, int index) mapping in schemaMap)
+                        {
+                            if (mapping.schema == "onTable")
+                            {
+                                joinedRecordVals.Add(record.Values[mapping.index]);
+                            }
+                            else
+                            {
+                                int recordRef = joinFromTableRecordIndexReference[joinKey];
+                                joinedRecordVals.Add(joinFromTable.Records[recordRef].Values[mapping.index]);
+                            }
+                        }
+
+                        joinedTable.AddRecord(new TableRecord(joinedRecordVals));
+                    }
 
                     return new TableVal(joinedTable);
                 }
