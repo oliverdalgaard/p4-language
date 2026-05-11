@@ -69,11 +69,11 @@ public static class Interpreter
                     textFieldParser.SetDelimiters(",");
                     while (!textFieldParser.EndOfData)
                     {
-                        rows.Add(textFieldParser.ReadFields());
+                        rows.Add(textFieldParser.ReadFields()!);
                     }
                 }
 
-                Table table = new Table(envS.TryGet(((TableT)tableDeclaration.Type).SchemaId), rows);
+                Table table = new Table(envS.TryGet(((TableT)tableDeclaration.Type).SchemaId)!, rows);
                 table.ParseTypes();
 
                 TableVal parsedTable = new TableVal(table);
@@ -132,10 +132,10 @@ public static class Interpreter
                 return new StringVal(stringv.Value);
 
             case Ref reference:
-                return envV.TryGet(reference.Name);
+                return envV.TryGet(reference.Name)!;
 
             case FunctionRef functionRef:
-                FunctionDeclaration function = envP.TryGet(functionRef.Name);
+                FunctionDeclaration function = envP.TryGet(functionRef.Name)!;
 
                 if (functionRef.Arguments.Count != function.Parameters.Count)
                 {
@@ -161,7 +161,7 @@ public static class Interpreter
 
                 EvalStmt(function.Body, localScope, envP, envS);
 
-                return localScope.FunctionReturnValue;
+                return localScope.FunctionReturnValue!;
 
             case Filter filter:
                 {
