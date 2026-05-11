@@ -12,14 +12,14 @@ schema customers = {
 
 schema sumResult = {
     name : string,
-    amount : int
+    amount : float
 }
 
 schema joinResult = {
     account_id : int,
     name : string,
     transaction_date : int,
-    amount : int
+    amount : float
 }
 
 function table<sumResult> detectFraud(int days_ago, int flag_amount, table<transactions> transactions_table, table<customers> customers_table) {
