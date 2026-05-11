@@ -107,6 +107,27 @@ public class Sum : Expr
     }
 }
 
+public class JOIN : Expr
+{
+    public Expr TableExpr1 { get; }
+    public Expr TableExpr2 { get; }
+    public string Column1Id { get; }
+    public string Column2Id { get; }
+    public string ResultSchemaId { get; }
+    public override int LineNumber { get; }
+
+    public JOIN(Expr tableExpr1, Expr tableExpr2, string column1, string column2, string resultSchemaId, int lineNumber)
+    {
+        TableExpr1 = tableExpr1;
+        TableExpr2 = tableExpr1;
+        Column1Id = column1;
+        Column2Id = column2;
+        ResultSchemaId = resultSchemaId;
+
+        LineNumber = lineNumber;
+    }
+}
+
 public class IntV : Expr
 {
     public int Value { get; }

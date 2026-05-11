@@ -289,7 +289,19 @@ Term<out Expr expr>               (. expr = null; int lineNumber = -1; .) =
       ','
       IDENT                       (. string resultSchemaId = t.val; .)
     ')'                           (. expr = new Sum(tableExpr, groupByColumnId, sumColumnId, resultSchemaId, lineNumber); .)
-    
+  | "JOIN"                        (. linenumber = t.line; .)
+    '('
+      Expr<out Expr tableExpr1>
+      ','
+      Expr<out Expr tableExpr2>
+      ','
+      IDENT                       (. string column1Id = t.val; .)
+      ','
+      IDENT                       (. string column2Id = t.val; .)
+      ','
+      IDENT                       (. string resultSchemaId = t.val; .)
+    ')'                           (.expr = new JOIN(table1, table2, column1, column2, resultSchemaId, lineNumber);.)
+
 .
 
 END Matilda.
