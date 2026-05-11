@@ -1,3 +1,4 @@
+using System.Security;
 using Microsoft.VisualBasic.FileIO;
 
 namespace Matilda;
@@ -283,6 +284,34 @@ public static class Interpreter
                     }
 
                     return new TableVal(summedTable);
+                }
+
+            case Join join:
+                {
+                    Val tableValue1 = EvalExpr(join.TableExpr1, envV, envP, envS);
+                    Val tableValue2 = EvalExpr(join.TableExpr2, envV, envP, envS);
+                    Table inputTable1 = tableValue1.AsTable();
+                    Table inputTable2 = tableValue2.AsTable();
+
+                    List<Column> resultSchema = envS.TryGet(join.ResultSchemaId)!;
+
+                    List<TableHeader> resultHeaders = new List<TableHeader>();
+
+                    foreach (Column column in resultSchema)
+                    {
+                        resultHeaders.Add(
+                            new TableHeader(column.Id, column.Type)
+                        );
+                    }
+
+                    Table joinedTable = new Table(inputTable1.Identifier + "_join_" + inputTable2.Identifier, resultSchema, resultHeaders, new List<TableRecord>());
+
+                    // find indexes of join column
+
+                    //perform join 
+
+
+                    return new TableVal(joinedTable);
                 }
 
             case BinaryOp binaryOp:
