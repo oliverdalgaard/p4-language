@@ -17,6 +17,7 @@ schema sumResult = {
 
 schema joinResult = {
     account_id : int,
+    customer_id : int,
     name : string,
     transaction_date : int,
     amount : float

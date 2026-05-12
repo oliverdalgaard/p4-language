@@ -665,7 +665,7 @@ public class TypeChecker
                     return null;
                 }
 
-                if (joinResultSchema.Contains(joinFromReferenceColumn) && !(joinOnReferenceColumn.Id == joinFromReferenceColumn.Id))
+                if (joinResultSchema.Contains(joinFromReferenceColumn) && joinOnReferenceColumn.Id != joinFromReferenceColumn.Id)
                 {
                     errors.Add($"Line {join.LineNumber}: Result schema '{join.ResultSchemaId}' may not contain column with id '{join.KeyColumn2}'.");
                     return null;
