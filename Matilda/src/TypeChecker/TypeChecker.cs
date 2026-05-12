@@ -628,9 +628,9 @@ public class TypeChecker
                 }
 
 
-                if (joinResultSchema.Count != joinOnTableSchema.Count + joinFromTableSchema.Count - 2)
+                if (joinResultSchema.Count != joinOnTableSchema.Count + joinFromTableSchema.Count - 1)
                 {
-                    errors.Add($"Line {join.LineNumber}: Result schema '{join.ResultSchemaId}' may only contain {joinOnTableSchema.Count + joinFromTableSchema.Count - 2} columns but has {joinResultSchema.Count} columns.");
+                    errors.Add($"Line {join.LineNumber}: Result schema '{join.ResultSchemaId}' may only contain {joinOnTableSchema.Count + joinFromTableSchema.Count - 1} columns but has {joinResultSchema.Count} columns.");
                     return null;
                 }
 
@@ -665,13 +665,7 @@ public class TypeChecker
                     return null;
                 }
 
-                if (joinResultSchema.Contains(joinOnReferenceColumn))
-                {
-                    errors.Add($"Line {join.LineNumber}: Result schema '{join.ResultSchemaId}' may not contain column with id '{join.KeyColumn1}'.");
-                    return null;
-                }
-
-                if (joinResultSchema.Contains(joinFromReferenceColumn))
+                if (joinResultSchema.Contains(joinFromReferenceColumn) && !(joinOnReferenceColumn.Id == joinFromReferenceColumn.Id))
                 {
                     errors.Add($"Line {join.LineNumber}: Result schema '{join.ResultSchemaId}' may not contain column with id '{join.KeyColumn2}'.");
                     return null;
