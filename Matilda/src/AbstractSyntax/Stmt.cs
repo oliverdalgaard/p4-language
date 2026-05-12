@@ -20,10 +20,10 @@ public class Skip : Stmt
 
 public class Comp : Stmt
 {
-    public Stmt? Stmt1 { get; }
-    public Stmt? Stmt2 { get; }
+    public Stmt Stmt1 { get; }
+    public Stmt Stmt2 { get; }
 
-    public Comp(Stmt? stmt1, Stmt? stmt2)
+    public Comp(Stmt stmt1, Stmt stmt2)
     {
         Stmt1 = stmt1;
         Stmt2 = stmt2;
@@ -81,12 +81,12 @@ public class LocalDeclaration : Stmt
 
 public class Assign : Stmt
 {
-    public string? Identifier { get; }
-    public Expr? Value { get; }
+    public string Identifier { get; }
+    public Expr Value { get; }
 
     public override int LineNumber { get; }
 
-    public Assign(string? identifier, Expr? value, int lineNumber)
+    public Assign(string identifier, Expr value, int lineNumber)
     {
         Identifier = identifier;
         Value = value;

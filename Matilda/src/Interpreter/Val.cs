@@ -174,9 +174,9 @@ public class TableVal : Val
         {
             foreach (Val value in tRecord.Values)
             {
-                if (value.ToString().Length > padding)
+                if (value.ToString()!.Length > padding)
                 {
-                    padding = value.ToString().Length;
+                    padding = value.ToString()!.Length;
                 }
             }
         }
@@ -195,7 +195,7 @@ public class TableVal : Val
             returnString += "| ";
             for (int j = 0; j < T.Records[i].Values.Count; j++)
             {
-                returnString += T.Records[i].Values[j].ToString().PadRight(padding) + " | ";
+                returnString += T.Records[i].Values[j].ToString()!.PadRight(padding) + " | ";
             }
             returnString += "\n";
         }
