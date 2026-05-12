@@ -1,0 +1,1388 @@
+﻿{
+  envV: {
+    Bindings: {
+      customers: {
+        T: {
+          Schema: [
+            {
+              Id: customer_id,
+              Type: {}
+            },
+            {
+              Id: name,
+              Type: {}
+            }
+          ],
+          File: [
+            [
+              customer_id,
+              name
+            ],
+            [
+              1001,
+              Emma Johnson
+            ],
+            [
+              1002,
+              Liam Smith
+            ],
+            [
+              1003,
+              Olivia Brown
+            ],
+            [
+              1004,
+              Noah Davis
+            ],
+            [
+              1005,
+              Ava Wilson
+            ],
+            [
+              1006,
+              William Taylor
+            ],
+            [
+              1007,
+              Sophia Anderson
+            ],
+            [
+              1008,
+              James Thomas
+            ],
+            [
+              1009,
+              Isabella Jackson
+            ],
+            [
+              1010,
+              Benjamin White
+            ]
+          ],
+          Headers: [
+            {
+              Identifier: customer_id,
+              Type: {}
+            },
+            {
+              Identifier: name,
+              Type: {}
+            }
+          ],
+          Records: [
+            {
+              Values: [
+                {
+                  N: 1001
+                },
+                {
+                  S: Emma Johnson
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1002
+                },
+                {
+                  S: Liam Smith
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1003
+                },
+                {
+                  S: Olivia Brown
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1004
+                },
+                {
+                  S: Noah Davis
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1005
+                },
+                {
+                  S: Ava Wilson
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1006
+                },
+                {
+                  S: William Taylor
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1007
+                },
+                {
+                  S: Sophia Anderson
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1008
+                },
+                {
+                  S: James Thomas
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1009
+                },
+                {
+                  S: Isabella Jackson
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1010
+                },
+                {
+                  S: Benjamin White
+                }
+              ]
+            }
+          ]
+        }
+      },
+      High_Risk: {
+        T: {
+          Schema: [
+            {
+              Id: name,
+              Type: {}
+            },
+            {
+              Id: amount,
+              Type: {}
+            }
+          ],
+          Headers: [
+            {
+              Identifier: name,
+              Type: {}
+            },
+            {
+              Identifier: amount,
+              Type: {}
+            }
+          ],
+          Records: [
+            {
+              Values: [
+                {
+                  S: Noah Davis
+                },
+                {
+                  F: 1900.0
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  S: William Taylor
+                },
+                {
+                  F: 12000.0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      Medium_Risk: {
+        T: {
+          Schema: [
+            {
+              Id: name,
+              Type: {}
+            },
+            {
+              Id: amount,
+              Type: {}
+            }
+          ],
+          Headers: [
+            {
+              Identifier: name,
+              Type: {}
+            },
+            {
+              Identifier: amount,
+              Type: {}
+            }
+          ],
+          Records: [
+            {
+              Values: [
+                {
+                  S: Olivia Brown
+                },
+                {
+                  F: 640.0
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  S: Noah Davis
+                },
+                {
+                  F: 1900.0
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  S: Ava Wilson
+                },
+                {
+                  F: 467.49
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  S: William Taylor
+                },
+                {
+                  F: 12000.0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      transactions: {
+        T: {
+          Schema: [
+            {
+              Id: customer_id,
+              Type: {}
+            },
+            {
+              Id: account_id,
+              Type: {}
+            },
+            {
+              Id: transaction_date,
+              Type: {}
+            },
+            {
+              Id: amount,
+              Type: {}
+            }
+          ],
+          File: [
+            [
+              customer_id,
+              account_id,
+              transaction_date,
+              amount
+            ],
+            [
+              1001,
+              20001,
+              1,
+              125.50
+            ],
+            [
+              1002,
+              20002,
+              2,
+              -45.99
+            ],
+            [
+              1003,
+              20003,
+              2,
+              890.00
+            ],
+            [
+              1001,
+              20001,
+              2,
+              -12.75
+            ],
+            [
+              1004,
+              20004,
+              2,
+              2400.00
+            ],
+            [
+              1002,
+              20002,
+              3,
+              -89.30
+            ],
+            [
+              1005,
+              20005,
+              3,
+              17.49
+            ],
+            [
+              1003,
+              20003,
+              4,
+              -250.00
+            ],
+            [
+              1001,
+              20001,
+              5,
+              65.00
+            ],
+            [
+              1006,
+              20006,
+              6,
+              12000.00
+            ],
+            [
+              1004,
+              20004,
+              6,
+              -500.00
+            ],
+            [
+              1002,
+              20002,
+              6,
+              230.25
+            ],
+            [
+              1007,
+              20007,
+              7,
+              -19.99
+            ],
+            [
+              1005,
+              20005,
+              7,
+              450.00
+            ],
+            [
+              1008,
+              20008,
+              7,
+              -1200.00
+            ],
+            [
+              1001,
+              20001,
+              8,
+              310.80
+            ],
+            [
+              1009,
+              20009,
+              8,
+              75.25
+            ],
+            [
+              1010,
+              20010,
+              9,
+              -15.00
+            ],
+            [
+              1003,
+              20003,
+              10,
+              999.99
+            ],
+            [
+              1006,
+              20006,
+              10,
+              -3200.50
+            ]
+          ],
+          Headers: [
+            {
+              Identifier: customer_id,
+              Type: {}
+            },
+            {
+              Identifier: account_id,
+              Type: {}
+            },
+            {
+              Identifier: transaction_date,
+              Type: {}
+            },
+            {
+              Identifier: amount,
+              Type: {}
+            }
+          ],
+          Records: [
+            {
+              Values: [
+                {
+                  N: 1001
+                },
+                {
+                  N: 20001
+                },
+                {
+                  N: 1
+                },
+                {
+                  F: 125.5
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1002
+                },
+                {
+                  N: 20002
+                },
+                {
+                  N: 2
+                },
+                {
+                  F: -45.99
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1003
+                },
+                {
+                  N: 20003
+                },
+                {
+                  N: 2
+                },
+                {
+                  F: 890.0
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1001
+                },
+                {
+                  N: 20001
+                },
+                {
+                  N: 2
+                },
+                {
+                  F: -12.75
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1004
+                },
+                {
+                  N: 20004
+                },
+                {
+                  N: 2
+                },
+                {
+                  F: 2400.0
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1002
+                },
+                {
+                  N: 20002
+                },
+                {
+                  N: 3
+                },
+                {
+                  F: -89.3
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1005
+                },
+                {
+                  N: 20005
+                },
+                {
+                  N: 3
+                },
+                {
+                  F: 17.49
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1003
+                },
+                {
+                  N: 20003
+                },
+                {
+                  N: 4
+                },
+                {
+                  F: -250.0
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1001
+                },
+                {
+                  N: 20001
+                },
+                {
+                  N: 5
+                },
+                {
+                  F: 65.0
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1006
+                },
+                {
+                  N: 20006
+                },
+                {
+                  N: 6
+                },
+                {
+                  F: 12000.0
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1004
+                },
+                {
+                  N: 20004
+                },
+                {
+                  N: 6
+                },
+                {
+                  F: -500.0
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1002
+                },
+                {
+                  N: 20002
+                },
+                {
+                  N: 6
+                },
+                {
+                  F: 230.25
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1007
+                },
+                {
+                  N: 20007
+                },
+                {
+                  N: 7
+                },
+                {
+                  F: -19.99
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1005
+                },
+                {
+                  N: 20005
+                },
+                {
+                  N: 7
+                },
+                {
+                  F: 450.0
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1008
+                },
+                {
+                  N: 20008
+                },
+                {
+                  N: 7
+                },
+                {
+                  F: -1200.0
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1001
+                },
+                {
+                  N: 20001
+                },
+                {
+                  N: 8
+                },
+                {
+                  F: 310.8
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1009
+                },
+                {
+                  N: 20009
+                },
+                {
+                  N: 8
+                },
+                {
+                  F: 75.25
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1010
+                },
+                {
+                  N: 20010
+                },
+                {
+                  N: 9
+                },
+                {
+                  F: -15.0
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1003
+                },
+                {
+                  N: 20003
+                },
+                {
+                  N: 10
+                },
+                {
+                  F: 999.99
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 1006
+                },
+                {
+                  N: 20006
+                },
+                {
+                  N: 10
+                },
+                {
+                  F: -3200.5
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    IsFunctionScope: false
+  },
+  envP: {
+    Bindings: {
+      detectFraud: {
+        Type: {
+          SchemaId: sumResult
+        },
+        Identifier: detectFraud,
+        Parameters: [
+          {
+            Type: {},
+            Identifier: days_ago,
+            LineNumber: 26
+          },
+          {
+            Type: {},
+            Identifier: flag_amount,
+            LineNumber: 26
+          },
+          {
+            Type: {
+              SchemaId: transactions
+            },
+            Identifier: transactions_table,
+            LineNumber: 26
+          },
+          {
+            Type: {
+              SchemaId: customers
+            },
+            Identifier: customers_table,
+            LineNumber: 26
+          }
+        ],
+        Body: {
+          Stmt1: {
+            Type: {
+              SchemaId: joinResult
+            },
+            Identifier: joined_transactions_table,
+            Expression: {
+              JoinOnTableExpr: {
+                Name: transactions_table,
+                LineNumber: 28
+              },
+              JoinFromTableExpr: {
+                Name: customers_table,
+                LineNumber: 28
+              },
+              KeyColumn1: customer_id,
+              KeyColumn2: customer_id,
+              ResultSchemaId: joinResult,
+              LineNumber: 28
+            },
+            LineNumber: 28
+          },
+          Stmt2: {
+            Stmt1: {
+              Type: {
+                SchemaId: joinResult
+              },
+              Identifier: filtered_transactions_table,
+              Expression: {
+                TableExpr: {
+                  Name: joined_transactions_table,
+                  LineNumber: 29
+                },
+                Predicate: {
+                  Op: LT,
+                  ExprLeft: {
+                    Name: transaction_date,
+                    LineNumber: 29
+                  },
+                  ExprRight: {
+                    Name: days_ago,
+                    LineNumber: 29
+                  },
+                  LineNumber: 29
+                },
+                LineNumber: 29
+              },
+              LineNumber: 29
+            },
+            Stmt2: {
+              Stmt1: {
+                Type: {
+                  SchemaId: sumResult
+                },
+                Identifier: summed_transactions_table,
+                Expression: {
+                  TableExpr: {
+                    Name: filtered_transactions_table,
+                    LineNumber: 30
+                  },
+                  GroupByColumn: name,
+                  SumColumn: amount,
+                  ResultSchemaId: sumResult,
+                  LineNumber: 30
+                },
+                LineNumber: 30
+              },
+              Stmt2: {
+                Stmt1: {
+                  Identifier: summed_transactions_table,
+                  Value: {
+                    TableExpr: {
+                      Name: summed_transactions_table,
+                      LineNumber: 33
+                    },
+                    Predicate: {
+                      Op: LT,
+                      ExprLeft: {
+                        Name: flag_amount,
+                        LineNumber: 33
+                      },
+                      ExprRight: {
+                        Name: amount,
+                        LineNumber: 33
+                      },
+                      LineNumber: 33
+                    },
+                    LineNumber: 33
+                  },
+                  LineNumber: 33
+                },
+                Stmt2: {
+                  Value: {
+                    Name: summed_transactions_table,
+                    LineNumber: 35
+                  },
+                  LineNumber: 35
+                },
+                LineNumber: 33
+              },
+              LineNumber: 30
+            },
+            LineNumber: 29
+          },
+          LineNumber: 28
+        },
+        LineNumber: 26
+      }
+    }
+  },
+  envS: {
+    Bindings: {
+      customers: [
+        {
+          Id: customer_id,
+          Type: {}
+        },
+        {
+          Id: name,
+          Type: {}
+        }
+      ],
+      joinResult: [
+        {
+          Id: account_id,
+          Type: {}
+        },
+        {
+          Id: customer_id,
+          Type: {}
+        },
+        {
+          Id: name,
+          Type: {}
+        },
+        {
+          Id: transaction_date,
+          Type: {}
+        },
+        {
+          Id: amount,
+          Type: {}
+        }
+      ],
+      sumResult: [
+        {
+          Id: name,
+          Type: {}
+        },
+        {
+          Id: amount,
+          Type: {}
+        }
+      ],
+      transactions: [
+        {
+          Id: customer_id,
+          Type: {}
+        },
+        {
+          Id: account_id,
+          Type: {}
+        },
+        {
+          Id: transaction_date,
+          Type: {}
+        },
+        {
+          Id: amount,
+          Type: {}
+        }
+      ]
+    }
+  },
+  envVT: {
+    Bindings: {
+      customers: {
+        SchemaId: customers
+      },
+      High_Risk: {
+        SchemaId: sumResult
+      },
+      Medium_Risk: {
+        SchemaId: sumResult
+      },
+      transactions: {
+        SchemaId: transactions
+      }
+    },
+    HasReturn: false
+  },
+  envPT: {
+    Bindings: {
+      detectFraud: {
+        Parameters: [
+          {},
+          {},
+          {
+            SchemaId: transactions
+          },
+          {
+            SchemaId: customers
+          }
+        ],
+        ReturnType: {
+          SchemaId: sumResult
+        }
+      }
+    }
+  },
+  envST: {
+    Bindings: {
+      customers: [
+        {
+          Id: customer_id,
+          Type: {}
+        },
+        {
+          Id: name,
+          Type: {}
+        }
+      ],
+      joinResult: [
+        {
+          Id: account_id,
+          Type: {}
+        },
+        {
+          Id: customer_id,
+          Type: {}
+        },
+        {
+          Id: name,
+          Type: {}
+        },
+        {
+          Id: transaction_date,
+          Type: {}
+        },
+        {
+          Id: amount,
+          Type: {}
+        }
+      ],
+      sumResult: [
+        {
+          Id: name,
+          Type: {}
+        },
+        {
+          Id: amount,
+          Type: {}
+        }
+      ],
+      transactions: [
+        {
+          Id: customer_id,
+          Type: {}
+        },
+        {
+          Id: account_id,
+          Type: {}
+        },
+        {
+          Id: transaction_date,
+          Type: {}
+        },
+        {
+          Id: amount,
+          Type: {}
+        }
+      ]
+    }
+  },
+  typeChecker: {},
+  TopLevelDeclarations: [
+    {
+      Identifier: transactions,
+      Columns: [
+        {
+          Id: customer_id,
+          Type: {}
+        },
+        {
+          Id: account_id,
+          Type: {}
+        },
+        {
+          Id: transaction_date,
+          Type: {}
+        },
+        {
+          Id: amount,
+          Type: {}
+        }
+      ]
+    },
+    {
+      Identifier: customers,
+      Columns: [
+        {
+          Id: customer_id,
+          Type: {}
+        },
+        {
+          Id: name,
+          Type: {}
+        }
+      ],
+      LineNumber: 6
+    },
+    {
+      Identifier: sumResult,
+      Columns: [
+        {
+          Id: name,
+          Type: {}
+        },
+        {
+          Id: amount,
+          Type: {}
+        }
+      ],
+      LineNumber: 11
+    },
+    {
+      Identifier: joinResult,
+      Columns: [
+        {
+          Id: account_id,
+          Type: {}
+        },
+        {
+          Id: customer_id,
+          Type: {}
+        },
+        {
+          Id: name,
+          Type: {}
+        },
+        {
+          Id: transaction_date,
+          Type: {}
+        },
+        {
+          Id: amount,
+          Type: {}
+        }
+      ],
+      LineNumber: 16
+    },
+    {
+      Type: {
+        SchemaId: sumResult
+      },
+      Identifier: detectFraud,
+      Parameters: [
+        {
+          Type: {},
+          Identifier: days_ago,
+          LineNumber: 26
+        },
+        {
+          Type: {},
+          Identifier: flag_amount,
+          LineNumber: 26
+        },
+        {
+          Type: {
+            SchemaId: transactions
+          },
+          Identifier: transactions_table,
+          LineNumber: 26
+        },
+        {
+          Type: {
+            SchemaId: customers
+          },
+          Identifier: customers_table,
+          LineNumber: 26
+        }
+      ],
+      Body: {
+        Stmt1: {
+          Type: {
+            SchemaId: joinResult
+          },
+          Identifier: joined_transactions_table,
+          Expression: {
+            JoinOnTableExpr: {
+              Name: transactions_table,
+              LineNumber: 28
+            },
+            JoinFromTableExpr: {
+              Name: customers_table,
+              LineNumber: 28
+            },
+            KeyColumn1: customer_id,
+            KeyColumn2: customer_id,
+            ResultSchemaId: joinResult,
+            LineNumber: 28
+          },
+          LineNumber: 28
+        },
+        Stmt2: {
+          Stmt1: {
+            Type: {
+              SchemaId: joinResult
+            },
+            Identifier: filtered_transactions_table,
+            Expression: {
+              TableExpr: {
+                Name: joined_transactions_table,
+                LineNumber: 29
+              },
+              Predicate: {
+                Op: LT,
+                ExprLeft: {
+                  Name: transaction_date,
+                  LineNumber: 29
+                },
+                ExprRight: {
+                  Name: days_ago,
+                  LineNumber: 29
+                },
+                LineNumber: 29
+              },
+              LineNumber: 29
+            },
+            LineNumber: 29
+          },
+          Stmt2: {
+            Stmt1: {
+              Type: {
+                SchemaId: sumResult
+              },
+              Identifier: summed_transactions_table,
+              Expression: {
+                TableExpr: {
+                  Name: filtered_transactions_table,
+                  LineNumber: 30
+                },
+                GroupByColumn: name,
+                SumColumn: amount,
+                ResultSchemaId: sumResult,
+                LineNumber: 30
+              },
+              LineNumber: 30
+            },
+            Stmt2: {
+              Stmt1: {
+                Identifier: summed_transactions_table,
+                Value: {
+                  TableExpr: {
+                    Name: summed_transactions_table,
+                    LineNumber: 33
+                  },
+                  Predicate: {
+                    Op: LT,
+                    ExprLeft: {
+                      Name: flag_amount,
+                      LineNumber: 33
+                    },
+                    ExprRight: {
+                      Name: amount,
+                      LineNumber: 33
+                    },
+                    LineNumber: 33
+                  },
+                  LineNumber: 33
+                },
+                LineNumber: 33
+              },
+              Stmt2: {
+                Value: {
+                  Name: summed_transactions_table,
+                  LineNumber: 35
+                },
+                LineNumber: 35
+              },
+              LineNumber: 33
+            },
+            LineNumber: 30
+          },
+          LineNumber: 29
+        },
+        LineNumber: 28
+      },
+      LineNumber: 26
+    }
+  ],
+  Stmt: {
+    Stmt1: {
+      Type: {
+        SchemaId: customers
+      },
+      Identifier: customers,
+      FilePath: ../../../MatildaCSVFiles/customers.csv,
+      LineNumber: 39
+    },
+    Stmt2: {
+      Stmt1: {
+        Type: {
+          SchemaId: transactions
+        },
+        Identifier: transactions,
+        FilePath: ../../../MatildaCSVFiles/transactions.csv,
+        LineNumber: 40
+      },
+      Stmt2: {
+        Stmt1: {
+          Type: {
+            SchemaId: sumResult
+          },
+          Identifier: Medium_Risk,
+          Expression: {
+            Name: detectFraud,
+            Arguments: [
+              {
+                Value: 8,
+                LineNumber: 42
+              },
+              {
+                Value: 200,
+                LineNumber: 42
+              },
+              {
+                Name: transactions,
+                LineNumber: 42
+              },
+              {
+                Name: customers,
+                LineNumber: 42
+              }
+            ],
+            LineNumber: 42
+          },
+          LineNumber: 42
+        },
+        Stmt2: {
+          Type: {
+            SchemaId: sumResult
+          },
+          Identifier: High_Risk,
+          Expression: {
+            Name: detectFraud,
+            Arguments: [
+              {
+                Value: 8,
+                LineNumber: 43
+              },
+              {
+                Value: 1000,
+                LineNumber: 43
+              },
+              {
+                Name: transactions,
+                LineNumber: 43
+              },
+              {
+                Name: customers,
+                LineNumber: 43
+              }
+            ],
+            LineNumber: 43
+          },
+          LineNumber: 43
+        },
+        LineNumber: 42
+      },
+      LineNumber: 40
+    },
+    LineNumber: 39
+  }
+}
