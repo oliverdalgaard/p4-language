@@ -126,7 +126,7 @@ public class TypeChecker
 
                 if (ifStmt.Condition != null)
                 {
-                    Type condT = ExprT(ifStmt.Condition, envVT, envPT, envST);
+                    Type? condT = ExprT(ifStmt.Condition, envVT, envPT, envST);
 
                     if (condT != BoolT.Instance)
                     {
@@ -174,8 +174,8 @@ public class TypeChecker
                     break;
                 }
 
-                Type expectedType = envVT.TryGet(assign.Identifier);
-                Type actualType = ExprT(assign.Value, envVT, envPT, envST);
+                Type? expectedType = envVT.TryGet(assign.Identifier);
+                Type? actualType = ExprT(assign.Value, envVT, envPT, envST);
 
                 // Check table type (unique)
                 if (expectedType is TableT expectedTableType && actualType is TableT actualTableType)
@@ -210,7 +210,7 @@ public class TypeChecker
                     break;
                 }
 
-                Type declarationExprType = ExprT(declaration.Expression, envVT, envPT, envST);
+                Type? declarationExprType = ExprT(declaration.Expression, envVT, envPT, envST);
 
                 if (declaration.Type is TableT declarationTableType)
                 {
@@ -263,7 +263,7 @@ public class TypeChecker
                     errors.Add($"Line {r.LineNumber}: 'return' needs a value.");
                     break;
                 }
-                Type currentType = ExprT(r.Value, envVT, envPT, envST);
+                Type? currentType = ExprT(r.Value, envVT, envPT, envST);
                 Type? functionReturnType = envVT.FunctionReturnType;
 
                 if (functionReturnType != null)
@@ -293,7 +293,7 @@ public class TypeChecker
         }
     }
 
-    private Type ExprT(Expr expr, EnvVT envVT, EnvPT envPT, EnvST envST)
+    private Type? ExprT(Expr expr, EnvVT envVT, EnvPT envPT, EnvST envST)
     {
         switch (expr)
         {
@@ -306,8 +306,8 @@ public class TypeChecker
             case StringV: return StringT.Instance;
 
             case BinaryOp binaryOp:
-                Type typeLeft = ExprT(binaryOp.ExprLeft, envVT, envPT, envST);
-                Type typeRight = ExprT(binaryOp.ExprRight, envVT, envPT, envST);
+                Type? typeLeft = ExprT(binaryOp.ExprLeft, envVT, envPT, envST);
+                Type? typeRight = ExprT(binaryOp.ExprRight, envVT, envPT, envST);
 
                 switch (binaryOp.Op)
                 {
@@ -483,7 +483,7 @@ public class TypeChecker
 
             case UnaryOp unaryOp:
                 {
-                    Type innertype = ExprT(unaryOp.Expr, envVT, envPT, envST);
+                    Type? innertype = ExprT(unaryOp.Expr, envVT, envPT, envST);
 
                     switch (unaryOp.Op)
                     {
@@ -502,7 +502,7 @@ public class TypeChecker
                 }
 
             case Filter filter:
-                Type filterTableExprType = ExprT(filter.TableExpr, envVT, envPT, envST);
+                Type? filterTableExprType = ExprT(filter.TableExpr, envVT, envPT, envST);
 
                 if (filterTableExprType is not TableT)
                 {
@@ -511,7 +511,7 @@ public class TypeChecker
                 }
 
                 TableT filterTable = (TableT)filterTableExprType;
-                List<Column> filterTableSchema = envST.TryGet(filterTable.SchemaId);
+                List<Column> filterTableSchema = envST.TryGet(filterTable.SchemaId)!;
                 EnvVT rowEnv = envVT.NewScope();
 
                 foreach (Column col in filterTableSchema)
@@ -528,7 +528,7 @@ public class TypeChecker
                 return (TableT)filterTableExprType;
 
             case Sum sum:
-                Type sumTableExprType = ExprT(sum.TableExpr, envVT, envPT, envST);
+                Type? sumTableExprType = ExprT(sum.TableExpr, envVT, envPT, envST);
 
                 if (sumTableExprType is not TableT)
                 {
@@ -556,13 +556,13 @@ public class TypeChecker
 
                 if (!sumTableExprSchema.Contains(sumResultSchema[0]))
                 {
-                    errors.Add($"Line {sum.LineNumber}: The coulmn '{sumResultSchema[0].Id}' does not exist in schema '{sumExprTable.SchemaId}'.");
+                    errors.Add($"Line {sum.LineNumber}: The column '{sumResultSchema[0].Id}' does not exist in schema '{sumExprTable.SchemaId}'.");
                     return null;
                 }
 
                 if (!sumTableExprSchema.Contains(sumResultSchema[1]))
                 {
-                    errors.Add($"Line {sum.LineNumber}: The coulmn '{sumResultSchema[1].Id}' does not exist in schema '{sumExprTable.SchemaId}'.");
+                    errors.Add($"Line {sum.LineNumber}: The column '{sumResultSchema[1].Id}' does not exist in schema '{sumExprTable.SchemaId}'.");
                     return null;
                 }
 
@@ -580,11 +580,107 @@ public class TypeChecker
 
                 if (sumColumn.Type != IntT.Instance && sumColumn.Type != FloatT.Instance)
                 {
-                    errors.Add($"Line {sum.LineNumber}: The coulmn '{sumColumn.Id}' must be of type 'IntT' or 'FloatT', but got '{sumColumn.Type}'.");
+                    errors.Add($"Line {sum.LineNumber}: The column '{sumColumn.Id}' must be of type 'IntT' or 'FloatT', but got '{sumColumn.Type}'.");
                     return null;
                 }
 
                 return new TableT(sum.ResultSchemaId);
+
+            case Join join:
+                Type? joinOnTableType = ExprT(join.JoinOnTableExpr, envVT, envPT, envST);
+                Type? joinFromTableType = ExprT(join.JoinFromTableExpr, envVT, envPT, envST);
+
+                if (joinOnTableType is not TableT)
+                {
+                    errors.Add($"Line {join.LineNumber}: Argument 1 must be of type 'TableT'.");
+                    return null;
+                }
+
+                if (joinFromTableType is not TableT)
+                {
+                    errors.Add($"Line {join.LineNumber}: Argument 2 must be of type 'TableT'.");
+                    return null;
+                }
+
+                TableT joinOnTable = (TableT)joinOnTableType;
+                TableT joinFromTable = (TableT)joinFromTableType;
+
+                List<Column>? joinResultSchema = envST.TryGet(join.ResultSchemaId);
+                List<Column>? joinOnTableSchema = envST.TryGet(joinOnTable.SchemaId);
+                List<Column>? joinFromTableSchema = envST.TryGet(joinFromTable.SchemaId);
+
+                if (joinResultSchema == null)
+                {
+                    errors.Add($"Line {join.LineNumber}: Result schema '{join.ResultSchemaId}' has not been defined.");
+                    return null;
+                }
+
+                if (joinOnTableSchema == null)
+                {
+                    errors.Add($"Line {join.LineNumber}: Schema '{joinOnTable.SchemaId}' is not defined.");
+                    return null;
+                }
+
+                if (joinFromTableSchema == null)
+                {
+                    errors.Add($"Line {join.LineNumber}: Schema '{joinFromTable.SchemaId}' is not defined.");
+                    return null;
+                }
+
+
+                if (joinResultSchema.Count != joinOnTableSchema.Count + joinFromTableSchema.Count - 1)
+                {
+                    errors.Add($"Line {join.LineNumber}: Result schema '{join.ResultSchemaId}' may only contain {joinOnTableSchema.Count + joinFromTableSchema.Count - 1} columns but has {joinResultSchema.Count} columns.");
+                    return null;
+                }
+
+                Column? joinOnReferenceColumn = null;
+                Column? joinFromReferenceColumn = null;
+
+                foreach (Column col in joinOnTableSchema)
+                {
+                    if (col.Id == join.KeyColumn1)
+                    {
+                        joinOnReferenceColumn = col;
+                    }
+                }
+
+                foreach (Column col in joinFromTableSchema)
+                {
+                    if (col.Id == join.KeyColumn2)
+                    {
+                        joinFromReferenceColumn = col;
+                    }
+                }
+
+                if (joinOnReferenceColumn == null)
+                {
+                    errors.Add($"Line {join.LineNumber}: Join schema '{joinOnTable.SchemaId}' must contain '{join.KeyColumn1}'.");
+                    return null;
+                }
+
+                if (joinFromReferenceColumn == null)
+                {
+                    errors.Add($"Line {join.LineNumber}: Join schema '{joinFromTable.SchemaId}' must contain '{join.KeyColumn2}'.");
+                    return null;
+                }
+
+                if (joinResultSchema.Contains(joinFromReferenceColumn) && joinOnReferenceColumn.Id != joinFromReferenceColumn.Id)
+                {
+                    errors.Add($"Line {join.LineNumber}: Result schema '{join.ResultSchemaId}' may not contain column with id '{join.KeyColumn2}'.");
+                    return null;
+                }
+
+                foreach (Column col in joinResultSchema)
+                {
+                    if (!joinOnTableSchema.Contains(col) && !joinFromTableSchema.Contains(col))
+                    {
+                        errors.Add($"Line {join.LineNumber}: Result schema '{join.ResultSchemaId}' may not contain a column '{col.Id}' that does not exist in schema '{joinOnTable.SchemaId}' or '{joinFromTable.SchemaId}'.");
+                        return null;
+                    }
+                }
+
+                return new TableT(join.ResultSchemaId);
 
             case Ref r:
                 if (envVT.TryGet(r.Name) == null)
@@ -602,7 +698,7 @@ public class TypeChecker
                     return null;
                 }
 
-                FunctionType funcType = envPT.TryGet(functionRef.Name);
+                FunctionType funcType = envPT.TryGet(functionRef.Name)!;
                 int parameterCount = funcType.Parameters.Count;
 
                 if (functionRef.Arguments.Count != parameterCount)
@@ -614,7 +710,7 @@ public class TypeChecker
                 //check type on param
                 for (int i = 0; i < parameterCount; i++)
                 {
-                    Type argType = ExprT(functionRef.Arguments[i], envVT, envPT, envST);
+                    Type? argType = ExprT(functionRef.Arguments[i], envVT, envPT, envST);
                     Type paramType = funcType.Parameters[i];
 
                     if (argType is TableT currentTableType && paramType is TableT functionReturnTableType)

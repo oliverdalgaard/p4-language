@@ -1,5 +1,3 @@
-using System;
-
 namespace Matilda;
 
 class Matilda

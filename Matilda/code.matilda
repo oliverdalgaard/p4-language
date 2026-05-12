@@ -1,21 +1,43 @@
-schema Transactions = {
-    ID : int,
-    Transaction : string,
-    Amount : int,
-    test: bool
+schema transactions = {
+    customer_id : int,
+    account_id : int,
+    transaction_date : int,
+    amount : float
 }
 
-schema SummedTransactionsByTransaction = {
-    Transaction : string
-    Amount : int,
+schema customers = {
+    customer_id : int,
+    name : string
 }
 
-schema SummedTransactionsById = {
-    ID : int,
-    Amount : int
+schema sumResult = {
+    name : string,
+    amount : float
 }
 
-table<Transactions> transactions = read("test.csv");
+schema joinResult = {
+    account_id : int,
+    customer_id : int,
+    name : string,
+    transaction_date : int,
+    amount : float
+}
 
-table<SummedTransactionsByTransaction> summedTransactions = SUM(transactions, Transaction, Amount, SummedTransactionsByTransaction);
-table<SummedTransactionsById> summedTransactions2 = SUM(transactions, ID, Amount, SummedTransactionsById);
+function table<sumResult> detectFraud(int days_ago, int flag_amount, table<transactions> transactions_table, table<customers> customers_table) {
+    
+    table<joinResult> joined_transactions_table = JOIN(transactions_table, customers_table, customer_id, customer_id, joinResult);
+    table<joinResult> filtered_transactions_table = FILTER(joined_transactions_table, transaction_date < days_ago);
+    table<sumResult> summed_transactions_table = SUM(filtered_transactions_table, name, amount, sumResult);
+    
+    
+    summed_transactions_table = FILTER(summed_transactions_table, flag_amount < amount);
+
+    return summed_transactions_table;
+}
+
+
+table<customers> customers = read("../../../customers.csv");
+table<transactions> transactions = read("../../../transactions.csv");
+
+table<sumResult> Medium_Risk = detectFraud(8, 200, transactions, customers);
+table<sumResult> High_Risk = detectFraud(8, 1000, transactions, customers);

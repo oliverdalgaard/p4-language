@@ -313,7 +313,7 @@ public class InterpreterEvalExprTests
             new TableRecord(new List<Val> {new StringVal("Test3"), new IntVal(5)}),
         };
 
-        TableVal filterTable = new TableVal(new Table("TestTable", schema, headers, unfilteredRecords));
+        TableVal filterTable = new TableVal(new Table(schema, headers, unfilteredRecords));
 
         Expr predicate = new BinaryOp(BinaryOperators.LT, new IntV(4, -1), new Ref("TestCol2", -1), -1);
 
@@ -354,7 +354,7 @@ public class InterpreterEvalExprTests
                                                         new Column("TransactionOwner", StringT.Instance),
                                                         new Column("Amount", IntT.Instance) };
 
-        TableVal initialTable = new TableVal(new Table("initialTable", initialSchema,
+        TableVal initialTable = new TableVal(new Table(initialSchema,
                                         new List<TableHeader> { new TableHeader("ID", StringT.Instance), new TableHeader("TransactionOwner", StringT.Instance), new TableHeader("Amount", StringT.Instance) },
                                         new List<TableRecord> { new TableRecord(new List<Val> { new IntVal(1), new StringVal("Peter"), new IntVal(30) }),
                                                                 new TableRecord(new List<Val> { new IntVal(2), new StringVal("Lotte"), new IntVal(40) }),
@@ -365,7 +365,7 @@ public class InterpreterEvalExprTests
         List<Column> resultSchema = new List<Column> { new Column("ID", IntT.Instance),
                                                        new Column("Amount", IntT.Instance)};
 
-        TableVal resultTable = new TableVal(new Table("resulTable", resultSchema,
+        TableVal resultTable = new TableVal(new Table(resultSchema,
                                        new List<TableHeader> { new TableHeader("ID", StringT.Instance), new TableHeader("Amount", StringT.Instance) },
                                        new List<TableRecord> { new TableRecord(new List<Val> { new IntVal(1), new IntVal(80) }), new TableRecord(new List<Val> { new IntVal(2), new IntVal(100) }) }));
 
@@ -414,7 +414,7 @@ public class InterpreterEvalExprTests
                                                         new Column("TransactionOwner", StringT.Instance),
                                                         new Column("Amount", FloatT.Instance) };
 
-        TableVal initialTable = new TableVal(new Table("initialTable", initialSchema,
+        TableVal initialTable = new TableVal(new Table(initialSchema,
                                         new List<TableHeader> { new TableHeader("ID", StringT.Instance), new TableHeader("TransactionOwner", StringT.Instance), new TableHeader("Amount", StringT.Instance) },
                                         new List<TableRecord> { new TableRecord(new List<Val> { new FloatVal(1), new StringVal("Peter"), new FloatVal(30) }),
                                                                 new TableRecord(new List<Val> { new FloatVal(2), new StringVal("Lotte"), new FloatVal(40) }),
@@ -425,7 +425,7 @@ public class InterpreterEvalExprTests
         List<Column> resultSchema = new List<Column> { new Column("Amount", FloatT.Instance),
                                                        new Column("ID", FloatT.Instance)};
 
-        TableVal resultTable = new TableVal(new Table("resulTable", resultSchema,
+        TableVal resultTable = new TableVal(new Table(resultSchema,
                                        new List<TableHeader> { new TableHeader("ID", StringT.Instance), new TableHeader("Amount", StringT.Instance) },
                                        new List<TableRecord> { new TableRecord(new List<Val> { new FloatVal(1), new FloatVal(80) }), new TableRecord(new List<Val> { new FloatVal(2), new FloatVal(100) }) }));
 
