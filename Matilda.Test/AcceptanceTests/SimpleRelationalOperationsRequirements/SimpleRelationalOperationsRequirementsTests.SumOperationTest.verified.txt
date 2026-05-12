@@ -1,6 +1,72 @@
 ﻿{
   envV: {
     Bindings: {
+      summed: {
+        T: {
+          Schema: [
+            {
+              Id: id,
+              Type: {}
+            },
+            {
+              Id: amount,
+              Type: {}
+            }
+          ],
+          Headers: [
+            {
+              Identifier: id,
+              Type: {}
+            },
+            {
+              Identifier: amount,
+              Type: {}
+            }
+          ],
+          Records: [
+            {
+              Values: [
+                {
+                  N: 1
+                },
+                {
+                  N: 5000
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 2
+                },
+                {
+                  N: 12500
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 3
+                },
+                {
+                  N: 7500
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 4
+                },
+                {
+                  N: 3500
+                }
+              ]
+            }
+          ]
+        }
+      },
       transactions: {
         T: {
           Schema: [
@@ -156,6 +222,16 @@
   envP: {},
   envS: {
     Bindings: {
+      SummedTransaction: [
+        {
+          Id: id,
+          Type: {}
+        },
+        {
+          Id: amount,
+          Type: {}
+        }
+      ],
       Transaction: [
         {
           Id: id,
@@ -174,6 +250,9 @@
   },
   envVT: {
     Bindings: {
+      summed: {
+        SchemaId: SummedTransaction
+      },
       transactions: {
         SchemaId: Transaction
       }
@@ -183,6 +262,16 @@
   envPT: {},
   envST: {
     Bindings: {
+      SummedTransaction: [
+        {
+          Id: id,
+          Type: {}
+        },
+        {
+          Id: amount,
+          Type: {}
+        }
+      ],
       Transaction: [
         {
           Id: id,
@@ -217,14 +306,48 @@
           Type: {}
         }
       ]
+    },
+    {
+      Identifier: SummedTransaction,
+      Columns: [
+        {
+          Id: id,
+          Type: {}
+        },
+        {
+          Id: amount,
+          Type: {}
+        }
+      ],
+      LineNumber: 5
     }
   ],
   Stmt: {
-    Type: {
-      SchemaId: Transaction
+    Stmt1: {
+      Type: {
+        SchemaId: Transaction
+      },
+      Identifier: transactions,
+      FilePath: ../../../MatildaCSVFiles/transaction.csv,
+      LineNumber: 12
     },
-    Identifier: transactions,
-    FilePath: ../../../MatildaCSVFiles/transaction.csv,
-    LineNumber: 7
+    Stmt2: {
+      Type: {
+        SchemaId: SummedTransaction
+      },
+      Identifier: summed,
+      Expression: {
+        TableExpr: {
+          Name: transactions,
+          LineNumber: 13
+        },
+        GroupByColumn: id,
+        SumColumn: amount,
+        ResultSchemaId: SummedTransaction,
+        LineNumber: 13
+      },
+      LineNumber: 13
+    },
+    LineNumber: 12
   }
 }

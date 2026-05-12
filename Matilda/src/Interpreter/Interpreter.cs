@@ -69,11 +69,11 @@ public static class Interpreter
                     textFieldParser.SetDelimiters(",");
                     while (!textFieldParser.EndOfData)
                     {
-                        rows.Add(textFieldParser.ReadFields());
+                        rows.Add(textFieldParser.ReadFields()!);
                     }
                 }
 
-                Table table = new Table(tableDeclaration.Identifier, envS.TryGet(((TableT)tableDeclaration.Type).SchemaId), rows);
+                Table table = new Table(envS.TryGet(((TableT)tableDeclaration.Type).SchemaId)!, rows);
                 table.ParseTypes();
 
                 TableVal parsedTable = new TableVal(table);
@@ -132,10 +132,10 @@ public static class Interpreter
                 return new StringVal(stringv.Value);
 
             case Ref reference:
-                return envV.TryGet(reference.Name);
+                return envV.TryGet(reference.Name)!;
 
             case FunctionRef functionRef:
-                FunctionDeclaration function = envP.TryGet(functionRef.Name);
+                FunctionDeclaration function = envP.TryGet(functionRef.Name)!;
 
                 if (functionRef.Arguments.Count != function.Parameters.Count)
                 {
@@ -161,14 +161,14 @@ public static class Interpreter
 
                 EvalStmt(function.Body, localScope, envP, envS);
 
-                return localScope.FunctionReturnValue;
+                return localScope.FunctionReturnValue!;
 
             case Filter filter:
                 {
                     Val tableValue = EvalExpr(filter.TableExpr, envV, envP, envS);
                     Table inputTable = tableValue.AsTable();
 
-                    Table filteredTable = new Table(inputTable.Identifier, inputTable.Schema, inputTable.Headers, new List<TableRecord>());
+                    Table filteredTable = new Table(inputTable.Schema, inputTable.Headers, new List<TableRecord>());
 
                     for (int rowIndex = 0; rowIndex < inputTable.Records.Count; rowIndex++)
                     {
@@ -205,7 +205,7 @@ public static class Interpreter
                     TableHeader tableHeader1 = new TableHeader(resultSchema[0].Id, resultSchema[0].Type);
                     TableHeader tableHeader2 = new TableHeader(resultSchema[1].Id, resultSchema[1].Type);
 
-                    Table summedTable = new Table(inputTable.Identifier, resultSchema, new List<TableHeader> { tableHeader1, tableHeader2 }, new List<TableRecord>());
+                    Table summedTable = new Table(resultSchema, new List<TableHeader> { tableHeader1, tableHeader2 }, new List<TableRecord>());
 
                     int groupByIndex = -1;
                     int sumIndex = -1;
@@ -283,6 +283,103 @@ public static class Interpreter
                     }
 
                     return new TableVal(summedTable);
+                }
+
+            case Join join:
+                {
+                    Val tableValue1 = EvalExpr(join.JoinOnTableExpr, envV, envP, envS);
+                    Val tableValue2 = EvalExpr(join.JoinFromTableExpr, envV, envP, envS);
+                    Table joinOnTable = tableValue1.AsTable();
+                    Table joinFromTable = tableValue2.AsTable();
+
+                    List<Column> resultSchema = envS.TryGet(join.ResultSchemaId)!;
+                    List<TableHeader> resultHeaders = new List<TableHeader>();
+
+                    foreach (Column column in resultSchema)
+                    {
+                        resultHeaders.Add(
+                            new TableHeader(column.Id, column.Type)
+                        );
+                    }
+
+                    Table joinedTable = new Table(resultSchema, resultHeaders, new List<TableRecord>());
+
+                    // Contains every reference key (ID) in the from table and their respective rows for table lookups.
+                    Dictionary<Val, int> joinFromTableRecordIndexReference = new Dictionary<Val, int>();
+
+                    Dictionary<string, int> joinOnTableHeaderIndexReference = new Dictionary<string, int>();
+                    Dictionary<string, int> joinFromTableHeaderIndexReference = new Dictionary<string, int>();
+
+                    (string schema, int index)[] schemaMap = new (string schema, int index)[resultHeaders.Count];
+
+                    for (int i = 0; i < joinOnTable.Headers.Count; i++)
+                    {
+                        joinOnTableHeaderIndexReference[joinOnTable.Headers[i].Identifier] = i;
+                    }
+
+                    for (int i = 0; i < joinFromTable.Headers.Count; i++)
+                    {
+                        joinFromTableHeaderIndexReference[joinFromTable.Headers[i].Identifier] = i;
+                    }
+
+                    int joinOnTableReferenceColumnIndex = joinOnTableHeaderIndexReference[join.KeyColumn1];
+                    int joinFromTableReferenceColumnIndex = joinFromTableHeaderIndexReference[join.KeyColumn2];
+
+                    for (int i = 0; i < joinFromTable.Records.Count; i++)
+                    {
+                        Val key = joinFromTable.Records[i].Values[joinFromTableReferenceColumnIndex];
+
+                        if (!joinFromTableRecordIndexReference.TryAdd(key, i))
+                        {
+                            throw new Exception("Duplicate primary key in table.");
+                        }
+                    }
+
+                    for (int i = 0; i < resultSchema.Count; i++)
+                    {
+                        string columnId = resultSchema[i].Id;
+
+                        if (joinOnTableHeaderIndexReference.TryGetValue(columnId, out int idx))
+                        {
+                            schemaMap[i] = ("onTable", idx);
+                        }
+                        else
+                        {
+                            schemaMap[i] = ("fromTable", joinFromTableHeaderIndexReference[columnId]);
+                        }
+                    }
+
+                    // Joins here
+                    for (int i = 0; i < joinOnTable.Records.Count; i++)
+                    {
+                        TableRecord record = joinOnTable.Records[i];
+                        List<Val> joinedRecordVals = new List<Val>();
+
+                        Val joinKey = record.Values[joinOnTableReferenceColumnIndex];
+
+                        foreach ((string schema, int index) mapping in schemaMap)
+                        {
+                            if (mapping.schema == "onTable")
+                            {
+                                joinedRecordVals.Add(record.Values[mapping.index]);
+                            }
+                            else
+                            {
+                                if (joinFromTableRecordIndexReference.TryGetValue(joinKey, out int value))
+                                {
+                                    joinedRecordVals.Add(joinFromTable.Records[value].Values[mapping.index]);
+                                }
+                                else
+                                {
+                                    throw new Exception($"Key {joinKey} was not found in the join table.");
+                                }
+                            }
+                        }
+
+                        joinedTable.AddRecord(new TableRecord(joinedRecordVals));
+                    }
+
+                    return new TableVal(joinedTable);
                 }
 
             case BinaryOp binaryOp:

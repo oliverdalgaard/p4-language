@@ -36,8 +36,8 @@ function table<sumResult> detectFraud(int days_ago, int flag_amount, table<trans
 }
 
 
-table<customers> customers = read("../../../customers.csv");
-table<transactions> transactions = read("../../../transactions.csv");
+table<customers> customers = read("../../../MatildaCSVFiles/customers.csv");
+table<transactions> transactions = read("../../../MatildaCSVFiles/transactions.csv");
 
 table<sumResult> Medium_Risk = detectFraud(8, 200, transactions, customers);
 table<sumResult> High_Risk = detectFraud(8, 1000, transactions, customers);

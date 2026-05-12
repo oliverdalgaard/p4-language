@@ -9,15 +9,13 @@ public class TableTests
     public void TableInitTest1()
     {
         // Arrange
-        string identifier = "testId";
         List<Column> schema = new List<Column>();
         List<string[]> file = new List<string[]>();
 
         // Act
-        Table table = new Table(identifier, schema, file);
+        Table table = new Table(schema, file);
 
         // Assert
-        Assert.AreEqual(identifier, table.Identifier);
         Assert.AreEqual(schema, table.Schema);
         Assert.AreEqual(file, table.File);
         Assert.IsInstanceOfType<List<TableHeader>>(table.Headers);
@@ -28,16 +26,14 @@ public class TableTests
     public void TableInitTest2()
     {
         // Arrange
-        string identifier = "testId";
         List<Column> schema = new List<Column>();
         List<TableHeader> tableHeaders = new List<TableHeader>();
         List<TableRecord> tableRecords = new List<TableRecord>();
 
         // Act
-        Table table = new Table(identifier, schema, tableHeaders, tableRecords);
+        Table table = new Table(schema, tableHeaders, tableRecords);
 
         // Assert
-        Assert.AreEqual(identifier, table.Identifier);
         Assert.AreEqual(schema, table.Schema);
         Assert.AreEqual(tableHeaders, table.Headers);
         Assert.AreEqual(tableRecords, table.Records);
@@ -47,7 +43,6 @@ public class TableTests
     public void TableAddRecordTest()
     {
         // Arrange
-        string identifier = "testId";
         List<Column> schema = new List<Column>();
         List<TableHeader> tableHeaders = new List<TableHeader>();
         List<TableRecord> tableRecords = new List<TableRecord>();
@@ -55,11 +50,10 @@ public class TableTests
         List<Val> recordValList = new List<Val> { new IntVal(2) };
 
         // Act
-        Table table = new Table(identifier, schema, tableHeaders, tableRecords);
+        Table table = new Table(schema, tableHeaders, tableRecords);
         table.AddRecord(recordValList);
 
         // Assert
-        Assert.AreEqual(identifier, table.Identifier);
         Assert.AreEqual(schema, table.Schema);
         Assert.AreEqual(tableHeaders, table.Headers);
         Assert.AreEqual(recordValList, table.Records[0].Values);
@@ -69,7 +63,6 @@ public class TableTests
     public void TableAddRecordTest2()
     {
         // Arrange
-        string identifier = "testId";
         List<Column> schema = new List<Column>();
         List<TableHeader> tableHeaders = new List<TableHeader>();
         List<TableRecord> tableRecords = new List<TableRecord>();
@@ -78,11 +71,10 @@ public class TableTests
         TableRecord newRecord = new TableRecord(recordValList);
 
         // Act
-        Table table = new Table(identifier, schema, tableHeaders, tableRecords);
+        Table table = new Table(schema, tableHeaders, tableRecords);
         table.AddRecord(newRecord);
 
         // Assert
-        Assert.AreEqual(identifier, table.Identifier);
         Assert.AreEqual(schema, table.Schema);
         Assert.AreEqual(tableHeaders, table.Headers);
         Assert.AreEqual(recordValList, table.Records[0].Values);
@@ -92,7 +84,7 @@ public class TableTests
     public void ParseTypesSchemaCountNotMatchTest()
     {
         // Arrange
-        Table table = new Table("testId", new List<Column> { new Column("test", IntT.Instance) }, new List<string[]> { new string[] { "123", "321" } });
+        Table table = new Table(new List<Column> { new Column("test", IntT.Instance) }, new List<string[]> { new string[] { "123", "321" } });
 
         // Assert
         try
@@ -110,7 +102,7 @@ public class TableTests
     public void ParseTypesSchemaHeadersNotMatchTest()
     {
         // Arrange
-        Table table = new Table("testId", new List<Column> { new Column("test", IntT.Instance) }, new List<string[]> { new string[] { "test2" } });
+        Table table = new Table(new List<Column> { new Column("test", IntT.Instance) }, new List<string[]> { new string[] { "test2" } });
 
         // Assert
         try
@@ -128,7 +120,7 @@ public class TableTests
     public void ParseTypesFailureUnknownTypeTest()
     {
         // Arrange
-        Table table = new Table("testId", new List<Column> { new Column("test", RowValT.Instance) }, new List<string[]> { new string[] { "test" }, new string[] { "1" } });
+        Table table = new Table(new List<Column> { new Column("test", RowValT.Instance) }, new List<string[]> { new string[] { "test" }, new string[] { "1" } });
 
         // Assert
         try
@@ -146,7 +138,7 @@ public class TableTests
     public void ParseTypesRowDoesNotMatchTest()
     {
         // Arrange
-        Table table = new Table("testId", new List<Column> { new Column("test", IntT.Instance) }, new List<string[]> { new string[] { "test" }, new string[] { "1", "2" } });
+        Table table = new Table(new List<Column> { new Column("test", IntT.Instance) }, new List<string[]> { new string[] { "test" }, new string[] { "1", "2" } });
 
         // Assert
         try
@@ -164,7 +156,7 @@ public class TableTests
     public void ParseTypesSuccessIntTest()
     {
         // Arrange
-        Table table = new Table("testId", new List<Column> { new Column("test", IntT.Instance) }, new List<string[]> { new string[] { "test" }, new string[] { "1" } });
+        Table table = new Table(new List<Column> { new Column("test", IntT.Instance) }, new List<string[]> { new string[] { "test" }, new string[] { "1" } });
 
         // Act
         table.ParseTypes();
@@ -179,7 +171,7 @@ public class TableTests
     public void ParseTypesSuccessFloatTest()
     {
         // Arrange
-        Table table = new Table("testId", new List<Column> { new Column("test", FloatT.Instance) }, new List<string[]> { new string[] { "test" }, new string[] { "1" } });
+        Table table = new Table(new List<Column> { new Column("test", FloatT.Instance) }, new List<string[]> { new string[] { "test" }, new string[] { "1" } });
 
         // Act
         table.ParseTypes();
@@ -194,7 +186,7 @@ public class TableTests
     public void ParseTypesSuccessBoolTest()
     {
         // Arrange
-        Table table = new Table("testId", new List<Column> { new Column("test", BoolT.Instance) }, new List<string[]> { new string[] { "test" }, new string[] { "True" } });
+        Table table = new Table(new List<Column> { new Column("test", BoolT.Instance) }, new List<string[]> { new string[] { "test" }, new string[] { "True" } });
 
         // Act
         table.ParseTypes();
@@ -209,7 +201,7 @@ public class TableTests
     public void ParseTypesSuccessStringTest()
     {
         // Arrange
-        Table table = new Table("testId", new List<Column> { new Column("test", StringT.Instance) }, new List<string[]> { new string[] { "test" }, new string[] { "Hej" } });
+        Table table = new Table(new List<Column> { new Column("test", StringT.Instance) }, new List<string[]> { new string[] { "test" }, new string[] { "Hej" } });
 
         // Act
         table.ParseTypes();

@@ -107,6 +107,26 @@ public class Sum : Expr
     }
 }
 
+public class Join : Expr  // Convention: PascalCase, not all caps
+{
+    public Expr JoinOnTableExpr { get; }
+    public Expr JoinFromTableExpr { get; }
+    public string KeyColumn1 { get; }
+    public string KeyColumn2 { get; }
+    public string ResultSchemaId { get; }
+    public override int LineNumber { get; }
+
+    public Join(Expr joinOnTableExpr, Expr joinFromTableExpr, string keyColumn1, string keyColumn2, string resultSchemaId, int lineNumber)
+    {
+        JoinOnTableExpr = joinOnTableExpr;
+        JoinFromTableExpr = joinFromTableExpr;
+        KeyColumn1 = keyColumn1;
+        KeyColumn2 = keyColumn2;
+        ResultSchemaId = resultSchemaId;
+        LineNumber = lineNumber;
+    }
+}
+
 public class IntV : Expr
 {
     public int Value { get; }

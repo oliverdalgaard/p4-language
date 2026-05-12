@@ -3,7 +3,6 @@
     Bindings: {
       people: {
         T: {
-          Identifier: people,
           Schema: [
             {
               Id: id,
