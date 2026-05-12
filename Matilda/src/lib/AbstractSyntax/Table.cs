@@ -4,7 +4,6 @@ namespace Matilda;
 
 public class Table
 {
-    public string Identifier { get; }
     public List<Column> Schema { get; }
 
     public List<string[]> File { get; }
@@ -12,9 +11,8 @@ public class Table
     public List<TableHeader> Headers { get; }
     public List<TableRecord> Records { get; }
 
-    public Table(string identifier, List<Column> schema, List<string[]> file)
+    public Table(List<Column> schema, List<string[]> file)
     {
-        Identifier = identifier;
         Schema = schema;
         File = file;
 
@@ -22,9 +20,8 @@ public class Table
         Records = new List<TableRecord>();
     }
 
-    public Table(string identifier, List<Column> schema, List<TableHeader> headers, List<TableRecord> records)
+    public Table(List<Column> schema, List<TableHeader> headers, List<TableRecord> records)
     {
-        Identifier = identifier;
         Schema = schema;
 
         File = new List<string[]>();
@@ -103,7 +100,7 @@ public class Table
         List<TableRecord> tableRecords = new List<TableRecord>();
         List<TableHeader> tableHeaders = new List<TableHeader>();
 
-        for (int i = 0; i < this.Headers.Count; i++)
+        for (int i = 0; i < Headers.Count; i++)
         {
             tableHeaders.Add(new TableHeader(this.Headers[i].Identifier, this.Headers[i].Type));
         }
@@ -113,7 +110,7 @@ public class Table
             tableRecords.Add(new TableRecord(this.Records[i].Values));
         }
 
-        return new Table(this.Identifier, this.Schema, tableHeaders, tableRecords);
+        return new Table(this.Schema, tableHeaders, tableRecords);
     }
 }
 

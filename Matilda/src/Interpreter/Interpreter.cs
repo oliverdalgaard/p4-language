@@ -69,11 +69,11 @@ public static class Interpreter
                     textFieldParser.SetDelimiters(",");
                     while (!textFieldParser.EndOfData)
                     {
-                        rows.Add(textFieldParser.ReadFields());
+                        rows.Add(textFieldParser.ReadFields()!);
                     }
                 }
 
-                Table table = new Table(tableDeclaration.Identifier, envS.TryGet(((TableT)tableDeclaration.Type).SchemaId), rows);
+                Table table = new Table(envS.TryGet(((TableT)tableDeclaration.Type).SchemaId)!, rows);
                 table.ParseTypes();
 
                 TableVal parsedTable = new TableVal(table);
@@ -132,10 +132,10 @@ public static class Interpreter
                 return new StringVal(stringv.Value);
 
             case Ref reference:
-                return envV.TryGet(reference.Name);
+                return envV.TryGet(reference.Name)!;
 
             case FunctionRef functionRef:
-                FunctionDeclaration function = envP.TryGet(functionRef.Name);
+                FunctionDeclaration function = envP.TryGet(functionRef.Name)!;
 
                 if (functionRef.Arguments.Count != function.Parameters.Count)
                 {
@@ -161,14 +161,14 @@ public static class Interpreter
 
                 EvalStmt(function.Body, localScope, envP, envS);
 
-                return localScope.FunctionReturnValue;
+                return localScope.FunctionReturnValue!;
 
             case Filter filter:
                 {
                     Val tableValue = EvalExpr(filter.TableExpr, envV, envP, envS);
                     Table inputTable = tableValue.AsTable();
 
-                    Table filteredTable = new Table(inputTable.Identifier, inputTable.Schema, inputTable.Headers, new List<TableRecord>());
+                    Table filteredTable = new Table(inputTable.Schema, inputTable.Headers, new List<TableRecord>());
 
                     for (int rowIndex = 0; rowIndex < inputTable.Records.Count; rowIndex++)
                     {
@@ -205,7 +205,7 @@ public static class Interpreter
                     TableHeader tableHeader1 = new TableHeader(resultSchema[0].Id, resultSchema[0].Type);
                     TableHeader tableHeader2 = new TableHeader(resultSchema[1].Id, resultSchema[1].Type);
 
-                    Table summedTable = new Table(inputTable.Identifier, resultSchema, new List<TableHeader> { tableHeader1, tableHeader2 }, new List<TableRecord>());
+                    Table summedTable = new Table(resultSchema, new List<TableHeader> { tableHeader1, tableHeader2 }, new List<TableRecord>());
 
                     int groupByIndex = -1;
                     int sumIndex = -1;
@@ -302,7 +302,7 @@ public static class Interpreter
                         );
                     }
 
-                    Table joinedTable = new Table(joinOnTable.Identifier, resultSchema, resultHeaders, new List<TableRecord>());
+                    Table joinedTable = new Table(resultSchema, resultHeaders, new List<TableRecord>());
 
                     // Contains every reference key (ID) in the from table and their respective rows for table lookups.
                     Dictionary<Val, int> joinFromTableRecordIndexReference = new Dictionary<Val, int>();
