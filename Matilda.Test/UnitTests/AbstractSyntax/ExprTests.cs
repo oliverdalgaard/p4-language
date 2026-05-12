@@ -126,4 +126,26 @@ public class SumTests
         Assert.AreEqual(resultSchemaId, sumExpr.ResultSchemaId);
         Assert.AreEqual(-1, sumExpr.LineNumber);
     }
+
+    [TestMethod]
+    public void SetJoinPropertiesTest()
+    {
+        // Arrange
+        Expr joinTableExpr1 = new Ref("TestTable", -1);
+        Expr joinTableExpr2 = new Ref("TestTable2", -1);
+        string keyCol1 = "id";
+        string keyCol2 = "id";
+        string resultSchemaId = "resultSchema";
+
+        // Act
+        Join joinExpr = new Join(joinTableExpr1, joinTableExpr2, keyCol1, keyCol2, resultSchemaId, -1);
+
+        // Assert
+        Assert.AreEqual(joinTableExpr1, joinExpr.JoinOnTableExpr);
+        Assert.AreEqual(joinTableExpr2, joinExpr.JoinFromTableExpr);
+        Assert.AreEqual(keyCol1, joinExpr.KeyColumn1);
+        Assert.AreEqual(keyCol2, joinExpr.KeyColumn2);
+        Assert.AreEqual(resultSchemaId, joinExpr.ResultSchemaId);
+        Assert.AreEqual(-1, joinExpr.LineNumber);
+    }
 }
