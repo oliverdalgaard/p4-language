@@ -1,0 +1,725 @@
+﻿{
+  envV: {
+    Bindings: {
+      enrollmentTable: {
+        T: {
+          Schema: [
+            {
+              Id: enrollment_id,
+              Type: {}
+            },
+            {
+              Id: student_id,
+              Type: {}
+            },
+            {
+              Id: course,
+              Type: {}
+            }
+          ],
+          File: [
+            [
+              enrollment_id,
+              student_id,
+              course
+            ],
+            [
+              1,
+              1,
+              Programming
+            ],
+            [
+              2,
+              1,
+              Math
+            ],
+            [
+              3,
+              4,
+              Physics
+            ],
+            [
+              4,
+              2,
+              English
+            ],
+            [
+              5,
+              1,
+              Chemistry
+            ],
+            [
+              6,
+              4,
+              Histroy
+            ],
+            [
+              7,
+              4,
+              French
+            ],
+            [
+              8,
+              2,
+              Spanish
+            ],
+            [
+              9,
+              2,
+              Geography
+            ],
+            [
+              10,
+              4,
+              Inovation
+            ]
+          ],
+          Headers: [
+            {
+              Identifier: enrollment_id,
+              Type: {}
+            },
+            {
+              Identifier: student_id,
+              Type: {}
+            },
+            {
+              Identifier: course,
+              Type: {}
+            }
+          ],
+          Records: [
+            {
+              Values: [
+                {
+                  N: 1
+                },
+                {
+                  N: 1
+                },
+                {
+                  S: Programming
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 2
+                },
+                {
+                  N: 1
+                },
+                {
+                  S: Math
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 3
+                },
+                {
+                  N: 4
+                },
+                {
+                  S: Physics
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 4
+                },
+                {
+                  N: 2
+                },
+                {
+                  S: English
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 5
+                },
+                {
+                  N: 1
+                },
+                {
+                  S: Chemistry
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 6
+                },
+                {
+                  N: 4
+                },
+                {
+                  S: Histroy
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 7
+                },
+                {
+                  N: 4
+                },
+                {
+                  S: French
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 8
+                },
+                {
+                  N: 2
+                },
+                {
+                  S: Spanish
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 9
+                },
+                {
+                  N: 2
+                },
+                {
+                  S: Geography
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 10
+                },
+                {
+                  N: 4
+                },
+                {
+                  S: Inovation
+                }
+              ]
+            }
+          ]
+        }
+      },
+      joinedResultTable: {
+        T: {
+          Schema: [
+            {
+              Id: enrollment_id,
+              Type: {}
+            },
+            {
+              Id: student_id,
+              Type: {}
+            },
+            {
+              Id: name,
+              Type: {}
+            },
+            {
+              Id: course,
+              Type: {}
+            }
+          ],
+          Headers: [
+            {
+              Identifier: enrollment_id,
+              Type: {}
+            },
+            {
+              Identifier: student_id,
+              Type: {}
+            },
+            {
+              Identifier: name,
+              Type: {}
+            },
+            {
+              Identifier: course,
+              Type: {}
+            }
+          ],
+          Records: [
+            {
+              Values: [
+                {
+                  N: 1
+                },
+                {
+                  N: 1
+                },
+                {
+                  S: Alice
+                },
+                {
+                  S: Programming
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 2
+                },
+                {
+                  N: 1
+                },
+                {
+                  S: Alice
+                },
+                {
+                  S: Math
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 3
+                },
+                {
+                  N: 4
+                },
+                {
+                  S: Diana
+                },
+                {
+                  S: Physics
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 4
+                },
+                {
+                  N: 2
+                },
+                {
+                  S: Bob
+                },
+                {
+                  S: English
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 5
+                },
+                {
+                  N: 1
+                },
+                {
+                  S: Alice
+                },
+                {
+                  S: Chemistry
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 6
+                },
+                {
+                  N: 4
+                },
+                {
+                  S: Diana
+                },
+                {
+                  S: Histroy
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 7
+                },
+                {
+                  N: 4
+                },
+                {
+                  S: Diana
+                },
+                {
+                  S: French
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 8
+                },
+                {
+                  N: 2
+                },
+                {
+                  S: Bob
+                },
+                {
+                  S: Spanish
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 9
+                },
+                {
+                  N: 2
+                },
+                {
+                  S: Bob
+                },
+                {
+                  S: Geography
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 10
+                },
+                {
+                  N: 4
+                },
+                {
+                  S: Diana
+                },
+                {
+                  S: Inovation
+                }
+              ]
+            }
+          ]
+        }
+      },
+      studentTable: {
+        T: {
+          Schema: [
+            {
+              Id: id,
+              Type: {}
+            },
+            {
+              Id: name,
+              Type: {}
+            }
+          ],
+          File: [
+            [
+              id,
+              name
+            ],
+            [
+              1,
+              Alice
+            ],
+            [
+              2,
+              Bob
+            ],
+            [
+              3,
+              Charlie
+            ],
+            [
+              4,
+              Diana
+            ]
+          ],
+          Headers: [
+            {
+              Identifier: id,
+              Type: {}
+            },
+            {
+              Identifier: name,
+              Type: {}
+            }
+          ],
+          Records: [
+            {
+              Values: [
+                {
+                  N: 1
+                },
+                {
+                  S: Alice
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 2
+                },
+                {
+                  S: Bob
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 3
+                },
+                {
+                  S: Charlie
+                }
+              ]
+            },
+            {
+              Values: [
+                {
+                  N: 4
+                },
+                {
+                  S: Diana
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    IsFunctionScope: false
+  },
+  envP: {},
+  envS: {
+    Bindings: {
+      Enrollment: [
+        {
+          Id: enrollment_id,
+          Type: {}
+        },
+        {
+          Id: student_id,
+          Type: {}
+        },
+        {
+          Id: course,
+          Type: {}
+        }
+      ],
+      joinResult: [
+        {
+          Id: enrollment_id,
+          Type: {}
+        },
+        {
+          Id: student_id,
+          Type: {}
+        },
+        {
+          Id: name,
+          Type: {}
+        },
+        {
+          Id: course,
+          Type: {}
+        }
+      ],
+      Student: [
+        {
+          Id: id,
+          Type: {}
+        },
+        {
+          Id: name,
+          Type: {}
+        }
+      ]
+    }
+  },
+  envVT: {
+    Bindings: {
+      enrollmentTable: {
+        SchemaId: Enrollment
+      },
+      joinedResultTable: {
+        SchemaId: joinResult
+      },
+      studentTable: {
+        SchemaId: Student
+      }
+    },
+    HasReturn: false
+  },
+  envPT: {},
+  envST: {
+    Bindings: {
+      Enrollment: [
+        {
+          Id: enrollment_id,
+          Type: {}
+        },
+        {
+          Id: student_id,
+          Type: {}
+        },
+        {
+          Id: course,
+          Type: {}
+        }
+      ],
+      joinResult: [
+        {
+          Id: enrollment_id,
+          Type: {}
+        },
+        {
+          Id: student_id,
+          Type: {}
+        },
+        {
+          Id: name,
+          Type: {}
+        },
+        {
+          Id: course,
+          Type: {}
+        }
+      ],
+      Student: [
+        {
+          Id: id,
+          Type: {}
+        },
+        {
+          Id: name,
+          Type: {}
+        }
+      ]
+    }
+  },
+  typeChecker: {},
+  TopLevelDeclarations: [
+    {
+      Identifier: Student,
+      Columns: [
+        {
+          Id: id,
+          Type: {}
+        },
+        {
+          Id: name,
+          Type: {}
+        }
+      ]
+    },
+    {
+      Identifier: Enrollment,
+      Columns: [
+        {
+          Id: enrollment_id,
+          Type: {}
+        },
+        {
+          Id: student_id,
+          Type: {}
+        },
+        {
+          Id: course,
+          Type: {}
+        }
+      ],
+      LineNumber: 4
+    },
+    {
+      Identifier: joinResult,
+      Columns: [
+        {
+          Id: enrollment_id,
+          Type: {}
+        },
+        {
+          Id: student_id,
+          Type: {}
+        },
+        {
+          Id: name,
+          Type: {}
+        },
+        {
+          Id: course,
+          Type: {}
+        }
+      ],
+      LineNumber: 10
+    }
+  ],
+  Stmt: {
+    Stmt1: {
+      Type: {
+        SchemaId: Student
+      },
+      Identifier: studentTable,
+      FilePath: ../../../MatildaCSVFiles/people.csv,
+      LineNumber: 19
+    },
+    Stmt2: {
+      Stmt1: {
+        Type: {
+          SchemaId: Enrollment
+        },
+        Identifier: enrollmentTable,
+        FilePath: ../../../MatildaCSVFiles/enrollment.csv,
+        LineNumber: 20
+      },
+      Stmt2: {
+        Type: {
+          SchemaId: joinResult
+        },
+        Identifier: joinedResultTable,
+        Expression: {
+          JoinOnTableExpr: {
+            Name: enrollmentTable,
+            LineNumber: 22
+          },
+          JoinFromTableExpr: {
+            Name: studentTable,
+            LineNumber: 22
+          },
+          KeyColumn1: student_id,
+          KeyColumn2: id,
+          ResultSchemaId: joinResult,
+          LineNumber: 22
+        },
+        LineNumber: 22
+      },
+      LineNumber: 20
+    },
+    LineNumber: 19
+  }
+}

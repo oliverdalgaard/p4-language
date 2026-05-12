@@ -1,0 +1,22 @@
+schema Student = {
+    id : int,
+    name : string
+}
+
+schema Enrollment = {
+    enrollment_id : int,
+    student_id : int,
+    course : string
+}
+
+schema joinResult = {
+    enrollment_id : int,
+    student_id : int,
+    name : string,
+    course : string
+}
+
+table<Student> studentTable = read("../../../MatildaCSVFiles/people.csv");
+table<Enrollment> enrollmentTable = read("../../../MatildaCSVFiles/enrollment.csv");
+
+table<joinResult> joinedResultTable = JOIN(enrollmentTable, studentTable, student_id, id, joinResult);
