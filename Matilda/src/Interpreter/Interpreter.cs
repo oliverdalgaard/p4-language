@@ -365,8 +365,14 @@ public static class Interpreter
                             }
                             else
                             {
-                                int recordRef = joinFromTableRecordIndexReference[joinKey];
-                                joinedRecordVals.Add(joinFromTable.Records[recordRef].Values[mapping.index]);
+                                if (joinFromTableRecordIndexReference.TryGetValue(joinKey, out int value))
+                                {
+                                    joinedRecordVals.Add(joinFromTable.Records[value].Values[mapping.index]);
+                                }
+                                else
+                                {
+                                    throw new Exception($"Key {joinKey} was not found in the join table.");
+                                }
                             }
                         }
 
