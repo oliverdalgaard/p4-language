@@ -606,27 +606,14 @@ public class TypeChecker
                 TableT joinFromTable = (TableT)joinFromTableType;
 
                 List<Column>? joinResultSchema = envST.TryGet(join.ResultSchemaId);
-                List<Column>? joinOnTableSchema = envST.TryGet(joinOnTable.SchemaId);
-                List<Column>? joinFromTableSchema = envST.TryGet(joinFromTable.SchemaId);
+                List<Column> joinOnTableSchema = envST.TryGet(joinOnTable.SchemaId)!;
+                List<Column> joinFromTableSchema = envST.TryGet(joinFromTable.SchemaId)!;
 
                 if (joinResultSchema == null)
                 {
                     errors.Add($"Line {join.LineNumber}: Result schema '{join.ResultSchemaId}' has not been defined.");
                     return null;
                 }
-
-                if (joinOnTableSchema == null)
-                {
-                    errors.Add($"Line {join.LineNumber}: Schema '{joinOnTable.SchemaId}' is not defined.");
-                    return null;
-                }
-
-                if (joinFromTableSchema == null)
-                {
-                    errors.Add($"Line {join.LineNumber}: Schema '{joinFromTable.SchemaId}' is not defined.");
-                    return null;
-                }
-
 
                 if (joinResultSchema.Count != joinOnTableSchema.Count + joinFromTableSchema.Count - 1)
                 {
@@ -665,7 +652,7 @@ public class TypeChecker
                     return null;
                 }
 
-                if (joinResultSchema.Contains(joinFromReferenceColumn) && joinOnReferenceColumn.Id != joinFromReferenceColumn.Id)
+                if (joinResultSchema.Contains(joinFromReferenceColumn) && !joinOnTableSchema.Contains(joinFromReferenceColumn))
                 {
                     errors.Add($"Line {join.LineNumber}: Result schema '{join.ResultSchemaId}' may not contain column with id '{join.KeyColumn2}'.");
                     return null;

@@ -463,6 +463,229 @@ public class InterpreterEvalExprTests
     }
 
     [TestMethod]
+    public void JoinExprTest()
+    {
+        // Arrange
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
+
+        List<Column> joinOnSchema = new List<Column> { new Column("ID", IntT.Instance),
+                                                        new Column("TransactionOwner_id", IntT.Instance),
+                                                        new Column("Amount", IntT.Instance) };
+
+        List<Column> joinFromSchema = new List<Column> { new Column("ID", IntT.Instance),
+                                                        new Column("name", StringT.Instance) };
+
+        TableVal joinOnTable = new TableVal(new Table(joinOnSchema,
+                                        new List<TableHeader> { new TableHeader("ID", StringT.Instance), new TableHeader("TransactionOwner_id", IntT.Instance), new TableHeader("Amount", IntT.Instance) },
+                                        new List<TableRecord> { new TableRecord(new List<Val> { new IntVal(1), new IntVal(1), new IntVal(30) }),
+                                                                new TableRecord(new List<Val> { new IntVal(2), new IntVal(1), new IntVal(40) }),
+                                                                new TableRecord(new List<Val> { new IntVal(3), new IntVal(2), new IntVal(50) }),
+                                                                new TableRecord(new List<Val> { new IntVal(4), new IntVal(1), new IntVal(60) }) }));
+
+        TableVal joinFromTable = new TableVal(new Table(joinFromSchema,
+                                        new List<TableHeader> { new TableHeader("ID", StringT.Instance), new TableHeader("name", StringT.Instance) },
+                                        new List<TableRecord> { new TableRecord(new List<Val> { new IntVal(1), new StringVal("Lotte") }),
+                                                                new TableRecord(new List<Val> { new IntVal(2), new StringVal("Peter") }) }));
+
+
+        List<Column> resultSchema = new List<Column> { new Column("ID", IntT.Instance),
+                                                       new Column("TransactionOwner_id", IntT.Instance),
+                                                       new Column("name", StringT.Instance),
+                                                       new Column("Amount", IntT.Instance)};
+
+        TableVal resultTable = new TableVal(new Table(resultSchema,
+                                       new List<TableHeader> { new TableHeader("ID", StringT.Instance), new TableHeader("TransactionOwner_id", IntT.Instance), new TableHeader("name", StringT.Instance), new TableHeader("Amount", IntT.Instance) },
+                                       new List<TableRecord> { new TableRecord(new List<Val> { new IntVal(1), new IntVal(1), new StringVal("Lotte"), new IntVal(30) }),
+                                                               new TableRecord(new List<Val> { new IntVal(2), new IntVal(1), new StringVal("Lotte"), new IntVal(40) }),
+                                                               new TableRecord(new List<Val> { new IntVal(3), new IntVal(2), new StringVal("Peter"), new IntVal(50) }),
+                                                               new TableRecord(new List<Val> { new IntVal(4), new IntVal(1), new StringVal("Lotte"), new IntVal(60) }) }));
+
+
+        Join joinExpr = new Join(new Ref("joinOnTable", -1), new Ref("joinFromTable", -1), "TransactionOwner_id", "ID", "resultSchema", -1);
+
+
+        // Act
+        envS.Bind("joinOnSchema", joinOnSchema);
+        envS.Bind("joinFromSchema", joinFromSchema);
+        envS.Bind("resultSchema", resultSchema);
+        envV.Bind("joinOnTable", joinOnTable);
+        envV.Bind("joinFromTable", joinFromTable);
+
+        Val result = Interpreter.EvalExpr(joinExpr, envV, envP, envS);
+
+        // Assert
+        Assert.IsInstanceOfType<TableVal>(result);
+
+        Assert.HasCount(4, result.AsTable().Records);
+        Assert.HasCount(4, result.AsTable().Headers);
+
+        Assert.AreEqual("ID", result.AsTable().Headers[0].Identifier);
+        Assert.AreEqual(IntT.Instance, result.AsTable().Headers[0].Type);
+
+        Assert.AreEqual("TransactionOwner_id", result.AsTable().Headers[1].Identifier);
+        Assert.AreEqual(IntT.Instance, result.AsTable().Headers[1].Type);
+
+        Assert.AreEqual("name", result.AsTable().Headers[2].Identifier);
+        Assert.AreEqual(StringT.Instance, result.AsTable().Headers[2].Type);
+
+        Assert.AreEqual("Amount", result.AsTable().Headers[3].Identifier);
+        Assert.AreEqual(IntT.Instance, result.AsTable().Headers[3].Type);
+
+        Assert.HasCount(4, result.AsTable().Records[0].Values);
+        Assert.HasCount(4, result.AsTable().Records[1].Values);
+        Assert.HasCount(4, result.AsTable().Records[2].Values);
+        Assert.HasCount(4, result.AsTable().Records[3].Values);
+
+        Assert.AreEqual(1, result.AsTable().Records[0].Values[0].AsInt());
+        Assert.AreEqual(1, result.AsTable().Records[0].Values[1].AsInt());
+        Assert.AreEqual("Lotte", result.AsTable().Records[0].Values[2].ToString());
+        Assert.AreEqual(30, result.AsTable().Records[0].Values[3].AsInt());
+
+        Assert.AreEqual(2, result.AsTable().Records[1].Values[0].AsInt());
+        Assert.AreEqual(1, result.AsTable().Records[1].Values[1].AsInt());
+        Assert.AreEqual("Lotte", result.AsTable().Records[1].Values[2].ToString());
+        Assert.AreEqual(40, result.AsTable().Records[1].Values[3].AsInt());
+
+        Assert.AreEqual(3, result.AsTable().Records[2].Values[0].AsInt());
+        Assert.AreEqual(2, result.AsTable().Records[2].Values[1].AsInt());
+        Assert.AreEqual("Peter", result.AsTable().Records[2].Values[2].ToString());
+        Assert.AreEqual(50, result.AsTable().Records[2].Values[3].AsInt());
+
+        Assert.AreEqual(4, result.AsTable().Records[3].Values[0].AsInt());
+        Assert.AreEqual(1, result.AsTable().Records[3].Values[1].AsInt());
+        Assert.AreEqual("Lotte", result.AsTable().Records[3].Values[2].ToString());
+        Assert.AreEqual(60, result.AsTable().Records[3].Values[3].AsInt());
+    }
+
+    [TestMethod]
+    public void JoinExprTest2()
+    {
+        // Arrange
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
+
+        List<Column> joinOnSchema = new List<Column> { new Column("ID", IntT.Instance),
+                                                        new Column("TransactionOwner_id", IntT.Instance),
+                                                        new Column("Amount", IntT.Instance) };
+
+        List<Column> joinFromSchema = new List<Column> { new Column("ID", IntT.Instance),
+                                                        new Column("name", StringT.Instance) };
+
+        TableVal joinOnTable = new TableVal(new Table(joinOnSchema,
+                                        new List<TableHeader> { new TableHeader("ID", StringT.Instance), new TableHeader("TransactionOwner_id", IntT.Instance), new TableHeader("Amount", IntT.Instance) },
+                                        new List<TableRecord> { new TableRecord(new List<Val> { new IntVal(1), new IntVal(1), new IntVal(30) }),
+                                                                new TableRecord(new List<Val> { new IntVal(2), new IntVal(1), new IntVal(40) }),
+                                                                new TableRecord(new List<Val> { new IntVal(3), new IntVal(2), new IntVal(50) }),
+                                                                new TableRecord(new List<Val> { new IntVal(4), new IntVal(1), new IntVal(60) }) }));
+
+        TableVal joinFromTable = new TableVal(new Table(joinFromSchema,
+                                        new List<TableHeader> { new TableHeader("ID", StringT.Instance), new TableHeader("name", StringT.Instance) },
+                                        new List<TableRecord> { new TableRecord(new List<Val> { new IntVal(1), new StringVal("Lotte") }),
+                                                                new TableRecord(new List<Val> { new IntVal(1), new StringVal("Peter") }) }));
+
+
+        List<Column> resultSchema = new List<Column> { new Column("ID", IntT.Instance),
+                                                       new Column("TransactionOwner_id", IntT.Instance),
+                                                       new Column("name", StringT.Instance),
+                                                       new Column("Amount", IntT.Instance)};
+
+        TableVal resultTable = new TableVal(new Table(resultSchema,
+                                       new List<TableHeader> { new TableHeader("ID", StringT.Instance), new TableHeader("TransactionOwner_id", IntT.Instance), new TableHeader("name", StringT.Instance), new TableHeader("Amount", IntT.Instance) },
+                                       new List<TableRecord> { new TableRecord(new List<Val> { new IntVal(1), new IntVal(1), new StringVal("Lotte"), new IntVal(30) }),
+                                                               new TableRecord(new List<Val> { new IntVal(2), new IntVal(1), new StringVal("Lotte"), new IntVal(40) }),
+                                                               new TableRecord(new List<Val> { new IntVal(3), new IntVal(2), new StringVal("Peter"), new IntVal(50) }),
+                                                               new TableRecord(new List<Val> { new IntVal(4), new IntVal(1), new StringVal("Lotte"), new IntVal(60) }) }));
+
+
+        Join joinExpr = new Join(new Ref("joinOnTable", -1), new Ref("joinFromTable", -1), "TransactionOwner_id", "ID", "resultSchema", -1);
+
+
+        // Act
+        envS.Bind("joinOnSchema", joinOnSchema);
+        envS.Bind("joinFromSchema", joinFromSchema);
+        envS.Bind("resultSchema", resultSchema);
+        envV.Bind("joinOnTable", joinOnTable);
+        envV.Bind("joinFromTable", joinFromTable);
+
+        // Assert
+        try
+        {
+            Interpreter.EvalExpr(joinExpr, envV, envP, envS);
+            Assert.Fail();
+        }
+        catch (Exception exception)
+        {
+            Assert.AreEqual("Duplicate primary key in table.", exception.Message);
+        }
+    }
+
+    [TestMethod]
+    public void JoinExprTest3()
+    {
+        // Arrange
+        EnvV envV = new EnvV();
+        EnvP envP = new EnvP();
+        EnvS envS = new EnvS();
+
+        List<Column> joinOnSchema = new List<Column> { new Column("ID", IntT.Instance),
+                                                        new Column("TransactionOwner_id", IntT.Instance),
+                                                        new Column("Amount", IntT.Instance) };
+
+        List<Column> joinFromSchema = new List<Column> { new Column("ID", IntT.Instance),
+                                                        new Column("name", StringT.Instance) };
+
+        TableVal joinOnTable = new TableVal(new Table(joinOnSchema,
+                                        new List<TableHeader> { new TableHeader("ID", StringT.Instance), new TableHeader("TransactionOwner_id", IntT.Instance), new TableHeader("Amount", IntT.Instance) },
+                                        new List<TableRecord> { new TableRecord(new List<Val> { new IntVal(1), new IntVal(1), new IntVal(30) }),
+                                                                new TableRecord(new List<Val> { new IntVal(2), new IntVal(1), new IntVal(40) }),
+                                                                new TableRecord(new List<Val> { new IntVal(3), new IntVal(2), new IntVal(50) }),
+                                                                new TableRecord(new List<Val> { new IntVal(4), new IntVal(3), new IntVal(60) }) }));
+
+        TableVal joinFromTable = new TableVal(new Table(joinFromSchema,
+                                        new List<TableHeader> { new TableHeader("ID", StringT.Instance), new TableHeader("name", StringT.Instance) },
+                                        new List<TableRecord> { new TableRecord(new List<Val> { new IntVal(1), new StringVal("Lotte") }),
+                                                                new TableRecord(new List<Val> { new IntVal(2), new StringVal("Peter") }) }));
+
+
+        List<Column> resultSchema = new List<Column> { new Column("ID", IntT.Instance),
+                                                       new Column("TransactionOwner_id", IntT.Instance),
+                                                       new Column("name", StringT.Instance),
+                                                       new Column("Amount", IntT.Instance)};
+
+        TableVal resultTable = new TableVal(new Table(resultSchema,
+                                       new List<TableHeader> { new TableHeader("ID", StringT.Instance), new TableHeader("TransactionOwner_id", IntT.Instance), new TableHeader("name", StringT.Instance), new TableHeader("Amount", IntT.Instance) },
+                                       new List<TableRecord> { new TableRecord(new List<Val> { new IntVal(1), new IntVal(1), new StringVal("Lotte"), new IntVal(30) }),
+                                                               new TableRecord(new List<Val> { new IntVal(2), new IntVal(1), new StringVal("Lotte"), new IntVal(40) }),
+                                                               new TableRecord(new List<Val> { new IntVal(3), new IntVal(2), new StringVal("Peter"), new IntVal(50) }),
+                                                               new TableRecord(new List<Val> { new IntVal(4), new IntVal(1), new StringVal("Lotte"), new IntVal(60) }) }));
+
+
+        Join joinExpr = new Join(new Ref("joinOnTable", -1), new Ref("joinFromTable", -1), "TransactionOwner_id", "ID", "resultSchema", -1);
+
+
+        // Act
+        envS.Bind("joinOnSchema", joinOnSchema);
+        envS.Bind("joinFromSchema", joinFromSchema);
+        envS.Bind("resultSchema", resultSchema);
+        envV.Bind("joinOnTable", joinOnTable);
+        envV.Bind("joinFromTable", joinFromTable);
+
+        // Assert
+        try
+        {
+            Interpreter.EvalExpr(joinExpr, envV, envP, envS);
+            Assert.Fail();
+        }
+        catch (Exception exception)
+        {
+            Assert.AreEqual("Key 3 was not found in the join table.", exception.Message);
+        }
+    }
+
+    [TestMethod]
     [DataRow(BinaryOperators.AND, true, false, false)]
     [DataRow(BinaryOperators.AND, false, true, false)]
     [DataRow(BinaryOperators.AND, false, false, false)]
