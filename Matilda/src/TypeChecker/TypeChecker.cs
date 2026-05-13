@@ -652,6 +652,20 @@ public class TypeChecker
                     return null;
                 }
 
+                if (joinOnReferenceColumn.Type == IntT.Instance || joinOnReferenceColumn.Type == FloatT.Instance)
+                {
+                    if (joinFromReferenceColumn.Type != IntT.Instance && joinFromReferenceColumn.Type != FloatT.Instance)
+                    {
+                        errors.Add($"Line {join.LineNumber}: Schemas have uncompatible column types '{joinOnReferenceColumn.Type}' and '{joinFromReferenceColumn.Type}'.");
+                        return null;
+                    }
+                }
+                else if (joinOnReferenceColumn.Type != joinFromReferenceColumn.Type)
+                {
+                    errors.Add($"Line {join.LineNumber}: Schemas have uncompatible column types '{joinOnReferenceColumn.Type}' and '{joinFromReferenceColumn.Type}'.");
+                    return null;
+                }
+
                 if (joinResultSchema.Contains(joinFromReferenceColumn) && !joinOnTableSchema.Contains(joinFromReferenceColumn))
                 {
                     errors.Add($"Line {join.LineNumber}: Result schema '{join.ResultSchemaId}' may not contain column with id '{join.KeyColumn2}'.");
