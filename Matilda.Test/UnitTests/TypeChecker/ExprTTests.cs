@@ -762,15 +762,16 @@ public class SumTestsTypechecker : RunTypeChecker
         Assert.AreEqual("Line -1: The column 'name' must be of type 'IntT' or 'FloatT', but got 'Matilda.StringT'.", checker.errors[0]);
         Assert.AreEqual("Line -1: Declaration type does not match the type of the expression.", checker.errors[1]);
     }
+}
 
-    [TestClass]
-    public class JoinTestsTypechecker : RunTypeChecker
+[TestClass]
+public class JoinTestsTypechecker : RunTypeChecker
+{
+    [TestMethod]
+    public void JoinTestType()
     {
-        [TestMethod]
-        public void JoinTestType()
-        {
-            // Arrange
-            List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> {
+        // Arrange
+        List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> {
             new SchemaDeclaration(
                     "schema1",
                     new List<Column>
@@ -801,205 +802,205 @@ public class SumTestsTypechecker : RunTypeChecker
                 )
             };
 
-            Stmt stmt = new Comp(new TableDeclaration(
-                new TableT("schema1"),
-                "tab1",
-                "TableDeclaration.csv",
-                -1),
-                new Comp(
-                    new TableDeclaration(
-                        new TableT("schema2"),
-                        "tab2",
-                        "TableDeclaration2.csv",
-                    -1),
-                    new LocalDeclaration(new TableT("schema3"), "x", new Join(new Ref("tab1", -1), new Ref("tab2", -1), "customer_id", "id", "schema3", -1), -1)
-                )
-                );
-
-            // Act
-            var checker = Run(new Program(topLevelDeclarations, stmt));
-
-            // Assert
-            Assert.IsFalse(checker.HasErrors());
-        }
-
-        [TestMethod]
-        public void JoinTestType2()
-        {
-            // Arrange
-            List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> {
-            new SchemaDeclaration(
-                    "schema1",
-                    new List<Column>
-                    {
-                        new Column("id", IntT.Instance),
-                        new Column("customer_id", IntT.Instance)
-                    },
-                    -1
-                ),
-            new SchemaDeclaration(
-                    "schema2",
-                    new List<Column>
-                    {
-                        new Column("id", IntT.Instance),
-                        new Column("name", StringT.Instance)
-                    },
-                    -1
-                ),
-            new SchemaDeclaration(
-                    "schema3",
-                    new List<Column>
-                    {
-                        new Column("id", IntT.Instance),
-                        new Column("customer_id", IntT.Instance),
-                        new Column("name", StringT.Instance)
-                    },
-                    -1
-                )
-            };
-
-            Stmt stmt = new Comp(new LocalDeclaration(
-                IntT.Instance,
-                "tab1",
-                new IntV(1, -1),
-                -1),
-                new Comp(
-                    new TableDeclaration(
-                        new TableT("schema2"),
-                        "tab2",
-                        "TableDeclaration2.csv",
-                    -1),
-                    new LocalDeclaration(new TableT("schema3"), "x", new Join(new Ref("tab1", -1), new Ref("tab2", -1), "customer_id", "id", "schema3", -1), -1)
-                )
-                );
-
-            // Act
-            var checker = Run(new Program(topLevelDeclarations, stmt));
-
-            // Assert
-            Assert.IsTrue(checker.HasErrors());
-            Assert.HasCount(2, checker.errors);
-            Assert.AreEqual("Line -1: Argument 1 must be of type 'TableT'.", checker.errors[0]);
-            Assert.AreEqual("Line -1: Declaration type does not match the type of the expression.", checker.errors[1]);
-        }
-
-        [TestMethod]
-        public void JoinTestType3()
-        {
-            // Arrange
-            List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> {
-            new SchemaDeclaration(
-                    "schema1",
-                    new List<Column>
-                    {
-                        new Column("id", IntT.Instance),
-                        new Column("customer_id", IntT.Instance)
-                    },
-                    -1
-                ),
-            new SchemaDeclaration(
-                    "schema2",
-                    new List<Column>
-                    {
-                        new Column("id", IntT.Instance),
-                        new Column("name", StringT.Instance)
-                    },
-                    -1
-                ),
-            new SchemaDeclaration(
-                    "schema3",
-                    new List<Column>
-                    {
-                        new Column("id", IntT.Instance),
-                        new Column("customer_id", IntT.Instance),
-                        new Column("name", StringT.Instance)
-                    },
-                    -1
-                )
-            };
-
-            Stmt stmt = new Comp(new TableDeclaration(
+        Stmt stmt = new Comp(new TableDeclaration(
+            new TableT("schema1"),
+            "tab1",
+            "TableDeclaration.csv",
+            -1),
+            new Comp(
+                new TableDeclaration(
                     new TableT("schema2"),
+                    "tab2",
+                    "TableDeclaration2.csv",
+                -1),
+                new LocalDeclaration(new TableT("schema3"), "x", new Join(new Ref("tab1", -1), new Ref("tab2", -1), "customer_id", "id", "schema3", -1), -1)
+            )
+            );
+
+        // Act
+        var checker = Run(new Program(topLevelDeclarations, stmt));
+
+        // Assert
+        Assert.IsFalse(checker.HasErrors());
+    }
+
+    [TestMethod]
+    public void JoinTestType2()
+    {
+        // Arrange
+        List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> {
+            new SchemaDeclaration(
+                    "schema1",
+                    new List<Column>
+                    {
+                        new Column("id", IntT.Instance),
+                        new Column("customer_id", IntT.Instance)
+                    },
+                    -1
+                ),
+            new SchemaDeclaration(
+                    "schema2",
+                    new List<Column>
+                    {
+                        new Column("id", IntT.Instance),
+                        new Column("name", StringT.Instance)
+                    },
+                    -1
+                ),
+            new SchemaDeclaration(
+                    "schema3",
+                    new List<Column>
+                    {
+                        new Column("id", IntT.Instance),
+                        new Column("customer_id", IntT.Instance),
+                        new Column("name", StringT.Instance)
+                    },
+                    -1
+                )
+            };
+
+        Stmt stmt = new Comp(new LocalDeclaration(
+            IntT.Instance,
+            "tab1",
+            new IntV(1, -1),
+            -1),
+            new Comp(
+                new TableDeclaration(
+                    new TableT("schema2"),
+                    "tab2",
+                    "TableDeclaration2.csv",
+                -1),
+                new LocalDeclaration(new TableT("schema3"), "x", new Join(new Ref("tab1", -1), new Ref("tab2", -1), "customer_id", "id", "schema3", -1), -1)
+            )
+            );
+
+        // Act
+        var checker = Run(new Program(topLevelDeclarations, stmt));
+
+        // Assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.HasCount(2, checker.errors);
+        Assert.AreEqual("Line -1: Argument 1 must be of type 'TableT'.", checker.errors[0]);
+        Assert.AreEqual("Line -1: Declaration type does not match the type of the expression.", checker.errors[1]);
+    }
+
+    [TestMethod]
+    public void JoinTestType3()
+    {
+        // Arrange
+        List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> {
+            new SchemaDeclaration(
+                    "schema1",
+                    new List<Column>
+                    {
+                        new Column("id", IntT.Instance),
+                        new Column("customer_id", IntT.Instance)
+                    },
+                    -1
+                ),
+            new SchemaDeclaration(
+                    "schema2",
+                    new List<Column>
+                    {
+                        new Column("id", IntT.Instance),
+                        new Column("name", StringT.Instance)
+                    },
+                    -1
+                ),
+            new SchemaDeclaration(
+                    "schema3",
+                    new List<Column>
+                    {
+                        new Column("id", IntT.Instance),
+                        new Column("customer_id", IntT.Instance),
+                        new Column("name", StringT.Instance)
+                    },
+                    -1
+                )
+            };
+
+        Stmt stmt = new Comp(new TableDeclaration(
+                new TableT("schema2"),
+                "tab1",
+                "TableDeclaration2.csv",
+            -1),
+            new Comp(
+                new LocalDeclaration(
+                IntT.Instance,
+                "tab2",
+                new IntV(1, -1),
+                -1
+                ),
+                new LocalDeclaration(new TableT("schema3"), "x", new Join(new Ref("tab1", -1), new Ref("tab2", -1), "customer_id", "id", "schema3", -1), -1)
+            )
+            );
+
+        // Act
+        var checker = Run(new Program(topLevelDeclarations, stmt));
+
+        // Assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.HasCount(2, checker.errors);
+        Assert.AreEqual("Line -1: Argument 2 must be of type 'TableT'.", checker.errors[0]);
+        Assert.AreEqual("Line -1: Declaration type does not match the type of the expression.", checker.errors[1]);
+    }
+
+    [TestMethod]
+    public void JoinTestWrongSchemaId()
+    {
+        // Arrange
+        List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> {
+            new SchemaDeclaration(
+                    "schema1",
+                    new List<Column>
+                    {
+                        new Column("id", IntT.Instance),
+                        new Column("customer_id", IntT.Instance)
+                    },
+                    -1
+                ),
+            new SchemaDeclaration(
+                    "schema2",
+                    new List<Column>
+                    {
+                        new Column("id", IntT.Instance),
+                        new Column("name", StringT.Instance)
+                    },
+                    -1
+                )
+            };
+
+        Stmt stmt = new Comp(
+            new TableDeclaration(
+                    new TableT("schema1"),
                     "tab1",
                     "TableDeclaration2.csv",
                 -1),
-                new Comp(
-                    new LocalDeclaration(
-                    IntT.Instance,
+            new Comp(
+                new TableDeclaration(
+                    new TableT("schema2"),
                     "tab2",
-                    new IntV(1, -1),
-                    -1
-                    ),
-                    new LocalDeclaration(new TableT("schema3"), "x", new Join(new Ref("tab1", -1), new Ref("tab2", -1), "customer_id", "id", "schema3", -1), -1)
-                )
-                );
+                    "TableDeclaration2.csv",
+                -1),
+                new LocalDeclaration(new TableT("schema3"), "x", new Join(new Ref("tab1", -1), new Ref("tab2", -1), "customer_id", "id", "schema3", -1), -1)
+            )
+            );
 
-            // Act
-            var checker = Run(new Program(topLevelDeclarations, stmt));
+        // Act
+        var checker = Run(new Program(topLevelDeclarations, stmt));
 
-            // Assert
-            Assert.IsTrue(checker.HasErrors());
-            Assert.HasCount(2, checker.errors);
-            Assert.AreEqual("Line -1: Argument 2 must be of type 'TableT'.", checker.errors[0]);
-            Assert.AreEqual("Line -1: Declaration type does not match the type of the expression.", checker.errors[1]);
-        }
+        // Assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.HasCount(2, checker.errors);
+        Assert.AreEqual("Line -1: Result schema 'schema3' has not been defined.", checker.errors[0]);
+        Assert.AreEqual("Line -1: Declaration type does not match the type of the expression.", checker.errors[1]);
+    }
 
-        [TestMethod]
-        public void JoinTestWrongSchemaId()
-        {
-            // Arrange
-            List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> {
-            new SchemaDeclaration(
-                    "schema1",
-                    new List<Column>
-                    {
-                        new Column("id", IntT.Instance),
-                        new Column("customer_id", IntT.Instance)
-                    },
-                    -1
-                ),
-            new SchemaDeclaration(
-                    "schema2",
-                    new List<Column>
-                    {
-                        new Column("id", IntT.Instance),
-                        new Column("name", StringT.Instance)
-                    },
-                    -1
-                )
-            };
-
-            Stmt stmt = new Comp(
-                new TableDeclaration(
-                        new TableT("schema1"),
-                        "tab1",
-                        "TableDeclaration2.csv",
-                    -1),
-                new Comp(
-                    new TableDeclaration(
-                        new TableT("schema2"),
-                        "tab2",
-                        "TableDeclaration2.csv",
-                    -1),
-                    new LocalDeclaration(new TableT("schema3"), "x", new Join(new Ref("tab1", -1), new Ref("tab2", -1), "customer_id", "id", "schema3", -1), -1)
-                )
-                );
-
-            // Act
-            var checker = Run(new Program(topLevelDeclarations, stmt));
-
-            // Assert
-            Assert.IsTrue(checker.HasErrors());
-            Assert.HasCount(2, checker.errors);
-            Assert.AreEqual("Line -1: Result schema 'schema3' has not been defined.", checker.errors[0]);
-            Assert.AreEqual("Line -1: Declaration type does not match the type of the expression.", checker.errors[1]);
-        }
-
-        [TestMethod]
-        public void JoinTestWrongSchemaColumnAmount()
-        {
-            // Arrange
-            List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> {
+    [TestMethod]
+    public void JoinTestWrongSchemaColumnAmount()
+    {
+        // Arrange
+        List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> {
             new SchemaDeclaration(
                     "schema1",
                     new List<Column>
@@ -1029,38 +1030,38 @@ public class SumTestsTypechecker : RunTypeChecker
                 )
             };
 
-            Stmt stmt = new Comp(
+        Stmt stmt = new Comp(
+            new TableDeclaration(
+                new TableT("schema1"),
+                    "tab1",
+                    "TableDeclaration2.csv",
+                -1
+            ),
+            new Comp(
                 new TableDeclaration(
-                    new TableT("schema1"),
-                        "tab1",
-                        "TableDeclaration2.csv",
-                    -1
-                ),
-                new Comp(
-                    new TableDeclaration(
-                        new TableT("schema2"),
-                        "tab2",
-                        "TableDeclaration2.csv",
-                    -1),
-                    new LocalDeclaration(new TableT("schema3"), "x", new Join(new Ref("tab1", -1), new Ref("tab2", -1), "customer_id", "id", "schema3", -1), -1)
-                )
-                );
+                    new TableT("schema2"),
+                    "tab2",
+                    "TableDeclaration2.csv",
+                -1),
+                new LocalDeclaration(new TableT("schema3"), "x", new Join(new Ref("tab1", -1), new Ref("tab2", -1), "customer_id", "id", "schema3", -1), -1)
+            )
+            );
 
-            // Act
-            var checker = Run(new Program(topLevelDeclarations, stmt));
+        // Act
+        var checker = Run(new Program(topLevelDeclarations, stmt));
 
-            // Assert
-            Assert.IsTrue(checker.HasErrors());
-            Assert.HasCount(2, checker.errors);
-            Assert.AreEqual("Line -1: Result schema 'schema3' may only contain 3 columns but has 2 columns.", checker.errors[0]);
-            Assert.AreEqual("Line -1: Declaration type does not match the type of the expression.", checker.errors[1]);
-        }
+        // Assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.HasCount(2, checker.errors);
+        Assert.AreEqual("Line -1: Result schema 'schema3' may only contain 3 columns but has 2 columns.", checker.errors[0]);
+        Assert.AreEqual("Line -1: Declaration type does not match the type of the expression.", checker.errors[1]);
+    }
 
-        [TestMethod]
-        public void JoinTestWrongJoinOnReferenceColumn()
-        {
-            // Arrange
-            List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> {
+    [TestMethod]
+    public void JoinTestWrongJoinOnReferenceColumn()
+    {
+        // Arrange
+        List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> {
             new SchemaDeclaration(
                     "schema1",
                     new List<Column>
@@ -1089,38 +1090,38 @@ public class SumTestsTypechecker : RunTypeChecker
                 )
             };
 
-            Stmt stmt = new Comp(
+        Stmt stmt = new Comp(
+            new TableDeclaration(
+                new TableT("schema1"),
+                    "tab1",
+                    "TableDeclaration2.csv",
+                -1
+            ),
+            new Comp(
                 new TableDeclaration(
-                    new TableT("schema1"),
-                        "tab1",
-                        "TableDeclaration2.csv",
-                    -1
-                ),
-                new Comp(
-                    new TableDeclaration(
-                        new TableT("schema2"),
-                        "tab2",
-                        "TableDeclaration2.csv",
-                    -1),
-                    new LocalDeclaration(new TableT("schema3"), "x", new Join(new Ref("tab1", -1), new Ref("tab2", -1), "customer_id", "id", "schema3", -1), -1)
-                )
-                );
+                    new TableT("schema2"),
+                    "tab2",
+                    "TableDeclaration2.csv",
+                -1),
+                new LocalDeclaration(new TableT("schema3"), "x", new Join(new Ref("tab1", -1), new Ref("tab2", -1), "customer_id", "id", "schema3", -1), -1)
+            )
+            );
 
-            // Act
-            var checker = Run(new Program(topLevelDeclarations, stmt));
+        // Act
+        var checker = Run(new Program(topLevelDeclarations, stmt));
 
-            // Assert
-            Assert.IsTrue(checker.HasErrors());
-            Assert.HasCount(2, checker.errors);
-            Assert.AreEqual("Line -1: Join schema 'schema1' must contain 'customer_id'.", checker.errors[0]);
-            Assert.AreEqual("Line -1: Declaration type does not match the type of the expression.", checker.errors[1]);
-        }
+        // Assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.HasCount(2, checker.errors);
+        Assert.AreEqual("Line -1: Join schema 'schema1' must contain 'customer_id'.", checker.errors[0]);
+        Assert.AreEqual("Line -1: Declaration type does not match the type of the expression.", checker.errors[1]);
+    }
 
-        [TestMethod]
-        public void JoinTestWrongJoinFromReferenceColumn()
-        {
-            // Arrange
-            List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> {
+    [TestMethod]
+    public void JoinTestWrongJoinFromReferenceColumn()
+    {
+        // Arrange
+        List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> {
             new SchemaDeclaration(
                     "schema1",
                     new List<Column>
@@ -1149,38 +1150,38 @@ public class SumTestsTypechecker : RunTypeChecker
                 )
             };
 
-            Stmt stmt = new Comp(
+        Stmt stmt = new Comp(
+            new TableDeclaration(
+                new TableT("schema1"),
+                    "tab1",
+                    "TableDeclaration2.csv",
+                -1
+            ),
+            new Comp(
                 new TableDeclaration(
-                    new TableT("schema1"),
-                        "tab1",
-                        "TableDeclaration2.csv",
-                    -1
-                ),
-                new Comp(
-                    new TableDeclaration(
-                        new TableT("schema2"),
-                        "tab2",
-                        "TableDeclaration2.csv",
-                    -1),
-                    new LocalDeclaration(new TableT("schema3"), "x", new Join(new Ref("tab1", -1), new Ref("tab2", -1), "customer_id", "id", "schema3", -1), -1)
-                )
-                );
+                    new TableT("schema2"),
+                    "tab2",
+                    "TableDeclaration2.csv",
+                -1),
+                new LocalDeclaration(new TableT("schema3"), "x", new Join(new Ref("tab1", -1), new Ref("tab2", -1), "customer_id", "id", "schema3", -1), -1)
+            )
+            );
 
-            // Act
-            var checker = Run(new Program(topLevelDeclarations, stmt));
+        // Act
+        var checker = Run(new Program(topLevelDeclarations, stmt));
 
-            // Assert
-            Assert.IsTrue(checker.HasErrors());
-            Assert.HasCount(2, checker.errors);
-            Assert.AreEqual("Line -1: Join schema 'schema2' must contain 'id'.", checker.errors[0]);
-            Assert.AreEqual("Line -1: Declaration type does not match the type of the expression.", checker.errors[1]);
-        }
+        // Assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.HasCount(2, checker.errors);
+        Assert.AreEqual("Line -1: Join schema 'schema2' must contain 'id'.", checker.errors[0]);
+        Assert.AreEqual("Line -1: Declaration type does not match the type of the expression.", checker.errors[1]);
+    }
 
-        [TestMethod]
-        public void JoinTestResultSchemaContainsFromReferenceColumn()
-        {
-            // Arrange
-            List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> {
+    [TestMethod]
+    public void JoinTestResultSchemaContainsFromReferenceColumn()
+    {
+        // Arrange
+        List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> {
             new SchemaDeclaration(
                     "schema1",
                     new List<Column>
@@ -1211,38 +1212,38 @@ public class SumTestsTypechecker : RunTypeChecker
                 )
             };
 
-            Stmt stmt = new Comp(
+        Stmt stmt = new Comp(
+            new TableDeclaration(
+                new TableT("schema1"),
+                    "tab1",
+                    "TableDeclaration2.csv",
+                -1
+            ),
+            new Comp(
                 new TableDeclaration(
-                    new TableT("schema1"),
-                        "tab1",
-                        "TableDeclaration2.csv",
-                    -1
-                ),
-                new Comp(
-                    new TableDeclaration(
-                        new TableT("schema2"),
-                        "tab2",
-                        "TableDeclaration2.csv",
-                    -1),
-                    new LocalDeclaration(new TableT("schema3"), "x", new Join(new Ref("tab1", -1), new Ref("tab2", -1), "customer_id", "id", "schema3", -1), -1)
-                )
-                );
+                    new TableT("schema2"),
+                    "tab2",
+                    "TableDeclaration2.csv",
+                -1),
+                new LocalDeclaration(new TableT("schema3"), "x", new Join(new Ref("tab1", -1), new Ref("tab2", -1), "customer_id", "id", "schema3", -1), -1)
+            )
+            );
 
-            // Act
-            var checker = Run(new Program(topLevelDeclarations, stmt));
+        // Act
+        var checker = Run(new Program(topLevelDeclarations, stmt));
 
-            // Assert
-            Assert.IsTrue(checker.HasErrors());
-            Assert.HasCount(2, checker.errors);
-            Assert.AreEqual("Line -1: Result schema 'schema3' may not contain column with id 'id'.", checker.errors[0]);
-            Assert.AreEqual("Line -1: Declaration type does not match the type of the expression.", checker.errors[1]);
-        }
+        // Assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.HasCount(2, checker.errors);
+        Assert.AreEqual("Line -1: Result schema 'schema3' may not contain column with id 'id'.", checker.errors[0]);
+        Assert.AreEqual("Line -1: Declaration type does not match the type of the expression.", checker.errors[1]);
+    }
 
-        [TestMethod]
-        public void JoinTestResultSchemaContainsFromReferenceColumn2()
-        {
-            // Arrange
-            List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> {
+    [TestMethod]
+    public void JoinTestResultSchemaContainsFromReferenceColumn2()
+    {
+        // Arrange
+        List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> {
             new SchemaDeclaration(
                     "schema1",
                     new List<Column>
@@ -1273,31 +1274,207 @@ public class SumTestsTypechecker : RunTypeChecker
                 )
             };
 
-            Stmt stmt = new Comp(
+        Stmt stmt = new Comp(
+            new TableDeclaration(
+                new TableT("schema1"),
+                    "tab1",
+                    "TableDeclaration2.csv",
+                -1
+            ),
+            new Comp(
                 new TableDeclaration(
-                    new TableT("schema1"),
-                        "tab1",
-                        "TableDeclaration2.csv",
+                    new TableT("schema2"),
+                    "tab2",
+                    "TableDeclaration2.csv",
+                -1),
+                new LocalDeclaration(new TableT("schema3"), "x", new Join(new Ref("tab1", -1), new Ref("tab2", -1), "customer_id", "customer_id", "schema3", -1), -1)
+            )
+            );
+
+        // Act
+        var checker = Run(new Program(topLevelDeclarations, stmt));
+
+        // Assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.HasCount(2, checker.errors);
+        Assert.AreEqual("Line -1: Result schema 'schema3' may not contain a column 'c_id' that does not exist in schema 'schema1' or 'schema2'.", checker.errors[0]);
+        Assert.AreEqual("Line -1: Declaration type does not match the type of the expression.", checker.errors[1]);
+    }
+
+    [TestMethod]
+    public void JoinTestIncompatibleColumns()
+    {
+        // Arrange
+        List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> {
+            new SchemaDeclaration(
+                    "schema1",
+                    new List<Column>
+                    {
+                        new Column("id", IntT.Instance),
+                        new Column("customer_id", BoolT.Instance)
+                    },
                     -1
                 ),
-                new Comp(
-                    new TableDeclaration(
-                        new TableT("schema2"),
-                        "tab2",
-                        "TableDeclaration2.csv",
-                    -1),
-                    new LocalDeclaration(new TableT("schema3"), "x", new Join(new Ref("tab1", -1), new Ref("tab2", -1), "customer_id", "customer_id", "schema3", -1), -1)
+            new SchemaDeclaration(
+                    "schema2",
+                    new List<Column>
+                    {
+                        new Column("id", IntT.Instance),
+                        new Column("name", StringT.Instance)
+                    },
+                    -1
+                ),
+            new SchemaDeclaration(
+                    "schema3",
+                    new List<Column>
+                    {
+                        new Column("id", IntT.Instance),
+                        new Column("customer_id", IntT.Instance),
+                        new Column("name", StringT.Instance)
+                    },
+                    -1
                 )
-                );
+            };
 
-            // Act
-            var checker = Run(new Program(topLevelDeclarations, stmt));
+        Stmt stmt = new Comp(new TableDeclaration(
+            new TableT("schema1"),
+            "tab1",
+            "TableDeclaration.csv",
+            -1),
+            new Comp(
+                new TableDeclaration(
+                    new TableT("schema2"),
+                    "tab2",
+                    "TableDeclaration2.csv",
+                -1),
+                new LocalDeclaration(new TableT("schema3"), "x", new Join(new Ref("tab1", -1), new Ref("tab2", -1), "customer_id", "id", "schema3", -1), -1)
+            )
+            );
 
-            // Assert
-            Assert.IsTrue(checker.HasErrors());
-            Assert.HasCount(2, checker.errors);
-            Assert.AreEqual("Line -1: Result schema 'schema3' may not contain a column 'c_id' that does not exist in schema 'schema1' or 'schema2'.", checker.errors[0]);
-            Assert.AreEqual("Line -1: Declaration type does not match the type of the expression.", checker.errors[1]);
-        }
+        // Act
+        var checker = Run(new Program(topLevelDeclarations, stmt));
+
+        // Assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.HasCount(2, checker.errors);
+        Assert.AreEqual("Line -1: Schemas have uncompatible column types 'Matilda.BoolT' and 'Matilda.IntT'.", checker.errors[0]);
+        Assert.AreEqual("Line -1: Declaration type does not match the type of the expression.", checker.errors[1]);
+    }
+
+    [TestMethod]
+    public void JoinTestIncompatibleColumns2()
+    {
+        // Arrange
+        List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> {
+            new SchemaDeclaration(
+                    "schema1",
+                    new List<Column>
+                    {
+                        new Column("id", IntT.Instance),
+                        new Column("customer_id", IntT.Instance)
+                    },
+                    -1
+                ),
+            new SchemaDeclaration(
+                    "schema2",
+                    new List<Column>
+                    {
+                        new Column("id", BoolT.Instance),
+                        new Column("name", StringT.Instance)
+                    },
+                    -1
+                ),
+            new SchemaDeclaration(
+                    "schema3",
+                    new List<Column>
+                    {
+                        new Column("id", IntT.Instance),
+                        new Column("customer_id", IntT.Instance),
+                        new Column("name", StringT.Instance)
+                    },
+                    -1
+                )
+            };
+
+        Stmt stmt = new Comp(new TableDeclaration(
+            new TableT("schema1"),
+            "tab1",
+            "TableDeclaration.csv",
+            -1),
+            new Comp(
+                new TableDeclaration(
+                    new TableT("schema2"),
+                    "tab2",
+                    "TableDeclaration2.csv",
+                -1),
+                new LocalDeclaration(new TableT("schema3"), "x", new Join(new Ref("tab1", -1), new Ref("tab2", -1), "customer_id", "id", "schema3", -1), -1)
+            )
+            );
+
+        // Act
+        var checker = Run(new Program(topLevelDeclarations, stmt));
+
+        // Assert
+        Assert.IsTrue(checker.HasErrors());
+        Assert.HasCount(2, checker.errors);
+        Assert.AreEqual("Line -1: Schemas have uncompatible column types 'Matilda.IntT' and 'Matilda.BoolT'.", checker.errors[0]);
+        Assert.AreEqual("Line -1: Declaration type does not match the type of the expression.", checker.errors[1]);
+    }
+
+    [TestMethod]
+    public void JoinTestIncompatibleColumns3()
+    {
+        // Arrange
+        List<TopLevelDeclaration> topLevelDeclarations = new List<TopLevelDeclaration> {
+            new SchemaDeclaration(
+                    "schema1",
+                    new List<Column>
+                    {
+                        new Column("id", IntT.Instance),
+                        new Column("customer_id", IntT.Instance)
+                    },
+                    -1
+                ),
+            new SchemaDeclaration(
+                    "schema2",
+                    new List<Column>
+                    {
+                        new Column("id", FloatT.Instance),
+                        new Column("name", StringT.Instance)
+                    },
+                    -1
+                ),
+            new SchemaDeclaration(
+                    "schema3",
+                    new List<Column>
+                    {
+                        new Column("id", IntT.Instance),
+                        new Column("customer_id", IntT.Instance),
+                        new Column("name", StringT.Instance)
+                    },
+                    -1
+                )
+            };
+
+        Stmt stmt = new Comp(new TableDeclaration(
+            new TableT("schema1"),
+            "tab1",
+            "TableDeclaration.csv",
+            -1),
+            new Comp(
+                new TableDeclaration(
+                    new TableT("schema2"),
+                    "tab2",
+                    "TableDeclaration2.csv",
+                -1),
+                new LocalDeclaration(new TableT("schema3"), "x", new Join(new Ref("tab1", -1), new Ref("tab2", -1), "customer_id", "id", "schema3", -1), -1)
+            )
+            );
+
+        // Act
+        var checker = Run(new Program(topLevelDeclarations, stmt));
+
+        // Assert
+        Assert.IsFalse(checker.HasErrors());
     }
 }
