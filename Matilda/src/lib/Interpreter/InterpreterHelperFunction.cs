@@ -120,7 +120,7 @@ public class InterpreterHelperFunction
 
         if (v1 is IntVal ai && v2 is IntVal bi)
         {
-            return new FloatVal(ai.AsInt() / bi.AsInt());
+            return new FloatVal((float)ai.AsInt() / bi.AsInt());
         }
         else if (v1 is FloatVal af && v2 is FloatVal bf)
         {
