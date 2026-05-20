@@ -517,7 +517,7 @@ public class IsEqualTests
         Assert.AreEqual(1, result1.AsFloat());
         Assert.AreEqual(1, result2.AsFloat());
         Assert.AreEqual(2, result3.AsFloat());
-        Assert.AreEqual(0, result4.AsFloat());
+        Assert.AreEqual(0.5, result4.AsFloat());
     }
 
     [TestMethod]
